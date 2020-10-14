@@ -2,9 +2,9 @@
   <a href="https://js.devexpress.com/" title="DevExtreme-Quill">DevExtreme Quill</a>
 </h1>
 
-Devextreme-Quill is a fork of [Quill](https://quilljs.com/), based on the 2.0 branch.
+The **DevExtreme Quill** is a fork of [Quill](https://quilljs.com/), based on the 2.0 branch.
 
-Comparing to the current stable version of Quill, Devextreme-Quill provides basic table support and improve working with lists.
+Comparing to the current stable version of Quill, the **DevExtreme Quill** supports basic table operations and brings enhancements to lists rendering. 
 
 ## API
 
@@ -22,7 +22,8 @@ Comparing to the current stable version of Quill, Devextreme-Quill provides basi
 
 ## Modules
 
-[Modules](/docs/modules.md) allow Quill's behavior and functionality to be customized. Several officially supported modules are available to pick and choose from, some with additional configuration options and APIs. Refer to their respective documentation pages for more details:
+[Modules](/docs/modules.md) allow users to customize the **DevExtreme Quill**'s behavior and functionality. The officially supported modules are the following:
+
 - [Clipboard](/docs/modules/clipboard.md)
 - [History](docs/docs/modules/history.md)
 - [Keyboard](/docs/modules/keyboard.md)
