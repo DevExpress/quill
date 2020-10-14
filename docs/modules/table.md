@@ -45,7 +45,7 @@ insertRow(offset: number)
 quill.table.insertRow(1); // inserts row below
 quill.table.insertRow(0); // inserts row above
 quill.table.insertRow(-3); // inserts a row 3 rows above the current position
-quill.table.insertRow(3); // inserts a row 3 rows below the current position
+quill.table.insertRow(3); // inserts a row 2 rows below the current position
 ```
 
 
@@ -92,7 +92,7 @@ Adds a column to the left or right of the current text cursor position. The posi
 quill.table.insertColumn(1); // insert row to the right
 quill.table.insertColumn(0); // insert row to the left
 quill.table.insertColumn(-3); // insert a column 3 columns before the current position
-quill.table.insertColumn(3); // insert a column 3 columns after the current position
+quill.table.insertColumn(3); // insert a column 2 columns after the current position
 ```
 
 **Examples**
