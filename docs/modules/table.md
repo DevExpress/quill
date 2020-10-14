@@ -89,10 +89,10 @@ Adds a column to the left or right of the current text cursor position. The posi
 **Methods**
 
 ```js
-quill.table.insertColumn(1); // insert row to the right
-quill.table.insertColumn(0); // insert row to the left
-quill.table.insertColumn(-3); // insert a column 3 columns before the current position
-quill.table.insertColumn(3); // insert a column 2 columns after the current position
+quill.table.insertColumn(1); // inserts row to the right
+quill.table.insertColumn(0); // inserts row to the left
+quill.table.insertColumn(-3); // inserts a column 3 columns before the current position
+quill.table.insertColumn(3); // inserts a column 2 columns after the current position
 ```
 
 **Examples**
