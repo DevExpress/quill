@@ -14,7 +14,7 @@ var quill = new DevExpress.Quill('#editor', {
 
 #### insertTable
 
-Adds a table to the current selection range.
+Adds a table to the selection range.
 
 **Methods**
 
@@ -156,7 +156,7 @@ const tableBySpecificRange = quill.table.getTable({ index: 3, length: 0 });
 
 #### deleteRow
 
-Deletes the row at the current selection range.
+Deletes the row at the selection range.
 
 **Methods**
 
@@ -174,7 +174,7 @@ quill.table.deleteRow();
 
 #### deleteColumn
 
-Deletes the column at the current selection range.
+Deletes the column at the selection range.
 
 **Methods**
 
@@ -192,7 +192,7 @@ quill.table.deleteColumn();
 
 #### deleteTable
 
-Deletes the table at the current selection range.
+Deletes the table at the selection range.
 
 **Methods**
 
