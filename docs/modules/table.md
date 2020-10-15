@@ -42,8 +42,8 @@ insertRow(offset: number)
 **Examples**
 
 ```js
-quill.table.insertRow(1); // inserts row below
-quill.table.insertRow(0); // inserts row above
+quill.table.insertRow(1); // inserts a row below
+quill.table.insertRow(0); // inserts a row above
 quill.table.insertRow(-3); // inserts a row 3 rows above the current position
 quill.table.insertRow(3); // inserts a row 2 rows below the current position
 ```
@@ -89,8 +89,8 @@ Adds a column to the left or right of the current text cursor position. The posi
 **Methods**
 
 ```js
-quill.table.insertColumn(1); // inserts row to the right
-quill.table.insertColumn(0); // inserts row to the left
+quill.table.insertColumn(1); // inserts a column to the right
+quill.table.insertColumn(0); // inserts a column to the left
 quill.table.insertColumn(-3); // inserts a column 3 columns before the current position
 quill.table.insertColumn(3); // inserts a column 2 columns after the current position
 ```
