@@ -51,7 +51,7 @@ quill.table.insertRow(3); // inserts a row 2 rows below the current position
 
 #### insertRowAbove
 
-Adds a row above the current text cursor position.
+Adds a row above the cursor's position.
 
 **Methods**
 
@@ -68,7 +68,7 @@ quill.table.insertRowAbove();
 
 #### insertRowBelow
 
-Adds a row below the current text cursor position.
+Adds a row below the cursor's position.
 
 **Methods**
 
@@ -84,7 +84,7 @@ quill.table.insertRowBelow();
 
 #### insertColumn
 
-Adds a column to the left or right of the current text cursor position. The position of the column depends on the `offset` parameter value.
+Adds a column to the left or right of the cursor's position. The position of the column depends on the `offset` parameter value.
 
 **Methods**
 
@@ -104,7 +104,7 @@ quill.table.insertColumn();
 
 #### insertColumnLeft
 
-Adds a column to the left of the current text cursor position.
+Adds a column to the left of the cursor's position.
 
 **Methods**
 
@@ -121,7 +121,7 @@ quill.table.insertColumnLeft();
 
 #### insertColumnRight
 
-Adds a column to the right of the current text cursor position.
+Adds a column to the right of the cursor's position.
 
 **Methods**
 
