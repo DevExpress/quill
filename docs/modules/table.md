@@ -14,7 +14,7 @@ var quill = new DevExpress.Quill('#editor', {
 
 #### insertTable
 
-Adds a table into the current selection range.
+Adds a table to the current selection range.
 
 **Methods**
 
@@ -31,7 +31,7 @@ quill.table.insertTable(2, 2);
 
 #### insertRow
 
-Adds a row above or below the current text cursor position. The position of the row depends on the `offset` parameter value.
+Adds a row above or below the cursor's position. The position of the row depends on the `offset` parameter value.
 
 **Methods**
 

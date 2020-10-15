@@ -22,7 +22,7 @@ Comparing to the current stable version of Quill, the **DevExtreme Quill** suppo
 
 ## Modules
 
-[Modules](/docs/modules.md) allow users to customize the **DevExtreme Quill**'s behavior and functionality. The officially supported modules are the following:
+[Modules](/docs/modules.md) allow users to customize the **DevExtreme Quill**'s behavior and functionality. The following are official modules:
 
 - [Clipboard](/docs/modules/clipboard.md)
 - [History](docs/docs/modules/history.md)
