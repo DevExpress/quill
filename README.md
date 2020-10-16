@@ -4,7 +4,7 @@
 
 The **DevExtreme Quill** is a fork of [Quill](https://quilljs.com/), based on the 2.0 branch.
 
-**DevExtreme Quill** supports basic table operations and enhances lists rendering. 
+In comparison with the original library, **DevExtreme Quill** supports basic table operations and enhances lists rendering. 
 
 ## API
 
