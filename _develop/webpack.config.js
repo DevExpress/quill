@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const pkg = require('../package.json');
 
 const bannerPack = new webpack.BannerPlugin({
@@ -137,18 +138,31 @@ const baseConfig = {
 };
 
 module.exports = env => {
-  if (env && env.minimize) {
-    const { devServer, ...prodConfig } = baseConfig;
+  if (env && env.production) {
+    const { devServer, entry, ...prodConfig } = baseConfig;
     return {
       ...prodConfig,
       mode: 'production',
-      entry: { 'quill.min.js': './quill.js' },
-      devtool: 'source-map',
+      entry: {
+        ...entry,
+        'quill.min.js': './quill.js',
+      },
+      optimization: {
+        minimize: true,
+        minimizer: [
+          new TerserPlugin({
+            test: /\.min\.js$/,
+          }),
+        ],
+      },
+      devtool: '',
     };
   }
+
   if (env && env.coverage) {
     baseConfig.module.rules[0].use[0].options.plugins = ['istanbul'];
     return baseConfig;
   }
+
   return baseConfig;
 };
