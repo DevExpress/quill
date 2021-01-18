@@ -87,9 +87,23 @@ class Clipboard extends Module {
         [CodeBlock.blotName]: formats[CodeBlock.blotName],
       });
     }
-    if (!html) {
-      return new Delta().insert(text || '');
-    }
+
+    return html
+      ? this.applyMatchers(html, formats)
+      : this.applyTextMatchers(text);
+  }
+
+  applyTextMatchers(text = '') {
+    const matchers = this.prepareTextMatching();
+    const doc = new DOMParser().parseFromString(text, 'text/html');
+    const node = doc.body.childNodes[0];
+
+    return matchers.reduce((delta, matcher) => {
+      return matcher(node, delta, this.quill.scroll);
+    }, new Delta());
+  }
+
+  applyMatchers(html, formats) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const container = doc.body;
     const nodeMatches = new WeakMap();
@@ -227,6 +241,19 @@ class Clipboard extends Module {
       }
     });
     return [elementMatchers, textMatchers];
+  }
+
+  prepareTextMatching() {
+    const textMatchers = [];
+
+    this.matchers.forEach(pair => {
+      const [selector, matcher] = pair;
+      if (selector === TEXT_NODE) {
+        textMatchers.push(matcher);
+      }
+    });
+
+    return textMatchers;
   }
 }
 Clipboard.DEFAULTS = {

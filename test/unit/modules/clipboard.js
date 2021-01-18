@@ -385,5 +385,65 @@ describe('Clipboard', function() {
       });
       expect(delta).toEqual(new Delta().insert(''));
     });
+
+    it('text matcher', function() {
+      this.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+        const composer = new Delta();
+
+        composer.retain(node.data.length, { bold: true });
+
+        return delta.compose(composer);
+      });
+
+      const delta = this.clipboard.convert({
+        html: '',
+        text: 'simple text',
+      });
+
+      const expected = new Delta().insert('simple text', { bold: true });
+      expect(delta).toEqual(expected);
+    });
+
+    it('text matcher and html text content', function() {
+      this.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
+        const composer = new Delta();
+
+        composer.retain(node.data.length, { italic: true });
+
+        return delta.compose(composer);
+      });
+
+      const delta = this.clipboard.convert({
+        html: 'simple text',
+        text: 'simple text',
+      });
+
+      const expected = new Delta().insert('simple text', { italic: true });
+      expect(delta).toEqual(expected);
+    });
+
+    it('apply several text matchers', function() {
+      const prepareMatcher = formatName => (node, delta) => {
+        const composer = new Delta();
+
+        composer.retain(node.data.length, { [formatName]: true });
+
+        return delta.compose(composer);
+      };
+
+      this.clipboard.addMatcher(Node.TEXT_NODE, prepareMatcher('bold'));
+      this.clipboard.addMatcher(Node.TEXT_NODE, prepareMatcher('italic'));
+
+      const delta = this.clipboard.convert({
+        html: '',
+        text: 'simple text',
+      });
+
+      const expected = new Delta().insert('simple text', {
+        bold: true,
+        italic: true,
+      });
+      expect(delta).toEqual(expected);
+    });
   });
 });
