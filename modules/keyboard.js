@@ -569,10 +569,8 @@ Keyboard.DEFAULTS = {
       shiftKey: null,
       collapsed: true,
       format: {
-        list: false,
         'code-block': false,
         blockquote: false,
-        header: false,
         table: false,
       },
       prefix: /^\s*?(\d+\.|-|\*|\[ ?\]|\[x\])$/,
