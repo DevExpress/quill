@@ -455,5 +455,15 @@ describe('Clipboard', function() {
 
       expect(delta).toEqual(new Delta());
     });
+
+    it('handle stringified html markup as text', function() {
+      this.clipboard.addMatcher(Node.TEXT_NODE, (node, delta) => delta);
+
+      const delta = this.clipboard.convert({
+        text: '<h1>123</h1>',
+      });
+
+      expect(delta).toEqual(new Delta().insert('<h1>123</h1>'));
+    });
   });
 });

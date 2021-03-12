@@ -99,8 +99,9 @@ class Clipboard extends Module {
     }
 
     const matchers = this.prepareTextMatching();
-    const doc = new DOMParser().parseFromString(text, 'text/html');
-    const node = doc.body.childNodes[0];
+    const element = this.quill.root.ownerDocument.createElement('div');
+    element.textContent = text;
+    const node = element.childNodes[0];
 
     return matchers.reduce((delta, matcher) => {
       return matcher(node, delta, this.quill.scroll);
