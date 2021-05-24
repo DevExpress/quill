@@ -7,6 +7,15 @@ function breakMatcher() {
   return new Delta().insert({ multilineBreak: '' });
 }
 
+function getInitialContents(html) {
+  const contents = this.clipboard.convert({
+    html,
+    text: '\n',
+  });
+  const newLine = new Delta('\n');
+  return contents.compose(newLine);
+}
+
 class Multiline extends Module {
   constructor(quill, options) {
     const path = 'blots/multilineBreak';
@@ -23,6 +32,7 @@ class Multiline extends Module {
     );
     quill.keyboard.bindings.enter.unshift(quill.keyboard.bindings.enter.pop());
     quill.clipboard.addMatcher('BR', breakMatcher);
+    quill.getInitialContents = getInitialContents.bind(quill);
   }
 
   enterHandler(range) {

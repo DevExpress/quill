@@ -109,12 +109,7 @@ class Quill {
         source,
       );
     });
-    const contents = this.clipboard.convert({
-      html,
-      text: '',
-    });
-    const newLine = new Delta('\n');
-    this.setContents(contents.compose(newLine));
+    this.setContents(this.getInitialContents(html));
     this.history.clear();
     if (this.options.placeholder) {
       this.root.setAttribute('data-placeholder', this.options.placeholder);
@@ -123,6 +118,13 @@ class Quill {
       this.disable();
     }
     this.allowReadOnlyEdits = false;
+  }
+
+  getInitialContents(html) {
+    return this.clipboard.convert({
+      html: `${html}<p><br></p>`,
+      text: '\n',
+    });
   }
 
   addContainer(container, refNode = null) {
