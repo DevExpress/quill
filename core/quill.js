@@ -110,10 +110,11 @@ class Quill {
       );
     });
     const contents = this.clipboard.convert({
-      html: `${html}<p><br></p>`,
-      text: '\n',
+      html,
+      text: '',
     });
-    this.setContents(contents);
+    const newLine = new Delta('\n');
+    this.setContents(contents.compose(newLine));
     this.history.clear();
     if (this.options.placeholder) {
       this.root.setAttribute('data-placeholder', this.options.placeholder);

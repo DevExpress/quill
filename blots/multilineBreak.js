@@ -12,6 +12,12 @@ class MultilineBreak extends EmbedBlot {
   value() {
     return '\n';
   }
+
+  optimize() {
+    if (!this.prev && !this.next) {
+      this.remove();
+    }
+  }
 }
 
 MultilineBreak.blotName = 'multilineBreak';

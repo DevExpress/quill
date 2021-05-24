@@ -25,10 +25,13 @@ import Script from './formats/script';
 import Strike from './formats/strike';
 import Underline from './formats/underline';
 
+import Formula from './formats/formula';
 import Image from './formats/image';
+import Video from './formats/video';
 
 import CodeBlock, { Code as InlineCode } from './formats/code';
 
+import Syntax from './modules/syntax';
 import Table from './modules/table';
 import Multiline from './modules/multiline';
 
@@ -77,8 +80,11 @@ Quill.register(
     'formats/strike': Strike,
     'formats/underline': Underline,
 
+    'formats/formula': Formula,
     'formats/image': Image,
+    'formats/video': Video,
 
+    'modules/syntax': Syntax,
     'modules/table': Table,
     'modules/multiline': Multiline,
   },
