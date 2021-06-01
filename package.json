@@ -1,6 +1,6 @@
 {
   "name": "devextreme-quill",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Core of the DevExtrene HtmlEditor",
   "author": "Developer Express Inc.",
   "main": "dist/dx-quill.js",
