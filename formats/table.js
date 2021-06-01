@@ -50,7 +50,7 @@ class TableCell extends Block {
   }
 }
 TableCell.blotName = 'table';
-TableCell.tagName = 'TD';
+TableCell.tagName = ['TD', 'TH'];
 
 class TableRow extends Container {
   checkMerge() {
@@ -103,7 +103,7 @@ TableRow.tagName = 'TR';
 
 class TableBody extends Container {}
 TableBody.blotName = 'table-body';
-TableBody.tagName = 'TBODY';
+TableBody.tagName = ['TBODY', 'THEAD'];
 
 class TableContainer extends Container {
   balanceCells() {

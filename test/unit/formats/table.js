@@ -338,4 +338,25 @@ describe('Table', function() {
       </table>`,
     );
   });
+
+  it('render header cells as data cells', function() {
+    const tableWithHeader = `
+    <table>
+      <thead>
+        <tr>
+          <th data-row="1">H1</th>
+          <th data-row="1">H2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-row="a">A1</td>
+          <td data-row="a">A2</td>
+        </tr>
+      </tbody>
+    </table>`;
+    const editor = this.initialize(Editor, tableWithHeader);
+    editor.scroll.children.head.balanceCells();
+    expect(this.container).toEqualHTML(tableWithHeader);
+  });
 });

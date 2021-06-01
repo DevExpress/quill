@@ -23,6 +23,47 @@ describe('Table Module', function() {
       `);
     });
 
+    it('head', function() {
+      const quill = this.initialize(
+        Quill,
+        `
+        <table>
+          <thead>
+            <tr>
+              <th data-row="1">H1</th>
+              <th data-row="1">H2</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-row="a">A1</td>
+              <td data-row="a">A2</td>
+            </tr>
+          </tbody>
+        </table>`,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+
+      expect(quill.root).toEqualHTML(`
+      <table>
+        <tbody>
+          <tr>
+            <td data-row="1">H1</td>
+            <td data-row="1">H2</td>
+          </tr>
+          <tr>
+            <td data-row="a">A1</td>
+            <td data-row="a">A2</td>
+          </tr>
+          </tbody>
+          </table>`);
+    });
+
     it('split', function() {
       const quill = this.initialize(Quill, '<p>0123</p>', this.container, {
         modules: {
