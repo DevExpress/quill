@@ -84,6 +84,7 @@ class Quill {
     );
     this.scroll = new ScrollBlot(this.options.registry, this.root, {
       emitter: this.emitter,
+      toggleBlankClass: this.toggleBlankClass.bind(this),
     });
     this.editor = new Editor(this.scroll);
     this.selection = new Selection(this.scroll, this.emitter);
@@ -95,7 +96,7 @@ class Quill {
     this.theme.init();
     this.emitter.on(Emitter.events.EDITOR_CHANGE, type => {
       if (type === Emitter.events.TEXT_CHANGE) {
-        this.root.classList.toggle('ql-blank', this.editor.isBlank());
+        this.toggleBlankClass();
       }
     });
     this.emitter.on(Emitter.events.SCROLL_UPDATE, (source, mutations) => {
@@ -125,6 +126,11 @@ class Quill {
       html: `${html}<p><br></p>`,
       text: '\n',
     });
+  }
+
+  toggleBlankClass() {
+    const isComposing = this.selection.composing;
+    this.root.classList.toggle('ql-blank', this.editor.isBlank(isComposing));
   }
 
   addContainer(container, refNode = null) {

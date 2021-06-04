@@ -755,6 +755,20 @@ describe('Quill', function() {
       expect(this.quill.root.classList).toContain('ql-blank');
     });
 
+    it('insert text with composition', function() {
+      this.quill.root.dispatchEvent(new CompositionEvent('compositionstart'), {
+        data: 't',
+      });
+      this.quill.root.dispatchEvent(new InputEvent('input'), {
+        data: 't',
+        isComposing: true,
+      });
+      this.quill.root.dispatchEvent(new CompositionEvent('compositionend'), {
+        data: 't',
+      });
+      expect(this.quill.root.classList).not.toContain('ql-blank');
+    });
+
     it('with text', function() {
       this.quill.setText('test');
       expect(this.quill.root.classList).not.toContain('ql-blank');

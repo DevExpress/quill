@@ -167,8 +167,9 @@ class Editor {
     );
   }
 
-  isBlank() {
+  isBlank(isComposing = false) {
     if (this.scroll.children.length === 0) return true;
+    if (isComposing) return false;
     if (this.scroll.children.length > 1) return false;
     const block = this.scroll.children.head;
     if (block.statics.blotName !== Block.blotName) return false;

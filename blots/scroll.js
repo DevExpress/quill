@@ -9,9 +9,10 @@ function isLine(blot) {
 }
 
 class Scroll extends ScrollBlot {
-  constructor(registry, domNode, { emitter }) {
+  constructor(registry, domNode, { emitter, toggleBlankClass }) {
     super(registry, domNode);
     this.emitter = emitter;
+    this.toggleBlankClass = toggleBlankClass;
     this.batch = false;
     this.optimize();
     this.enable();
@@ -154,6 +155,7 @@ class Scroll extends ScrollBlot {
     if (this.batch) {
       if (Array.isArray(mutations)) {
         this.batch = this.batch.concat(mutations);
+        this.toggleBlankClass();
       }
       return;
     }
