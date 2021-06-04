@@ -756,6 +756,7 @@ describe('Quill', function() {
     });
 
     it('insert text with composition', function() {
+      this.quill.focus();
       this.quill.root.dispatchEvent(new CompositionEvent('compositionstart'), {
         data: 't',
       });
