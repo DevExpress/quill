@@ -756,15 +756,12 @@ describe('Quill', function() {
     });
 
     it('insert text with composition', function() {
-      this.quill.focus();
-      this.quill.root.dispatchEvent(new CompositionEvent('compositionstart'), {
-        data: 't',
-      });
-      this.quill.root.dispatchEvent(new InputEvent('input'), {
-        data: 't',
-        isComposing: true,
-      });
-      this.quill.root.dispatchEvent(new CompositionEvent('compositionend'), {
+      this.quill.root.dispatchEvent(
+        new CompositionEvent('compositionstart'),
+        {},
+      );
+      this.quill.root.innerHTML = 't';
+      this.quill.root.dispatchEvent(new CompositionEvent('compositionupdate'), {
         data: 't',
       });
       expect(this.quill.root.classList).not.toContain('ql-blank');
