@@ -756,15 +756,22 @@ describe('Quill', function() {
     });
 
     it('insert text with composition', function() {
+      const eventData = { data: 't' };
       this.quill.root.dispatchEvent(
         new CompositionEvent('compositionstart'),
         {},
       );
+      this.quill.root.dispatchEvent(new InputEvent('beforeinput'), eventData);
       this.quill.root.innerHTML = 't';
-      this.quill.root.dispatchEvent(new CompositionEvent('compositionupdate'), {
-        data: 't',
+      this.quill.root.dispatchEvent(
+        new CompositionEvent('compositionupdate'),
+        eventData,
+      );
+      this.quill.root.dispatchEvent(new InputEvent('input'), eventData);
+
+      setTimeout(() => {
+        expect(this.quill.root.classList).not.toContain('ql-blank');
       });
-      expect(this.quill.root.classList).not.toContain('ql-blank');
     });
 
     it('with text', function() {
