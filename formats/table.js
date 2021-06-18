@@ -1,6 +1,8 @@
 import Block from '../blots/block';
 import Container from '../blots/container';
 
+const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
+
 class TableCell extends Block {
   static create(value) {
     const node = super.create();
@@ -188,4 +190,4 @@ function tableId() {
   return `row-${id}`;
 }
 
-export { TableCell, TableRow, TableBody, TableContainer, tableId };
+export { TableCell, TableRow, TableBody, TableContainer, tableId, TABLE_TAGS };

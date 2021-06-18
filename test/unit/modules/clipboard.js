@@ -272,6 +272,52 @@ describe('Clipboard', function() {
       );
     });
 
+    it('table with dimensions', function() {
+      const delta = this.clipboard.convert({
+        html:
+          '<table>' +
+          '<thead><tr><td width="20px" height="10px">A1</td><td width="50px">A2</td><td>A3</td></tr></thead>' +
+          '<tbody><tr><td>B1</td><td></td><td height="100px">B3</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\n', { table: 1, width: '20px', height: '10px' })
+          .insert('A2\n', { table: 1, width: '50px' })
+          .insert('A3\n', { table: 1 })
+          .insert('B1\n\n', { table: 2 })
+          .insert('B3\n', { table: 2, height: '100px' }),
+      );
+    });
+
+    it('table with style dimensions', function() {
+      const delta = this.clipboard.convert({
+        html:
+          '<table>' +
+          '<tbody><tr><td style="width: 100px; height: 200px">A1</td><td>A2</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\n', { table: 1, width: '100px', height: '200px' })
+          .insert('A2\n', { table: 1 }),
+      );
+    });
+
+    it('simple blocks with dimensions', function() {
+      const delta = this.clipboard.convert({
+        html: '<p width="20px" height="30px">test</p>',
+      });
+      expect(delta).toEqual(new Delta().insert('test'));
+    });
+
+    it('simple blocks with style dimensions', function() {
+      const delta = this.clipboard.convert({
+        html: '<p style="width: 100px; height: 200px">test</p>',
+      });
+      expect(delta).toEqual(new Delta().insert('test'));
+    });
+
     it('embeds', function() {
       const delta = this.clipboard.convert({
         html:

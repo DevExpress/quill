@@ -16,7 +16,12 @@ import List from './formats/list';
 import { BackgroundClass, BackgroundStyle } from './formats/background';
 import { ColorClass, ColorStyle } from './formats/color';
 import { FontClass, FontStyle } from './formats/font';
-import { SizeClass, SizeStyle } from './formats/size';
+import {
+  SizeClass,
+  SizeStyle,
+  WidthAttribute,
+  HeightAttribute,
+} from './formats/size';
 
 import Bold from './formats/bold';
 import Italic from './formats/italic';
@@ -38,6 +43,8 @@ import Multiline from './modules/multiline';
 Quill.register(
   {
     'attributors/attribute/direction': DirectionAttribute,
+    'attributors/attribute/width': WidthAttribute,
+    'attributors/attribute/height': HeightAttribute,
 
     'attributors/class/align': AlignClass,
     'attributors/class/background': BackgroundClass,
@@ -61,6 +68,9 @@ Quill.register(
     'formats/align': AlignClass,
     'formats/direction': DirectionClass,
     'formats/indent': Indent,
+
+    'formats/width': WidthAttribute,
+    'formats/height': HeightAttribute,
 
     'formats/background': BackgroundStyle,
     'formats/color': ColorStyle,
