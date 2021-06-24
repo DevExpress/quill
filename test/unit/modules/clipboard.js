@@ -431,6 +431,16 @@ describe('Clipboard', function() {
       expect(delta).toEqual(expected);
     });
 
+    it('text with new lines', function() {
+      const delta = this.clipboard.convert({
+        html: '',
+        text: 'ab\nc\nd',
+      });
+
+      const expected = new Delta().insert('ab\nc\nd');
+      expect(delta).toEqual(expected);
+    });
+
     it('text matcher and html text content', function() {
       this.clipboard.addMatcher(Node.TEXT_NODE, function(node, delta) {
         const composer = new Delta();

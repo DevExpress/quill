@@ -44,6 +44,7 @@ const CLIPBOARD_CONFIG = [
   ['style', matchIgnore],
 ];
 
+const HTML_TEXT_MATCHERS = [matchText, matchNewline];
 const ATTRIBUTE_ATTRIBUTORS = [AlignAttribute, DirectionAttribute].reduce(
   (memo, attr) => {
     memo[attr.keyName] = attr;
@@ -250,11 +251,14 @@ class Clipboard extends Module {
   }
 
   prepareTextMatching() {
-    const textMatchers = [];
+    const textMatchers = [matchPlainText];
 
     this.matchers.forEach(pair => {
       const [selector, matcher] = pair;
-      if (selector === TEXT_NODE) {
+      if (
+        HTML_TEXT_MATCHERS.indexOf(matcher) === -1 &&
+        selector === TEXT_NODE
+      ) {
         textMatchers.push(matcher);
       }
     });
@@ -544,6 +548,12 @@ function matchTable(node, delta) {
   const rows = Array.from(table.querySelectorAll('tr'));
   const row = rows.indexOf(node) + 1;
   return applyFormat(delta, 'table', row);
+}
+
+function matchPlainText(node, delta) {
+  let text = node.data || '';
+  text = text.replace(/\r\n/g, '\n');
+  return delta.insert(text);
 }
 
 function matchText(node, delta) {
