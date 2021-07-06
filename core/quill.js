@@ -398,6 +398,7 @@ class Quill {
         const applied = this.editor.applyDelta(delta);
         // Remove extra \n from empty editor initialization
         const delete2 = this.editor.deleteText(this.getLength() - 1, 1);
+        this.emitter.emit(Quill.events.CONTENT_SETTED);
         return delete1.compose(applied).compose(delete2);
       },
       source,

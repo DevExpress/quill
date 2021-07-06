@@ -150,6 +150,12 @@ class Table extends Module {
         return false;
       });
     });
+
+    this.quill.on(Quill.events.CONTENT_SETTED, () => {
+      this.quill.once(Quill.events.TEXT_CHANGE, () => {
+        this.balanceTables();
+      });
+    });
   }
 }
 

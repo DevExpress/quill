@@ -55,6 +55,7 @@ Emitter.events = {
   SCROLL_UPDATE: 'scroll-update',
   SELECTION_CHANGE: 'selection-change',
   TEXT_CHANGE: 'text-change',
+  CONTENT_SETTED: 'content-setted',
 };
 Emitter.sources = {
   API: 'api',
