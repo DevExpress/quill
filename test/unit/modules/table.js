@@ -51,17 +51,19 @@ describe('Table Module', function() {
 
       expect(quill.root).toEqualHTML(`
       <table>
-        <tbody>
+        <thead>
           <tr>
             <td data-row="1">H1</td>
             <td data-row="1">H2</td>
           </tr>
+        </thead>
+        <tbody>
           <tr>
             <td data-row="a">A1</td>
             <td data-row="a">A2</td>
           </tr>
-          </tbody>
-          </table>`);
+        </tbody>
+      </table>`);
     });
 
     it('split', function() {

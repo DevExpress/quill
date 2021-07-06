@@ -7,13 +7,19 @@ import {
   TableBody,
   TableContainer,
   tableId,
+  TableHeaderCell,
+  TableHeaderRow,
+  TableHeader,
 } from '../formats/table';
 
 class Table extends Module {
   static register() {
     Quill.register(TableCell);
+    Quill.register(TableHeaderCell);
     Quill.register(TableRow);
+    Quill.register(TableHeaderRow);
     Quill.register(TableBody);
+    Quill.register(TableHeader);
     Quill.register(TableContainer);
   }
 

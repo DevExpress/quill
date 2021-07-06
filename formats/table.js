@@ -30,7 +30,7 @@ class TableCell extends Block {
 
   format(name, value) {
     if (name === TableCell.blotName && value) {
-      this.domNode.setAttribute('data-row', value);
+      this.domNode.setAttribute(this.dataAttribute, value);
     } else {
       super.format(name, value);
     }
@@ -53,6 +53,18 @@ class TableCell extends Block {
 }
 TableCell.blotName = 'table';
 TableCell.tagName = ['TD', 'TH'];
+TableCell.dataAttribute = 'data-row';
+
+class TableHeaderCell extends TableCell {
+  static formats(domNode) {
+    if (domNode.hasAttribute('data-header-row')) {
+      return domNode.getAttribute('data-header-row');
+    }
+    return undefined;
+  }
+}
+TableHeaderCell.dataAttribute = 'data-header-row';
+TableHeaderCell.blotName = 'table-header-cell';
 
 class TableRow extends Container {
   checkMerge() {
@@ -103,16 +115,80 @@ class TableRow extends Container {
 TableRow.blotName = 'table-row';
 TableRow.tagName = 'TR';
 
+class TableHeaderRow extends Container {
+  checkMerge() {
+    if (super.checkMerge() && this.next.children.head != null) {
+      const thisHead = this.children.head.formats();
+      const thisTail = this.children.tail.formats();
+      const nextHead = this.next.children.head.formats();
+      const nextTail = this.next.children.tail.formats();
+      return (
+        thisHead.table === thisTail.table &&
+        thisHead.table === nextHead.table &&
+        thisHead.table === nextTail.table
+      );
+    }
+    return false;
+  }
+
+  optimize(...args) {
+    super.optimize(...args);
+    this.children.forEach(child => {
+      if (child.next == null) return;
+      const childFormats = child.formats();
+      const nextFormats = child.next.formats();
+      if (childFormats.table !== nextFormats.table) {
+        const next = this.splitAfter(child);
+        if (next) {
+          next.optimize();
+        }
+        // We might be able to merge with prev now
+        if (this.prev) {
+          this.prev.optimize();
+        }
+      }
+    });
+  }
+
+  rowOffset() {
+    if (this.parent) {
+      return this.parent.children.indexOf(this);
+    }
+    return -1;
+  }
+
+  table() {
+    return this.parent && this.parent.parent;
+  }
+}
+TableHeaderRow.tagName = 'TR';
+TableHeaderRow.blotName = 'table-header-row';
+
 class TableBody extends Container {}
 TableBody.blotName = 'table-body';
-TableBody.tagName = ['TBODY', 'THEAD'];
+TableBody.tagName = ['TBODY'];
+
+class TableHeader extends Container {}
+TableHeader.blotName = 'table-header';
+TableHeader.tagName = ['THEAD'];
 
 class TableContainer extends Container {
+  // descendants(criteria, index, length) {
+  //   const descendants = super.descendants(criteria, index, length);
+
+  //   return descendants.filter(descendant => descendant instanceof criteria);
+  // }
+
   balanceCells() {
+    const headerRows = this.descendants(TableHeaderRow);
     const rows = this.descendants(TableRow);
-    const maxColumns = rows.reduce((max, row) => {
+    const maxHeaderColumns = headerRows.reduce((max, row) => {
       return Math.max(row.children.length, max);
     }, 0);
+    const maxBodyColumns = rows.reduce((max, row) => {
+      return Math.max(row.children.length, max);
+    }, 0);
+    const maxColumns = Math.max(maxHeaderColumns, maxBodyColumns);
     rows.forEach(row => {
       new Array(maxColumns - row.children.length).fill(0).forEach(() => {
         let value;
@@ -120,6 +196,18 @@ class TableContainer extends Container {
           value = TableCell.formats(row.children.head.domNode);
         }
         const blot = this.scroll.create(TableCell.blotName, value);
+        row.appendChild(blot);
+        blot.optimize(); // Add break blot
+      });
+    });
+
+    headerRows.forEach(row => {
+      new Array(maxColumns - row.children.length).fill(0).forEach(() => {
+        let value;
+        if (row.children.head != null) {
+          value = TableHeaderCell.formats(row.children.head.domNode);
+        }
+        const blot = this.scroll.create(TableHeaderCell.blotName, value);
         row.appendChild(blot);
         blot.optimize(); // Add break blot
       });
@@ -174,14 +262,21 @@ class TableContainer extends Container {
 TableContainer.blotName = 'table-container';
 TableContainer.tagName = 'TABLE';
 
-TableContainer.allowedChildren = [TableBody];
+TableContainer.allowedChildren = [TableHeader, TableBody];
 TableBody.requiredContainer = TableContainer;
+TableHeader.requiredContainer = TableContainer;
 
 TableBody.allowedChildren = [TableRow];
 TableRow.requiredContainer = TableBody;
 
 TableRow.allowedChildren = [TableCell];
 TableCell.requiredContainer = TableRow;
+
+TableHeader.allowedChildren = [TableHeaderRow];
+TableHeaderRow.requiredContainer = TableHeader;
+
+TableHeaderRow.allowedChildren = [TableHeaderCell];
+TableHeaderCell.requiredContainer = TableHeaderRow;
 
 function tableId() {
   const id = Math.random()
@@ -190,4 +285,14 @@ function tableId() {
   return `row-${id}`;
 }
 
-export { TableCell, TableRow, TableBody, TableContainer, tableId, TABLE_TAGS };
+export {
+  TableCell,
+  TableHeaderCell,
+  TableRow,
+  TableHeaderRow,
+  TableBody,
+  TableHeader,
+  TableContainer,
+  tableId,
+  TABLE_TAGS,
+};

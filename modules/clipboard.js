@@ -567,9 +567,10 @@ function matchTable(node, delta) {
     node.parentNode.tagName === 'TABLE'
       ? node.parentNode
       : node.parentNode.parentNode;
+  const isHeaderRow = node.parentNode.tagName === 'THEAD' ? true : null;
   const rows = Array.from(table.querySelectorAll('tr'));
   const row = rows.indexOf(node) + 1;
-  return applyFormat(delta, 'table', row);
+  return applyFormat(delta, isHeaderRow ? 'table-header-cell' : 'table', row);
 }
 
 function matchPlainText(node, delta) {

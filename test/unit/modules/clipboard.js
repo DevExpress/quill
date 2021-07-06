@@ -267,7 +267,7 @@ describe('Clipboard', function() {
       });
       expect(delta).toEqual(
         new Delta()
-          .insert('A1\nA2\nA3\n', { table: 1 })
+          .insert('A1\nA2\nA3\n', { 'table-header-cell': 1 })
           .insert('B1\n\nB3\n', { table: 2 }),
       );
     });
