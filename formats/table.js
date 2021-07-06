@@ -30,7 +30,7 @@ class TableCell extends Block {
 
   format(name, value) {
     if (name === TableCell.blotName && value) {
-      this.domNode.setAttribute(this.dataAttribute, value);
+      this.domNode.setAttribute('data-row', value);
     } else {
       super.format(name, value);
     }
@@ -53,18 +53,57 @@ class TableCell extends Block {
 }
 TableCell.blotName = 'table';
 TableCell.tagName = ['TD', 'TH'];
-TableCell.dataAttribute = 'data-row';
 
-class TableHeaderCell extends TableCell {
+class TableHeaderCell extends Block {
+  static create(value) {
+    const node = super.create();
+    if (value) {
+      node.setAttribute('data-header-row', value);
+    } else {
+      node.setAttribute('data-header-row', tableId());
+    }
+    return node;
+  }
+
   static formats(domNode) {
     if (domNode.hasAttribute('data-header-row')) {
       return domNode.getAttribute('data-header-row');
     }
     return undefined;
   }
+
+  format(name, value) {
+    if (name === TableHeaderCell.blotName && value) {
+      this.domNode.setAttribute('data-header-row', value);
+    } else {
+      super.format(name, value);
+    }
+  }
+
+  cellOffset() {
+    if (this.parent) {
+      return this.parent.children.indexOf(this);
+    }
+    return -1;
+  }
+
+  row() {
+    return this.parent;
+  }
+
+  rowOffset() {
+    if (this.row()) {
+      return this.row().rowOffset();
+    }
+    return -1;
+  }
+
+  table() {
+    return this.row() && this.row().table();
+  }
 }
-TableHeaderCell.dataAttribute = 'data-header-row';
 TableHeaderCell.blotName = 'table-header-cell';
+TableHeaderCell.tagName = ['TD', 'TH'];
 
 class TableRow extends Container {
   checkMerge() {
@@ -123,9 +162,9 @@ class TableHeaderRow extends Container {
       const nextHead = this.next.children.head.formats();
       const nextTail = this.next.children.tail.formats();
       return (
-        thisHead.table === thisTail.table &&
-        thisHead.table === nextHead.table &&
-        thisHead.table === nextTail.table
+        thisHead['table-header-cell'] === thisTail['table-header-cell'] &&
+        thisHead['table-header-cell'] === nextHead['table-header-cell'] &&
+        thisHead['table-header-cell'] === nextTail['table-header-cell']
       );
     }
     return false;
@@ -137,7 +176,9 @@ class TableHeaderRow extends Container {
       if (child.next == null) return;
       const childFormats = child.formats();
       const nextFormats = child.next.formats();
-      if (childFormats.table !== nextFormats.table) {
+      if (
+        childFormats['table-header-cell'] !== nextFormats['table-header-cell']
+      ) {
         const next = this.splitAfter(child);
         if (next) {
           next.optimize();
@@ -173,12 +214,6 @@ TableHeader.blotName = 'table-header';
 TableHeader.tagName = ['THEAD'];
 
 class TableContainer extends Container {
-  // descendants(criteria, index, length) {
-  //   const descendants = super.descendants(criteria, index, length);
-
-  //   return descendants.filter(descendant => descendant instanceof criteria);
-  // }
-
   balanceCells() {
     const headerRows = this.descendants(TableHeaderRow);
     const rows = this.descendants(TableRow);
@@ -189,17 +224,6 @@ class TableContainer extends Container {
       return Math.max(row.children.length, max);
     }, 0);
     const maxColumns = Math.max(maxHeaderColumns, maxBodyColumns);
-    rows.forEach(row => {
-      new Array(maxColumns - row.children.length).fill(0).forEach(() => {
-        let value;
-        if (row.children.head != null) {
-          value = TableCell.formats(row.children.head.domNode);
-        }
-        const blot = this.scroll.create(TableCell.blotName, value);
-        row.appendChild(blot);
-        blot.optimize(); // Add break blot
-      });
-    });
 
     headerRows.forEach(row => {
       new Array(maxColumns - row.children.length).fill(0).forEach(() => {
@@ -208,6 +232,18 @@ class TableContainer extends Container {
           value = TableHeaderCell.formats(row.children.head.domNode);
         }
         const blot = this.scroll.create(TableHeaderCell.blotName, value);
+        row.appendChild(blot);
+        blot.optimize(); // Add break blot
+      });
+    });
+
+    rows.forEach(row => {
+      new Array(maxColumns - row.children.length).fill(0).forEach(() => {
+        let value;
+        if (row.children.head != null) {
+          value = TableCell.formats(row.children.head.domNode);
+        }
+        const blot = this.scroll.create(TableCell.blotName, value);
         row.appendChild(blot);
         blot.optimize(); // Add break blot
       });

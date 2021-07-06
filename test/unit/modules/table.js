@@ -30,8 +30,8 @@ describe('Table Module', function() {
         <table>
           <thead>
             <tr>
-              <th data-row="1">H1</th>
-              <th data-row="1">H2</th>
+              <th data-header-row="1">H1</th>
+              <th data-header-row="1">H2</th>
             </tr>
           </thead>
           <tbody>
@@ -53,8 +53,8 @@ describe('Table Module', function() {
       <table>
         <thead>
           <tr>
-            <td data-row="1">H1</td>
-            <td data-row="1">H2</td>
+            <td data-header-row="1">H1</td>
+            <td data-header-row="1">H2</td>
           </tr>
         </thead>
         <tbody>

@@ -14,10 +14,10 @@ import {
 
 class Table extends Module {
   static register() {
-    Quill.register(TableCell);
     Quill.register(TableHeaderCell);
-    Quill.register(TableRow);
+    Quill.register(TableCell);
     Quill.register(TableHeaderRow);
+    Quill.register(TableRow);
     Quill.register(TableBody);
     Quill.register(TableHeader);
     Quill.register(TableContainer);
@@ -60,7 +60,8 @@ class Table extends Module {
   getTable(range = this.quill.getSelection()) {
     if (range == null) return [null, null, null, -1];
     const [cell, offset] = this.quill.getLine(range.index);
-    if (cell == null || cell.statics.blotName !== TableCell.blotName) {
+    const allowedBlots = [TableCell.blotName, TableHeaderCell.blotName];
+    if (cell == null || allowedBlots.indexOf(cell.statics.blotName) === -1) {
       return [null, null, null, -1];
     }
     const row = cell.parent;
@@ -136,7 +137,9 @@ class Table extends Module {
     this.quill.on(Quill.events.SCROLL_OPTIMIZE, mutations => {
       mutations.some(mutation => {
         if (
-          ['TD', 'TR', 'TBODY', 'TABLE'].indexOf(mutation.target.tagName) !== -1
+          ['TD', 'TR', 'TBODY', 'THEAD', 'TABLE'].indexOf(
+            mutation.target.tagName,
+          ) !== -1
         ) {
           this.quill.once(Quill.events.TEXT_CHANGE, (delta, old, source) => {
             if (source !== Quill.sources.USER) return;

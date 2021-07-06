@@ -282,9 +282,13 @@ describe('Clipboard', function() {
       });
       expect(delta).toEqual(
         new Delta()
-          .insert('A1\n', { table: 1, width: '20px', height: '10px' })
-          .insert('A2\n', { table: 1, width: '50px' })
-          .insert('A3\n', { table: 1 })
+          .insert('A1\n', {
+            'table-header-cell': 1,
+            width: '20px',
+            height: '10px',
+          })
+          .insert('A2\n', { 'table-header-cell': 1, width: '50px' })
+          .insert('A3\n', { 'table-header-cell': 1 })
           .insert('B1\n\n', { table: 2 })
           .insert('B3\n', { table: 2, height: '100px' }),
       );

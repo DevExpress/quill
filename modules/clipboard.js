@@ -132,7 +132,9 @@ class Clipboard extends Module {
     // Remove trailing newline
     if (
       deltaEndsWith(delta, '\n') &&
-      (delta.ops[delta.ops.length - 1].attributes == null || formats.table)
+      (delta.ops[delta.ops.length - 1].attributes == null ||
+        formats.table ||
+        formats['table-header-cell'])
     ) {
       return delta.compose(new Delta().retain(delta.length() - 1).delete(1));
     }
@@ -453,7 +455,12 @@ function matchDimensions(node, delta) {
     const attributes = op.attributes || {};
     const { width, height, ...rest } = attributes;
     const formats =
-      attributes.table || isTableNode || isEmbed ? attributes : { ...rest };
+      attributes.table ||
+      attributes['table-header-cell'] ||
+      isTableNode ||
+      isEmbed
+        ? attributes
+        : { ...rest };
     return newDelta.insert(op.insert, formats);
   }, new Delta());
 }
