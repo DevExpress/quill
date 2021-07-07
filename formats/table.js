@@ -4,6 +4,25 @@ import Container from '../blots/container';
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
 class BaseCell extends Block {
+  static create(value) {
+    const node = super.create();
+    const attrName = this.dataAttribute;
+    if (value) {
+      node.setAttribute(attrName, value);
+    } else {
+      node.setAttribute(attrName, tableId());
+    }
+    return node;
+  }
+
+  static formats(domNode) {
+    const attrName = this.dataAttribute;
+    if (domNode.hasAttribute(attrName)) {
+      return domNode.getAttribute(attrName);
+    }
+    return undefined;
+  }
+
   cellOffset() {
     if (this.parent) {
       return this.parent.children.indexOf(this);
@@ -29,60 +48,28 @@ class BaseCell extends Block {
 BaseCell.tagName = ['TD', 'TH'];
 
 class TableCell extends BaseCell {
-  static create(value) {
-    const node = super.create();
-    if (value) {
-      node.setAttribute('data-row', value);
-    } else {
-      node.setAttribute('data-row', tableId());
-    }
-    return node;
-  }
-
-  static formats(domNode) {
-    if (domNode.hasAttribute('data-row')) {
-      return domNode.getAttribute('data-row');
-    }
-    return undefined;
-  }
-
   format(name, value) {
     if (name === TableCell.blotName && value) {
-      this.domNode.setAttribute('data-row', value);
+      this.domNode.setAttribute(TableCell.dataAttribute, value);
     } else {
       super.format(name, value);
     }
   }
 }
 TableCell.blotName = 'table';
+TableCell.dataAttribute = 'data-row';
 
 class TableHeaderCell extends BaseCell {
-  static create(value) {
-    const node = super.create();
-    if (value) {
-      node.setAttribute('data-header-row', value);
-    } else {
-      node.setAttribute('data-header-row', tableId());
-    }
-    return node;
-  }
-
-  static formats(domNode) {
-    if (domNode.hasAttribute('data-header-row')) {
-      return domNode.getAttribute('data-header-row');
-    }
-    return undefined;
-  }
-
   format(name, value) {
     if (name === TableHeaderCell.blotName && value) {
-      this.domNode.setAttribute('data-header-row', value);
+      this.domNode.setAttribute(TableHeaderCell.dataAttribute, value);
     } else {
       super.format(name, value);
     }
   }
 }
 TableHeaderCell.blotName = 'tableHeaderCell';
+TableHeaderCell.dataAttribute = 'data-header-row';
 
 class BaseRow extends Container {
   checkMerge() {
