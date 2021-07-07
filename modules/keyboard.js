@@ -499,14 +499,14 @@ Keyboard.DEFAULTS = {
     },
     'table backspace': {
       key: 'backspace',
-      format: ['table', 'table-header-cell'],
+      format: ['table', 'tableHeaderCell'],
       collapsed: true,
       offset: 0,
       handler() {},
     },
     'table delete': {
       key: 'del',
-      format: ['table', 'table-header-cell'],
+      format: ['table', 'tableHeaderCell'],
       collapsed: true,
       suffix: /^$/,
       handler() {},
@@ -514,7 +514,7 @@ Keyboard.DEFAULTS = {
     'table enter': {
       key: 'enter',
       shiftKey: null,
-      format: ['table', 'table-header-cell'],
+      format: ['table', 'tableHeaderCell'],
       handler(range) {
         const module = this.quill.getModule('table');
         if (module) {
@@ -542,7 +542,7 @@ Keyboard.DEFAULTS = {
     'table tab': {
       key: 'tab',
       shiftKey: null,
-      format: ['table', 'table-header-cell'],
+      format: ['table', 'tableHeaderCell'],
       handler(range, context) {
         const { event, line: cell } = context;
         const offset = cell.offset(this.quill.scroll);
@@ -728,7 +728,7 @@ function makeTableArrowHandler(up) {
   return {
     key: up ? 'upArrow' : 'downArrow',
     collapsed: true,
-    format: ['table', 'table-header-cell'],
+    format: ['table', 'tableHeaderCell'],
     handler(range, context) {
       // TODO move to table module
       const key = up ? 'prev' : 'next';
@@ -736,8 +736,8 @@ function makeTableArrowHandler(up) {
       const targetRow = cell.parent[key];
       if (targetRow != null) {
         if (
-          targetRow.statics.blotName === 'table-row' ||
-          targetRow.statics.blotName === 'table-header-row'
+          targetRow.statics.blotName === 'tableRow' ||
+          targetRow.statics.blotName === 'tableHeaderRow'
         ) {
           let targetCell = targetRow.children.head;
           let cur = cell;

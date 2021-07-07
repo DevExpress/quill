@@ -134,7 +134,7 @@ class Clipboard extends Module {
       deltaEndsWith(delta, '\n') &&
       (delta.ops[delta.ops.length - 1].attributes == null ||
         formats.table ||
-        formats['table-header-cell'])
+        formats.tableHeaderCell)
     ) {
       return delta.compose(new Delta().retain(delta.length() - 1).delete(1));
     }
@@ -455,10 +455,7 @@ function matchDimensions(node, delta) {
     const attributes = op.attributes || {};
     const { width, height, ...rest } = attributes;
     const formats =
-      attributes.table ||
-      attributes['table-header-cell'] ||
-      isTableNode ||
-      isEmbed
+      attributes.table || attributes.tableHeaderCell || isTableNode || isEmbed
         ? attributes
         : { ...rest };
     return newDelta.insert(op.insert, formats);
@@ -577,7 +574,7 @@ function matchTable(node, delta) {
   const isHeaderRow = node.parentNode.tagName === 'THEAD' ? true : null;
   const rows = Array.from(table.querySelectorAll('tr'));
   const row = rows.indexOf(node) + 1;
-  return applyFormat(delta, isHeaderRow ? 'table-header-cell' : 'table', row);
+  return applyFormat(delta, isHeaderRow ? 'tableHeaderCell' : 'table', row);
 }
 
 function matchPlainText(node, delta) {

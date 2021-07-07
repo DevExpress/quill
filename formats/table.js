@@ -3,37 +3,12 @@ import Container from '../blots/container';
 
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
-class TableCell extends Block {
-  static create(value) {
-    const node = super.create();
-    if (value) {
-      node.setAttribute('data-row', value);
-    } else {
-      node.setAttribute('data-row', tableId());
-    }
-    return node;
-  }
-
-  static formats(domNode) {
-    if (domNode.hasAttribute('data-row')) {
-      return domNode.getAttribute('data-row');
-    }
-    return undefined;
-  }
-
+class BaseCell extends Block {
   cellOffset() {
     if (this.parent) {
       return this.parent.children.indexOf(this);
     }
     return -1;
-  }
-
-  format(name, value) {
-    if (name === TableCell.blotName && value) {
-      this.domNode.setAttribute('data-row', value);
-    } else {
-      super.format(name, value);
-    }
   }
 
   row() {
@@ -51,10 +26,37 @@ class TableCell extends Block {
     return this.row() && this.row().table();
   }
 }
-TableCell.blotName = 'table';
-TableCell.tagName = ['TD', 'TH'];
+BaseCell.tagName = ['TD', 'TH'];
 
-class TableHeaderCell extends Block {
+class TableCell extends BaseCell {
+  static create(value) {
+    const node = super.create();
+    if (value) {
+      node.setAttribute('data-row', value);
+    } else {
+      node.setAttribute('data-row', tableId());
+    }
+    return node;
+  }
+
+  static formats(domNode) {
+    if (domNode.hasAttribute('data-row')) {
+      return domNode.getAttribute('data-row');
+    }
+    return undefined;
+  }
+
+  format(name, value) {
+    if (name === TableCell.blotName && value) {
+      this.domNode.setAttribute('data-row', value);
+    } else {
+      super.format(name, value);
+    }
+  }
+}
+TableCell.blotName = 'table';
+
+class TableHeaderCell extends BaseCell {
   static create(value) {
     const node = super.create();
     if (value) {
@@ -79,43 +81,21 @@ class TableHeaderCell extends Block {
       super.format(name, value);
     }
   }
-
-  cellOffset() {
-    if (this.parent) {
-      return this.parent.children.indexOf(this);
-    }
-    return -1;
-  }
-
-  row() {
-    return this.parent;
-  }
-
-  rowOffset() {
-    if (this.row()) {
-      return this.row().rowOffset();
-    }
-    return -1;
-  }
-
-  table() {
-    return this.row() && this.row().table();
-  }
 }
-TableHeaderCell.blotName = 'table-header-cell';
-TableHeaderCell.tagName = ['TD', 'TH'];
+TableHeaderCell.blotName = 'tableHeaderCell';
 
-class TableRow extends Container {
+class BaseRow extends Container {
   checkMerge() {
     if (super.checkMerge() && this.next.children.head != null) {
+      const formatName = this.childFormatName;
       const thisHead = this.children.head.formats();
       const thisTail = this.children.tail.formats();
       const nextHead = this.next.children.head.formats();
       const nextTail = this.next.children.tail.formats();
       return (
-        thisHead.table === thisTail.table &&
-        thisHead.table === nextHead.table &&
-        thisHead.table === nextTail.table
+        thisHead[formatName] === thisTail[formatName] &&
+        thisHead[formatName] === nextHead[formatName] &&
+        thisHead[formatName] === nextTail[formatName]
       );
     }
     return false;
@@ -123,11 +103,12 @@ class TableRow extends Container {
 
   optimize(...args) {
     super.optimize(...args);
+    const formatName = this.childFormatName;
     this.children.forEach(child => {
       if (child.next == null) return;
       const childFormats = child.formats();
       const nextFormats = child.next.formats();
-      if (childFormats.table !== nextFormats.table) {
+      if (childFormats[formatName] !== nextFormats[formatName]) {
         const next = this.splitAfter(child);
         if (next) {
           next.optimize();
@@ -151,99 +132,65 @@ class TableRow extends Container {
     return this.parent && this.parent.parent;
   }
 }
-TableRow.blotName = 'table-row';
-TableRow.tagName = 'TR';
+BaseRow.tagName = 'TR';
 
-class TableHeaderRow extends Container {
-  checkMerge() {
-    if (super.checkMerge() && this.next.children.head != null) {
-      const thisHead = this.children.head.formats();
-      const thisTail = this.children.tail.formats();
-      const nextHead = this.next.children.head.formats();
-      const nextTail = this.next.children.tail.formats();
-      return (
-        thisHead['table-header-cell'] === thisTail['table-header-cell'] &&
-        thisHead['table-header-cell'] === nextHead['table-header-cell'] &&
-        thisHead['table-header-cell'] === nextTail['table-header-cell']
-      );
-    }
-    return false;
-  }
+class TableRow extends BaseRow {
+  constructor(scroll, domNode) {
+    super(scroll, domNode);
 
-  optimize(...args) {
-    super.optimize(...args);
-    this.children.forEach(child => {
-      if (child.next == null) return;
-      const childFormats = child.formats();
-      const nextFormats = child.next.formats();
-      if (
-        childFormats['table-header-cell'] !== nextFormats['table-header-cell']
-      ) {
-        const next = this.splitAfter(child);
-        if (next) {
-          next.optimize();
-        }
-        // We might be able to merge with prev now
-        if (this.prev) {
-          this.prev.optimize();
-        }
-      }
-    });
-  }
-
-  rowOffset() {
-    if (this.parent) {
-      return this.parent.children.indexOf(this);
-    }
-    return -1;
-  }
-
-  table() {
-    return this.parent && this.parent.parent;
+    this.childFormatName = 'table';
   }
 }
-TableHeaderRow.tagName = 'TR';
-TableHeaderRow.blotName = 'table-header-row';
+TableRow.blotName = 'tableRow';
+
+class TableHeaderRow extends BaseRow {
+  constructor(scroll, domNode) {
+    super(scroll, domNode);
+
+    this.childFormatName = 'tableHeaderCell';
+  }
+}
+TableHeaderRow.blotName = 'tableHeaderRow';
 
 class TableBody extends Container {}
-TableBody.blotName = 'table-body';
+TableBody.blotName = 'tableBody';
 TableBody.tagName = ['TBODY'];
 
 class TableHeader extends Container {}
-TableHeader.blotName = 'table-header';
+TableHeader.blotName = 'tableHeader';
 TableHeader.tagName = ['THEAD'];
 
 class TableContainer extends Container {
   balanceCells() {
     const headerRows = this.descendants(TableHeaderRow);
-    const rows = this.descendants(TableRow);
-    const maxHeaderColumns = headerRows.reduce((max, row) => {
+    const bodyRows = this.descendants(TableRow);
+    const maxColCount = this.getMaxTableColCount(headerRows, bodyRows);
+
+    this.balanceRows(maxColCount, headerRows, TableHeaderCell);
+    this.balanceRows(maxColCount, bodyRows, TableCell);
+  }
+
+  getMaxTableColCount(headerRows, bodyRows) {
+    return Math.max(
+      this.getMaxRowColCount(headerRows),
+      this.getMaxRowColCount(bodyRows),
+    );
+  }
+
+  getMaxRowColCount(rows) {
+    return rows.reduce((max, row) => {
       return Math.max(row.children.length, max);
     }, 0);
-    const maxBodyColumns = rows.reduce((max, row) => {
-      return Math.max(row.children.length, max);
-    }, 0);
-    const maxColumns = Math.max(maxHeaderColumns, maxBodyColumns);
+  }
 
-    headerRows.forEach(row => {
-      new Array(maxColumns - row.children.length).fill(0).forEach(() => {
-        let value;
-        if (row.children.head != null) {
-          value = TableHeaderCell.formats(row.children.head.domNode);
-        }
-        const blot = this.scroll.create(TableHeaderCell.blotName, value);
-        row.appendChild(blot);
-        blot.optimize(); // Add break blot
-      });
-    });
-
+  balanceRows(maxColCount, rows, CellClass) {
     rows.forEach(row => {
-      new Array(maxColumns - row.children.length).fill(0).forEach(() => {
+      new Array(maxColCount - row.children.length).fill(0).forEach(() => {
         let value;
         if (row.children.head != null) {
-          value = TableCell.formats(row.children.head.domNode);
+          value = CellClass.formats(row.children.head.domNode);
         }
-        const blot = this.scroll.create(TableCell.blotName, value);
+        const blot = this.scroll.create(CellClass.blotName, value);
         row.appendChild(blot);
         blot.optimize(); // Add break blot
       });
@@ -295,7 +242,7 @@ class TableContainer extends Container {
     return body.children.map(row => row);
   }
 }
-TableContainer.blotName = 'table-container';
+TableContainer.blotName = 'tableContainer';
 TableContainer.tagName = 'TABLE';
 
 TableContainer.allowedChildren = [TableHeader, TableBody];
