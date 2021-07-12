@@ -121,6 +121,14 @@ class Table extends Module {
     this.insertRow(1);
   }
 
+  insertHeaderRow() {
+    const range = this.quill.getSelection();
+    const [table, , cell] = this.getTable(range);
+    if (cell == null) return;
+    table.insertHeaderRow();
+    this.quill.update(Quill.sources.USER);
+  }
+
   insertTable(rows, columns) {
     const range = this.quill.getSelection();
     if (range == null) return;
@@ -137,7 +145,7 @@ class Table extends Module {
     this.quill.on(Quill.events.SCROLL_OPTIMIZE, mutations => {
       mutations.some(mutation => {
         if (
-          ['TD', 'TR', 'TBODY', 'THEAD', 'TABLE'].indexOf(
+          ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'].indexOf(
             mutation.target.tagName,
           ) !== -1
         ) {

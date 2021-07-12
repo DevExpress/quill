@@ -105,11 +105,47 @@ describe('Table Module', function() {
       this.table = this.quill.getModule('table');
     });
 
+    it('insertHeaderRow', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td><br></td><td><br></td><td><br></td></tr>
+          </thead>
+          <tbody>
+            <tr><td>a1</td><td>a2</td><td>a3</td></tr>
+            <tr><td>b1</td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
     it('insertRowAbove', function() {
       this.quill.setSelection(0);
       this.table.insertRowAbove();
       expect(this.quill.root).toEqualHTML(`
         <table>
+          <tbody>
+            <tr><td><br></td><td><br></td><td><br></td></tr>
+            <tr><td>a1</td><td>a2</td><td>a3</td></tr>
+            <tr><td>b1</td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
+    it('insertRowAbove, selection at header', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+      this.quill.setSelection(0);
+      this.table.insertRowAbove();
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td><br></td><td><br></td><td><br></td></tr>
+          </thead>
           <tbody>
             <tr><td><br></td><td><br></td><td><br></td></tr>
             <tr><td>a1</td><td>a2</td><td>a3</td></tr>
@@ -133,11 +169,48 @@ describe('Table Module', function() {
       `);
     });
 
+    it('insertRowBelow, selection at header', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+      this.quill.setSelection(0);
+      this.table.insertRowBelow();
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td><br></td><td><br></td><td><br></td></tr>
+          </thead>
+          <tbody>
+            <tr><td>a1</td><td>a2</td><td>a3</td></tr>
+            <tr><td><br></td><td><br></td><td><br></td></tr>
+            <tr><td>b1</td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
     it('insertColumnLeft', function() {
       this.quill.setSelection(0);
       this.table.insertColumnLeft();
       expect(this.quill.root).toEqualHTML(`
         <table>
+          <tbody>
+            <tr><td><br></td><td>a1</td><td>a2</td><td>a3</td></tr>
+            <tr><td><br></td><td>b1</td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
+    it('insertColumnLeft, selection at header', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+      this.quill.setSelection(0);
+      this.table.insertColumnLeft();
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td><br></td><td><br></td><td><br></td><td><br></td></tr>
+          </thead>
           <tbody>
             <tr><td><br></td><td>a1</td><td>a2</td><td>a3</td></tr>
             <tr><td><br></td><td>b1</td><td>b2</td><td>b3</td></tr>
@@ -159,6 +232,24 @@ describe('Table Module', function() {
       `);
     });
 
+    it('insertColumnRight, selection at header', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+      this.quill.setSelection(0);
+      this.table.insertColumnRight();
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td><br></td><td><br></td><td><br></td><td><br></td></tr>
+          </thead>
+          <tbody>
+            <tr><td>a1</td><td><br></td><td>a2</td><td>a3</td></tr>
+            <tr><td>b1</td><td><br></td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
     it('deleteRow', function() {
       this.quill.setSelection(0);
       this.table.deleteRow();
@@ -171,11 +262,44 @@ describe('Table Module', function() {
       `);
     });
 
+    it('delete header row', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+      this.quill.setSelection(0);
+      this.table.deleteRow();
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <tbody>
+            <tr><td>a1</td><td>a2</td><td>a3</td></tr>
+            <tr><td>b1</td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
     it('deleteColumn', function() {
       this.quill.setSelection(0);
       this.table.deleteColumn();
       expect(this.quill.root).toEqualHTML(`
         <table>
+          <tbody>
+            <tr><td>a2</td><td>a3</td></tr>
+            <tr><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
+
+    it('deleteColumn with header', function() {
+      this.quill.setSelection(0);
+      this.table.insertHeaderRow();
+      this.quill.setSelection(0);
+      this.table.deleteColumn();
+      expect(this.quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td><br></td><td><br></td></tr>
+          </thead>
           <tbody>
             <tr><td>a2</td><td>a3</td></tr>
             <tr><td>b2</td><td>b3</td></tr>

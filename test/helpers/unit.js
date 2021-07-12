@@ -58,7 +58,13 @@ function compareHTML(actual, expected, ignoreClassId, ignoreUI = true) {
     }
     return container;
   });
-  let ignoredAttributes = ['width', 'height', 'data-row', 'contenteditable'];
+  let ignoredAttributes = [
+    'width',
+    'height',
+    'data-row',
+    'data-header-row',
+    'contenteditable',
+  ];
   if (ignoreClassId) {
     ignoredAttributes = ignoredAttributes.concat(['class', 'id']);
   }

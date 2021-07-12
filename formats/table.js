@@ -189,29 +189,38 @@ class TableContainer extends Container {
   }
 
   deleteColumn(index) {
-    const [body] = this.descendant(TableBody);
-    if (body == null || body.children.head == null) return;
-    body.children.forEach(row => {
-      const cell = row.children.at(index);
-      if (cell != null) {
-        cell.remove();
+    [TableHeader, TableBody].forEach(blot => {
+      const [tablePart] = this.descendants(blot);
+      if (tablePart == null || tablePart.children.head == null) {
+        return;
       }
+      tablePart.children.forEach(row => {
+        const cell = row.children.at(index);
+        if (cell != null) {
+          cell.remove();
+        }
+      });
     });
   }
 
   insertColumn(index) {
-    const [body] = this.descendant(TableBody);
-    if (body == null || body.children.head == null) return;
-    body.children.forEach(row => {
-      const ref = row.children.at(index);
-      const value = TableCell.formats(row.children.head.domNode);
-      const cell = this.scroll.create(TableCell.blotName, value);
-      row.insertBefore(cell, ref);
+    [TableHeader, TableBody].forEach(blot => {
+      const [tablePart] = this.descendants(blot);
+      if (tablePart == null || tablePart.children.head == null) {
+        return;
+      }
+      const CellBlot = blot === TableHeader ? TableHeaderCell : TableCell;
+      tablePart.children.forEach(row => {
+        const ref = row.children.at(index);
+        const value = CellBlot.formats(row.children.head.domNode);
+        const cell = this.scroll.create(CellBlot.blotName, value);
+        row.insertBefore(cell, ref);
+      });
     });
   }
 
   insertRow(index) {
-    const [body] = this.descendant(TableBody);
+    const [body] = this.descendants(TableBody);
     if (body == null || body.children.head == null) return;
     const id = tableId();
     const row = this.scroll.create(TableRow.blotName);
@@ -221,6 +230,24 @@ class TableContainer extends Container {
     });
     const ref = body.children.at(index);
     body.insertBefore(row, ref);
+  }
+
+  insertHeaderRow() {
+    const [header] = this.descendants(TableHeader);
+    const [body] = this.descendants(TableBody);
+
+    if (header != null || body == null || body.children.head == null) return;
+    const id = tableId();
+    const newHeader = this.scroll.create(TableHeader.blotName);
+    const row = this.scroll.create(TableHeaderRow.blotName);
+    const ref = this.children.at(0);
+    newHeader.appendChild(row);
+    body.children.head.children.forEach(() => {
+      const cell = this.scroll.create(TableHeaderCell.blotName, id);
+      row.appendChild(cell);
+      cell.optimize();
+    });
+    this.insertBefore(newHeader, ref);
   }
 
   rows() {
