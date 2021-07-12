@@ -85,6 +85,39 @@ describe('Table Module', function() {
         <p>23</p>
       `);
     });
+
+    it('initial balancing', function() {
+      const quill = this.initialize(
+        Quill,
+        `
+        <table>
+          <thead>
+            <tr><td>h1</td></tr>
+          </thead>
+          <tbody>
+            <tr><td>b1</td><td>b2</td></tr>
+          </tbody>
+        </table>
+      `,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+
+      expect(quill.root).toEqualHTML(`
+        <table>
+          <thead>
+            <tr><td>h1</td><td><br></td></tr>
+          </thead>
+          <tbody>
+            <tr><td>b1</td><td>b2</td></tr>
+          </tbody>
+        </table>
+      `);
+    });
   });
 
   describe('modify table', function() {
