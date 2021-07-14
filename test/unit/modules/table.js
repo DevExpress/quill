@@ -53,8 +53,8 @@ describe('Table Module', function() {
       <table>
         <thead>
           <tr>
-            <td data-header-row="1">H1</td>
-            <td data-header-row="1">H2</td>
+            <th data-header-row="1">H1</th>
+            <th data-header-row="1">H2</th>
           </tr>
         </thead>
         <tbody>
@@ -92,7 +92,7 @@ describe('Table Module', function() {
         `
         <table>
           <thead>
-            <tr><td>h1</td></tr>
+            <tr><th>h1</th></tr>
           </thead>
           <tbody>
             <tr><td>b1</td><td>b2</td></tr>
@@ -110,7 +110,7 @@ describe('Table Module', function() {
       expect(quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td>h1</td><td><br></td></tr>
+            <tr><th>h1</th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td>b1</td><td>b2</td></tr>
@@ -145,7 +145,7 @@ describe('Table Module', function() {
       expect(this.quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td><br></td><td><br></td><td><br></td></tr>
+            <tr><th><br></th><th><br></th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td>a1</td><td>a2</td><td>a3</td></tr>
@@ -177,7 +177,7 @@ describe('Table Module', function() {
       expect(this.quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td><br></td><td><br></td><td><br></td></tr>
+            <tr><th><br></th><th><br></th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td><br></td><td><br></td><td><br></td></tr>
@@ -210,7 +210,7 @@ describe('Table Module', function() {
       expect(this.quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td><br></td><td><br></td><td><br></td></tr>
+            <tr><th><br></th><th><br></th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td>a1</td><td>a2</td><td>a3</td></tr>
@@ -242,7 +242,7 @@ describe('Table Module', function() {
       expect(this.quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td><br></td><td><br></td><td><br></td><td><br></td></tr>
+            <tr><th><br></th><th><br></th><th><br></th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td><br></td><td>a1</td><td>a2</td><td>a3</td></tr>
@@ -273,7 +273,7 @@ describe('Table Module', function() {
       expect(this.quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td><br></td><td><br></td><td><br></td><td><br></td></tr>
+            <tr><th><br></th><th><br></th><th><br></th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td>a1</td><td><br></td><td>a2</td><td>a3</td></tr>
@@ -331,7 +331,7 @@ describe('Table Module', function() {
       expect(this.quill.root).toEqualHTML(`
         <table>
           <thead>
-            <tr><td><br></td><td><br></td></tr>
+            <tr><th><br></th><th><br></th></tr>
           </thead>
           <tbody>
             <tr><td>a2</td><td>a3</td></tr>

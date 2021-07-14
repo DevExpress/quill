@@ -1,5 +1,6 @@
 import Block from '../blots/block';
 import Container from '../blots/container';
+import isDefined from '../utils/isDefined';
 
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
@@ -68,12 +69,13 @@ class TableHeaderCell extends BaseCell {
     }
   }
 }
+TableHeaderCell.tagName = ['TH', 'TD'];
 TableHeaderCell.blotName = 'tableHeaderCell';
 TableHeaderCell.dataAttribute = 'data-header-row';
 
 class BaseRow extends Container {
   checkMerge() {
-    if (super.checkMerge() && this.next.children.head != null) {
+    if (super.checkMerge() && isDefined(this.next.children.head)) {
       const formatName = this.childFormatName;
       const thisHead = this.children.head.formats();
       const thisTail = this.children.tail.formats();
@@ -92,7 +94,10 @@ class BaseRow extends Container {
     super.optimize(...args);
     const formatName = this.childFormatName;
     this.children.forEach(child => {
-      if (child.next == null) return;
+      if (!isDefined(child.next)) {
+        return;
+      }
+
       const childFormats = child.formats();
       const nextFormats = child.next.formats();
       if (childFormats[formatName] !== nextFormats[formatName]) {
@@ -165,16 +170,14 @@ class TableContainer extends Container {
   }
 
   getMaxRowColCount(rows) {
-    return rows.reduce((max, row) => {
-      return Math.max(row.children.length, max);
-    }, 0);
+    return Math.max(...rows.map(row => row.children.length));
   }
 
   balanceRows(maxColCount, rows, CellClass) {
     rows.forEach(row => {
       new Array(maxColCount - row.children.length).fill(0).forEach(() => {
         let value;
-        if (row.children.head != null) {
+        if (isDefined(row.children.head)) {
           value = CellClass.formats(row.children.head.domNode);
         }
         const blot = this.scroll.create(CellClass.blotName, value);
@@ -191,12 +194,12 @@ class TableContainer extends Container {
   deleteColumn(index) {
     [TableHeader, TableBody].forEach(blot => {
       const [tablePart] = this.descendants(blot);
-      if (tablePart == null || tablePart.children.head == null) {
+      if (!isDefined(tablePart) || !isDefined(tablePart.children.head)) {
         return;
       }
       tablePart.children.forEach(row => {
         const cell = row.children.at(index);
-        if (cell != null) {
+        if (isDefined(cell)) {
           cell.remove();
         }
       });
@@ -206,9 +209,10 @@ class TableContainer extends Container {
   insertColumn(index) {
     [TableHeader, TableBody].forEach(blot => {
       const [tablePart] = this.descendants(blot);
-      if (tablePart == null || tablePart.children.head == null) {
+      if (!isDefined(tablePart) || !isDefined(tablePart.children.head)) {
         return;
       }
+
       const CellBlot = blot === TableHeader ? TableHeaderCell : TableCell;
       tablePart.children.forEach(row => {
         const ref = row.children.at(index);
@@ -221,7 +225,10 @@ class TableContainer extends Container {
 
   insertRow(index) {
     const [body] = this.descendants(TableBody);
-    if (body == null || body.children.head == null) return;
+    if (!isDefined(body) || !isDefined(body.children.head)) {
+      return;
+    }
+
     const id = tableId();
     const row = this.scroll.create(TableRow.blotName);
     body.children.head.children.forEach(() => {
@@ -236,7 +243,14 @@ class TableContainer extends Container {
     const [header] = this.descendants(TableHeader);
     const [body] = this.descendants(TableBody);
 
-    if (header != null || body == null || body.children.head == null) return;
+    if (
+      isDefined(header) ||
+      !isDefined(body) ||
+      !isDefined(body.children.head)
+    ) {
+      return;
+    }
+
     const id = tableId();
     const newHeader = this.scroll.create(TableHeader.blotName);
     const row = this.scroll.create(TableHeaderRow.blotName);
@@ -252,8 +266,7 @@ class TableContainer extends Container {
 
   rows() {
     const body = this.children.head;
-    if (body == null) return [];
-    return body.children.map(row => row);
+    return isDefined(body) ? body.children.map(row => row) : [];
   }
 }
 TableContainer.blotName = 'tableContainer';

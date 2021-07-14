@@ -11,6 +11,7 @@ import {
   TableHeaderRow,
   TableHeader,
 } from '../formats/table';
+import isDefined from '../utils/isDefined';
 
 class Table extends Module {
   static register() {
@@ -36,21 +37,30 @@ class Table extends Module {
 
   deleteColumn() {
     const [table, , cell] = this.getTable();
-    if (cell == null) return;
+    if (!isDefined(cell)) {
+      return;
+    }
+
     table.deleteColumn(cell.cellOffset());
     this.quill.update(Quill.sources.USER);
   }
 
   deleteRow() {
     const [, row] = this.getTable();
-    if (row == null) return;
+    if (!isDefined(row)) {
+      return;
+    }
+
     row.remove();
     this.quill.update(Quill.sources.USER);
   }
 
   deleteTable() {
     const [table] = this.getTable();
-    if (table == null) return;
+    if (!isDefined(table)) {
+      return;
+    }
+
     const offset = table.offset();
     table.remove();
     this.quill.update(Quill.sources.USER);
@@ -58,12 +68,19 @@ class Table extends Module {
   }
 
   getTable(range = this.quill.getSelection()) {
-    if (range == null) return [null, null, null, -1];
-    const [cell, offset] = this.quill.getLine(range.index);
-    const allowedBlots = [TableCell.blotName, TableHeaderCell.blotName];
-    if (cell == null || allowedBlots.indexOf(cell.statics.blotName) === -1) {
+    if (!isDefined(range)) {
       return [null, null, null, -1];
     }
+
+    const [cell, offset] = this.quill.getLine(range.index);
+    const allowedBlots = [TableCell.blotName, TableHeaderCell.blotName];
+    if (
+      !isDefined(cell) ||
+      allowedBlots.indexOf(cell.statics.blotName) === -1
+    ) {
+      return [null, null, null, -1];
+    }
+
     const row = cell.parent;
     const table = row.parent.parent;
     return [table, row, cell, offset];
@@ -72,7 +89,10 @@ class Table extends Module {
   insertColumn(offset) {
     const range = this.quill.getSelection();
     const [table, row, cell] = this.getTable(range);
-    if (cell == null) return;
+    if (!isDefined(cell)) {
+      return;
+    }
+
     const column = cell.cellOffset();
     table.insertColumn(column + offset);
     this.quill.update(Quill.sources.USER);
@@ -98,7 +118,10 @@ class Table extends Module {
   insertRow(offset) {
     const range = this.quill.getSelection();
     const [table, row, cell] = this.getTable(range);
-    if (cell == null) return;
+    if (!isDefined(cell)) {
+      return;
+    }
+
     const index = row.rowOffset();
     table.insertRow(index + offset);
     this.quill.update(Quill.sources.USER);
@@ -124,14 +147,20 @@ class Table extends Module {
   insertHeaderRow() {
     const range = this.quill.getSelection();
     const [table, , cell] = this.getTable(range);
-    if (cell == null) return;
+    if (!isDefined(cell)) {
+      return;
+    }
+
     table.insertHeaderRow();
     this.quill.update(Quill.sources.USER);
   }
 
   insertTable(rows, columns) {
     const range = this.quill.getSelection();
-    if (range == null) return;
+    if (!isDefined(range)) {
+      return;
+    }
+
     const delta = new Array(rows).fill(0).reduce(memo => {
       const text = new Array(columns).fill('\n').join('');
       return memo.insert(text, { table: tableId() });
