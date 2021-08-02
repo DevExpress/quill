@@ -87,17 +87,18 @@ class Keyboard extends Module {
   static normalizeKeyName({ key, which }) {
     const isKeySupported = !!key;
 
-    key = isKeySupported ? key : which;
+    let normalizedKey = isKeySupported ? key : which;
 
-    if (key) {
+    if (normalizedKey) {
       if (isKeySupported) {
-        key = KEY_NAMES[key.toLowerCase()] || key;
+        normalizedKey = KEY_NAMES[normalizedKey.toLowerCase()] || normalizedKey;
       } else {
-        key = KEY_CODES[key] || String.fromCharCode(key);
+        normalizedKey =
+          KEY_CODES[normalizedKey] || String.fromCharCode(normalizedKey);
       }
     }
 
-    return key;
+    return normalizedKey;
   }
 
   constructor(quill, options) {
@@ -651,10 +652,10 @@ Keyboard.DEFAULTS = {
         return true;
       },
     },
-    'embed left': makeEmbedArrowHandler('ArrowLeft', false),
-    'embed left shift': makeEmbedArrowHandler('ArrowLeft', true),
-    'embed right': makeEmbedArrowHandler('ArrowRight', false),
-    'embed right shift': makeEmbedArrowHandler('ArrowRight', true),
+    'embed left': makeEmbedArrowHandler('leftArrow', false),
+    'embed left shift': makeEmbedArrowHandler('leftArrow', true),
+    'embed right': makeEmbedArrowHandler('rightArrow', false),
+    'embed right shift': makeEmbedArrowHandler('rightArrow', true),
     'table down': makeTableArrowHandler(false),
     'table up': makeTableArrowHandler(true),
   },
@@ -709,7 +710,7 @@ function makeEmbedArrowHandler(key, shiftKey) {
       }
       const [leaf] = this.quill.getLeaf(index);
       if (!(leaf instanceof EmbedBlot)) return true;
-      if (key === 'ArrowLeft') {
+      if (key === 'leftArrow') {
         if (shiftKey) {
           this.quill.setSelection(
             range.index - 1,
