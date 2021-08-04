@@ -14,6 +14,7 @@
         <button id="bold">Bold</button>
         <button id="italic">Italic</button>
         <button id="header">Header</button>
+        <button id="embed">Insert embed</button>
 
         <div id="editor"></div>
     </div>
@@ -31,5 +32,35 @@
                 editor.format(formatName, value);
             });
     });
+
+    document
+        .getElementById('embed')
+        .addEventListener('click', () => {
+            const Embed = DevExpress.Quill.import('blots/embed');
+            class Hashtag extends Embed {
+                static create(value) {
+                    const node = super.create(value);
+                    node.innerHTML = `<span contenteditable=false>#${value}</span>`;
+                    return node;
+                }
+            }
+            Hashtag.blotName = 'hashtag'; 
+            Hashtag.tagName = 'span';
+
+            DevExpress.Quill.register({
+                'formats/hashtag': Hashtag
+            });
+
+            editor.setContents({
+                ops: [
+                    {insert: '12 '},
+                    {insert: { hashtag: 'test'}},
+                    {insert: ' 34'}
+                ]
+            });
+
+            editor.focus();
+            editor.setSelection(4, 0);
+        });
 </script>
 </html>

@@ -5,6 +5,8 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
 const SHORTKEY = process.platform === 'darwin' ? 'Meta' : 'Control';
 
 const CHAPTER = 'Chapter 1. Loomings.';
+const GUARD_CHAR = '\uFEFF';
+const EMBED = `<span>${GUARD_CHAR}<span contenteditable="false"><span contenteditable="false">#test</span></span>${GUARD_CHAR}</span>`;
 const P1 =
   'Call me Ishmael. Some years ago—never mind how long precisely-having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the ocean with me.';
 const P2 =
@@ -18,9 +20,7 @@ describe('quill', function() {
     const page = await browser.newPage();
 
     await page.goto('http://localhost:8080/index.html');
-    console.log('goto page');
     await page.waitForSelector('.ql-editor', { timeout: 100000 });
-    console.log('we have a content');
     const title = await page.title();
     expect(title).toEqual('DevExtreme-Quill Base Editing');
 
@@ -222,6 +222,12 @@ describe('quill', function() {
     expect(html).toBe('AB<strong>C</strong>DA');
     const selection = await page.evaluate(getSelectionInTextNode);
     expect(selection).toBe('["DA",1,"DA",1]');
+
+    await page.click('#embed');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Enter');
+    html = await page.$eval('.ql-editor', e => e.innerHTML);
+    expect(html).toEqual(`<p>12 </p><p>${EMBED} 34</p>`);
 
     await browser.close();
   });
