@@ -17,7 +17,7 @@ describe('quill', function() {
     });
     const page = await browser.newPage();
 
-    await page.goto('localhost:8080');
+    await page.goto('http://localhost:8080/index.html');
     console.log('goto page');
     await page.waitForSelector('.ql-editor', { timeout: 100000 });
     console.log('we have a content');
