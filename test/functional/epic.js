@@ -17,10 +17,10 @@ describe('quill', function() {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://localhost:9000/standalone/full/');
-    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+    await page.goto('localhost:8080');
+    await page.waitForSelector('.ql-editor', { timeout: 100000 });
     const title = await page.title();
-    expect(title).toEqual('Full Editor - Quill Rich Text Editor');
+    expect(title).toEqual('DevExtreme-Quill Base Editing');
 
     await page.type('.ql-editor', 'The Whale');
     let html = await page.$eval('.ql-editor', e => e.innerHTML);
@@ -128,8 +128,8 @@ describe('quill', function() {
       ].join(''),
     );
 
-    await page.click('.ql-toolbar .ql-bold');
-    await page.click('.ql-toolbar .ql-italic');
+    await page.click('#bold');
+    await page.click('#italic');
     html = await page.$eval('.ql-editor', e => e.innerHTML);
     expect(html).toEqual(
       [
@@ -141,10 +141,6 @@ describe('quill', function() {
         `<p>${P2}</p>`,
       ].join(''),
     );
-    let bold = await page.$('.ql-toolbar .ql-bold.ql-active');
-    let italic = await page.$('.ql-toolbar .ql-italic.ql-active');
-    expect(bold).not.toBe(null);
-    expect(italic).not.toBe(null);
 
     await page.type('.ql-editor', 'Moby Dick');
     html = await page.$eval('.ql-editor', e => e.innerHTML);
@@ -158,10 +154,6 @@ describe('quill', function() {
         `<p>${P2}</p>`,
       ].join(''),
     );
-    bold = await page.$('.ql-toolbar .ql-bold.ql-active');
-    italic = await page.$('.ql-toolbar .ql-italic.ql-active');
-    expect(bold).not.toBe(null);
-    expect(italic).not.toBe(null);
 
     await page.keyboard.press('ArrowRight');
     await page.keyboard.down('Shift');
@@ -171,16 +163,10 @@ describe('quill', function() {
         .map(() => page.keyboard.press('ArrowRight')),
     );
     await page.keyboard.up('Shift');
-    bold = await page.$('.ql-toolbar .ql-bold.ql-active');
-    italic = await page.$('.ql-toolbar .ql-italic.ql-active');
-    expect(bold).toBe(null);
-    expect(italic).toBe(null);
 
     await page.keyboard.down(SHORTKEY);
     await page.keyboard.press('b');
     await page.keyboard.up(SHORTKEY);
-    bold = await page.$('.ql-toolbar .ql-bold.ql-active');
-    expect(bold).not.toBe(null);
     html = await page.$eval('.ql-editor', e => e.innerHTML);
     expect(html).toEqual(
       [
@@ -195,7 +181,7 @@ describe('quill', function() {
 
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('ArrowUp');
-    await page.click('.ql-toolbar .ql-header[value="1"]');
+    await page.click('#header');
     html = await page.$eval('.ql-editor', e => e.innerHTML);
     expect(html).toEqual(
       [
@@ -207,8 +193,6 @@ describe('quill', function() {
         `<p>${P2}</p>`,
       ].join(''),
     );
-    const header = await page.$('.ql-toolbar .ql-header.ql-active[value="1"]');
-    expect(header).not.toBe(null);
 
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowDown');
@@ -237,7 +221,6 @@ describe('quill', function() {
     const selection = await page.evaluate(getSelectionInTextNode);
     expect(selection).toBe('["DA",1,"DA",1]');
 
-    // await page.waitFor(1000000);
     await browser.close();
   });
 });

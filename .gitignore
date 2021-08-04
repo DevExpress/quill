@@ -4,5 +4,6 @@
 /selenium
 /docs/_site
 /src
+/test/functional/example/src
 *.d.ts
 *.log
