@@ -18,7 +18,9 @@ describe('quill', function() {
     const page = await browser.newPage();
 
     await page.goto('localhost:8080');
+    console.log('goto page');
     await page.waitForSelector('.ql-editor', { timeout: 100000 });
+    console.log('we have a content');
     const title = await page.title();
     expect(title).toEqual('DevExtreme-Quill Base Editing');
 
