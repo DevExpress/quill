@@ -29,4 +29,4 @@ jobs:
       uses: Eun/http-server-action@v1.0.3
       with:
         directory: ./test/functional/example
-    - run: npm test:functional
+    - run: npm run test:functional
