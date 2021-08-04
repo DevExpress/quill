@@ -24,9 +24,5 @@ jobs:
     - name: HTTP Server Action
       uses: Eun/http-server-action@v1.0.3
       with:
-        directory: ./test/functional/example
-    - name: Wait
-      uses: jakejarvis/wait-action@v0.1.1
-      with:
-        time: 20s
+        directory: 'test/functional/example'
     - run: xvfb-run --auto-servernum npm run test:functional
