@@ -23,5 +23,10 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm run start
+    - run: npm run build
+    - run: npm run copy-dist
+    - name: HTTP Server Action
+      uses: Eun/http-server-action@v1.0.3
+      with:
+        directory: ./test/functional/example
     - run: npm test:functional
