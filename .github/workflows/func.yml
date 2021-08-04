@@ -25,4 +25,4 @@ jobs:
       uses: Eun/http-server-action@v1.0.3
       with:
         directory: ./test/functional/example
-    - run: npm run test:functional
+    - run: xvfb-run -a --server-args="-screen 0 1280x800x24 -ac -nolisten tcp -dpi 96 +extension RANDR" npm run test:functional
