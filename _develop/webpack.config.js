@@ -128,18 +128,11 @@ const baseConfig = {
       filename: 'dx-[name].css',
     }),
   ],
-  devServer: {
-    contentBase: path.resolve(__dirname, '../dist'),
-    hot: false,
-    port: process.env.npm_package_config_ports_webpack,
-    stats: 'minimal',
-    disableHostCheck: true,
-  },
 };
 
 module.exports = env => {
   if (env && env.production) {
-    const { devServer, entry, ...prodConfig } = baseConfig;
+    const { entry, ...prodConfig } = baseConfig;
     return {
       ...prodConfig,
       mode: 'production',
