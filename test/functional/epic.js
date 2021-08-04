@@ -11,7 +11,7 @@ const P2 =
   'There now is your insular city of the Manhattoes, belted round by wharves as Indian isles by coral reefs—commerce surrounds it with her surf. Right and left, the streets take you waterward. Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers there.';
 
 describe('quill', function() {
-  it('compose an epic', async function(done) {
+  it('compose an epic', async function() {
     const browser = await puppeteer.launch({
       headless: false,
     });
@@ -222,7 +222,6 @@ describe('quill', function() {
     expect(selection).toBe('["DA",1,"DA",1]');
 
     await browser.close();
-    done();
   });
 });
 
