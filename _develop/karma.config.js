@@ -1,5 +1,4 @@
 const browsers = require('./browsers');
-const sauce = require('./sauce');
 
 module.exports = config => {
   config.set({
@@ -37,30 +36,6 @@ module.exports = config => {
       dir: '.coverage',
       reporters: [{ type: 'text' }, { type: 'html' }],
     },
-    sauceLabs: {
-      testName: 'quill-unit',
-      options: {
-        public: 'public',
-        'record-screenshots': false,
-      },
-      build: sauce.build,
-      // There is no way to securely allow community PRs to be built and tested
-      // by Travis and SauceLabs. Please do not abuse.
-      username: 'quill',
-      accessKey: 'ced60aed-80ad-436b-9ba8-690ed1205180',
-      tunnelIdentifier: sauce.tunnel,
-    },
     customLaunchers: browsers,
   });
-
-  /* eslint-disable no-param-reassign */
-  if (process.env.TRAVIS) {
-    config.transports = ['polling'];
-    config.browsers = [process.env.BROWSER];
-    config.browserDisconnectTimeout = 10000;
-    config.browserDisconnectTolerance = 3;
-    config.browserNoActivityTimeout = 60000;
-    config.browserSocketTimeout = 40000;
-    config.captureTimeout = 120000;
-  }
 };
