@@ -38,7 +38,8 @@ const CLIPBOARD_CONFIG = [
   ['li', matchIndent],
   ['ol, ul', matchList],
   ['pre', matchCodeBlock],
-  ['tr', matchTable],
+  // ['tr', matchTable],
+  ['td', matchCell],
   [ELEMENT_NODE, matchDimensions],
   ['b', matchAlias.bind(matchAlias, 'bold')],
   ['i', matchAlias.bind(matchAlias, 'italic')],
@@ -566,15 +567,36 @@ function matchStyles(node, delta) {
   return delta;
 }
 
-function matchTable(node, delta) {
+// function matchTable(node, delta) {
+//   const table =
+//     node.parentNode.tagName === 'TABLE'
+//       ? node.parentNode
+//       : node.parentNode.parentNode;
+//   const isHeaderRow = node.parentNode.tagName === 'THEAD' ? true : null;
+//   const rows = Array.from(table.querySelectorAll('tr'));
+//   const row = rows.indexOf(node) + 1;
+//   return applyFormat(delta, isHeaderRow ? 'tableHeaderCell' : 'table', row);
+// }
+
+function matchCell(node, delta) {
+  const row = node.parentNode;
   const table =
-    node.parentNode.tagName === 'TABLE'
-      ? node.parentNode
-      : node.parentNode.parentNode;
-  const isHeaderRow = node.parentNode.tagName === 'THEAD' ? true : null;
+    row.parentNode.tagName === 'TABLE'
+      ? row.parentNode
+      : row.parentNode.parentNode;
   const rows = Array.from(table.querySelectorAll('tr'));
-  const row = rows.indexOf(node) + 1;
-  return applyFormat(delta, isHeaderRow ? 'tableHeaderCell' : 'table', row);
+  const cells = Array.from(row.querySelectorAll('td'));
+  const rowId = rows.indexOf(row) + 1;
+  const cellId = cells.indexOf(node) + 1;
+
+  if (delta.length() === 0) {
+    delta = new Delta().insert('\n', {
+      tableCellLine: { row: rowId, cell: cellId },
+    });
+    return delta;
+  }
+
+  return applyFormat(delta, 'tableCellLine', { row: rowId, cell: cellId });
 }
 
 function matchPlainText(node, delta) {

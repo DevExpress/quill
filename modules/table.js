@@ -2,6 +2,7 @@ import Delta from 'quill-delta';
 import Quill from '../core/quill';
 import Module from '../core/module';
 import {
+  CellLine,
   TableCell,
   TableRow,
   TableBody,
@@ -15,6 +16,7 @@ import isDefined from '../utils/isDefined';
 
 class Table extends Module {
   static register() {
+    Quill.register(CellLine);
     Quill.register(TableHeaderCell);
     Quill.register(TableCell);
     Quill.register(TableHeaderRow);
