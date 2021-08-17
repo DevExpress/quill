@@ -8,7 +8,6 @@ const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 class CellLine extends Block {
   static create(value) {
     const node = super.create(value);
-    debugger;
     CELL_IDENTITY_KEYS.forEach(key => {
       const identityMaker = key === 'row' ? tableId : cellId;
       node.setAttribute(`data-${key}`, value[key] || identityMaker());
@@ -29,7 +28,6 @@ class CellLine extends Block {
   }
 
   optimize(context) {
-    debugger;
     const rowId = this.domNode.getAttribute('data-row');
     if (
       this.statics.requiredContainer &&
@@ -50,7 +48,6 @@ CellLine.tagName = 'P';
 
 class BaseCell extends Container {
   checkMerge() {
-    debugger;
     if (super.checkMerge() && this.next.children.head != null) {
       const thisHead = this.children.head.formats()[
         this.children.head.statics.blotName
@@ -96,7 +93,6 @@ class BaseCell extends Container {
       formats = formats || {};
       formats[this.blotName] = domNode.getAttribute(attrName);
     }
-    debugger;
     return formats;
   }
 
@@ -109,7 +105,6 @@ class BaseCell extends Container {
     // if (this.domNode.hasAttribute('data-row')) {
     //   formats.table = this.domNode.getAttribute('data-row');
     // }
-    debugger;
     return CELL_IDENTITY_KEYS.reduce((fmts, attribute) => {
       if (this.domNode.hasAttribute(`data-${attribute}`)) {
         const formatName = attribute === 'row' ? 'table' : attribute;
