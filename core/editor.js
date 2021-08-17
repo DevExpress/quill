@@ -24,10 +24,12 @@ class Editor {
   }
 
   applyDelta(delta) {
-    let consumeNextNewline = false;
     this.scroll.update();
     let scrollLength = this.scroll.length();
     this.scroll.batchStart();
+    // Track indexes of violations of newline requirements
+    // (at end of doc and before block embeds)
+    const implicitNewlines = [];
     const normalizedDelta = normalizeDelta(delta);
     normalizedDelta.reduce((index, op) => {
       const length = Op.length(op);
@@ -35,8 +37,8 @@ class Editor {
       if (op.insert != null) {
         if (typeof op.insert === 'string') {
           let text = op.insert;
-          if (text.endsWith('\n') && consumeNextNewline) {
-            consumeNextNewline = false;
+          if (text.endsWith('\n') && implicitNewlines.length > 0) {
+            implicitNewlines.shift();
             text = text.slice(0, -1);
           }
           if (
@@ -44,7 +46,7 @@ class Editor {
               this.scroll.descendant(BlockEmbed, index)[0]) &&
             !text.endsWith('\n')
           ) {
-            consumeNextNewline = true;
+            implicitNewlines.push(index + length);
           }
           this.scroll.insertAt(index, text);
           const [line, offset] = this.scroll.line(index);
@@ -61,7 +63,7 @@ class Editor {
             this.scroll.query(key, Scope.INLINE) != null &&
             this.scroll.descendant(BlockEmbed, index)[0]
           ) {
-            consumeNextNewline = true;
+            implicitNewlines.push(index);
           }
           this.scroll.insertAt(index, key, op.insert[key]);
         }
@@ -79,7 +81,10 @@ class Editor {
       });
       return index + length;
     }, 0);
-    normalizedDelta.reduce((index, op) => {
+    const implicitDelta = implicitNewlines.reduce((delta, index) => {
+      return delta.retain(index).delete(1);
+    }, new Delta());
+    normalizedDelta.compose(implicitDelta).reduce((index, op) => {
       if (typeof op.delete === 'number') {
         this.scroll.deleteAt(index, op.delete);
         return index;
