@@ -512,29 +512,70 @@ Keyboard.DEFAULTS = {
       suffix: /^$/,
       handler() {},
     },
-    'table enter': {
+    // 'table enter': {
+    //   key: 'enter',
+    //   shiftKey: null,
+    //   format: ['table'],
+    //   handler(range) {
+    //     const module = this.quill.getModule('table');
+    //     if (module) {
+    //       const { quill } = this;
+    //       const [table, row, cell, offset] = module.getTable(range);
+    //       const shift = tableSide(row, cell, offset);
+
+    //       if (shift == null) {
+    //         return;
+    //       }
+
+    //       const index = table.offset();
+    //       const hasHead = table.children.length > 1 && table.children.head;
+    //       if (shift < 0 && !hasHead) {
+    //         insertParagraphAbove({ quill, index, range });
+    //       } else {
+    //         insertParagraphBelow({ quill, index, table });
+    //       }
+    //     }
+    //   },
+    // },
+    'table-cell-line enter': {
       key: 'enter',
       shiftKey: null,
-      format: ['table'],
-      handler(range) {
-        const module = this.quill.getModule('table');
-        if (module) {
-          const { quill } = this;
-          const [table, row, cell, offset] = module.getTable(range);
-          const shift = tableSide(row, cell, offset);
-
-          if (shift == null) {
-            return;
-          }
-
-          const index = table.offset();
-          const hasHead = table.children.length > 1 && table.children.head;
-          if (shift < 0 && !hasHead) {
-            insertParagraphAbove({ quill, index, range });
-          } else {
-            insertParagraphBelow({ quill, index, table });
-          }
+      format: ['tableCellLine'],
+      handler(range, context) {
+        // bugfix: a unexpected new line inserted when user compositionend with hitting Enter
+        if (this.quill.selection && this.quill.selection.composing) return;
+        if (range.length > 0) {
+          this.quill.scroll.deleteAt(range.index, range.length); // So we do not trigger text-change
         }
+        const lineFormats = Object.keys(context.format).reduce(
+          (formats, format) => {
+            if (
+              this.quill.scroll.query(format, Scope.BLOCK) &&
+              !Array.isArray(context.format[format])
+            ) {
+              formats[format] = context.format[format];
+            }
+            return formats;
+          },
+          {},
+        );
+        // insert new cellLine with lineFormats
+        this.quill.insertText(
+          range.index,
+          '\n',
+          lineFormats.tableCellLine,
+          Quill.sources.USER,
+        );
+        // Earlier scroll.deleteAt might have messed up our selection,
+        // so insertText's built in selection preservation is not reliable
+        this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
+        this.quill.focus();
+        Object.keys(context.format).forEach(name => {
+          if (lineFormats[name] != null) return;
+          if (Array.isArray(context.format[name])) return;
+          if (name === 'link') return;
+          this.quill.format(name, context.format[name], Quill.sources.USER);
+        });
       },
     },
     'table header enter': {
