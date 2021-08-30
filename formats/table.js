@@ -3,12 +3,13 @@ import Container from '../blots/container';
 import isDefined from '../utils/isDefined';
 
 const CELL_IDENTITY_KEYS = ['row', 'cell'];
+const HEADER_CELL_IDENTITY_KEYS = ['row', 'header-cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
 class CellLine extends Block {
   static create(value) {
     const node = super.create(value);
-    CELL_IDENTITY_KEYS.forEach(key => {
+    this.identityKeys.forEach(key => {
       const identityMaker = key === 'row' ? tableId : cellId;
       // const valueKey = key === 'row' ? 'table' : key;
       node.setAttribute(`data-${key}`, value[key] || identityMaker());
@@ -18,10 +19,11 @@ class CellLine extends Block {
   }
 
   static formats(domNode) {
-    return CELL_IDENTITY_KEYS.reduce((formats, attribute) => {
+    return this.identityKeys.reduce((formats, attribute) => {
       if (domNode.hasAttribute(`data-${attribute}`)) {
         // const formatName = attribute === 'row' ? 'table' : attribute;
-        formats[attribute] =
+        const formatName = attribute === 'header-cell' ? 'cell' : attribute;
+        formats[formatName] =
           domNode.getAttribute(`data-${attribute}`) || undefined;
       }
       return formats;
@@ -45,7 +47,14 @@ class CellLine extends Block {
   }
 }
 CellLine.blotName = 'tableCellLine';
+CellLine.className = 'ql-table-cell-line';
+CellLine.identityKeys = CELL_IDENTITY_KEYS;
 CellLine.tagName = 'P';
+
+class HeaderCellLine extends CellLine {}
+HeaderCellLine.blotName = 'tableHeaderCellLine';
+HeaderCellLine.className = 'ql-table-header-cell-line';
+HeaderCellLine.identityKeys = HEADER_CELL_IDENTITY_KEYS;
 
 class BaseCell extends Container {
   checkMerge() {
@@ -77,21 +86,28 @@ class BaseCell extends Container {
     return false;
   }
 
-  static create(value) {
-    const node = super.create();
-    const attrName = 'data-row';
-    if (value && value.row) {
-      node.setAttribute(attrName, value.row);
-    }
-    return node;
-  }
+  // static create(value) {
+  //   const node = super.create();
+  //   const attrName = 'data-row';
+  //   if (value && value.row) {
+  //     node.setAttribute(attrName, value.row);
+  //   }
+  //   return node;
+  // }
 
   static formats(domNode) {
     let formats;
     // const attrName = this.dataAttribute;
 
-    if (domNode.hasAttribute('data-row')) {
-      formats = { row: domNode.getAttribute('data-row') };
+    if (
+      domNode.hasAttribute('data-row') ||
+      domNode.hasAttribute('data-header-row')
+    ) {
+      formats = {
+        row:
+          domNode.getAttribute('data-row') ||
+          domNode.getAttribute('data-header-row'),
+      };
     }
     return formats;
   }
@@ -99,8 +115,13 @@ class BaseCell extends Container {
   formats() {
     const formats = {};
 
-    if (this.domNode.hasAttribute('data-row')) {
-      formats.row = this.domNode.getAttribute('data-row');
+    if (
+      this.domNode.hasAttribute('data-row') ||
+      this.domNode.hasAttribute('data-header-row')
+    ) {
+      formats.row =
+        this.domNode.getAttribute('data-row') ||
+        this.domNode.getAttribute('data-header-row');
     }
 
     return formats;
@@ -145,7 +166,9 @@ class BaseCell extends Container {
   }
 
   optimize(context) {
-    const rowId = this.domNode.getAttribute('data-row');
+    const rowId =
+      this.domNode.getAttribute('data-row') ||
+      this.domNode.getAttribute('data-header-row');
 
     if (
       this.statics.requiredContainer &&
@@ -159,8 +182,18 @@ class BaseCell extends Container {
 BaseCell.tagName = ['TD', 'TH'];
 
 class TableCell extends BaseCell {
+  static create(value) {
+    const node = super.create();
+    const attrName = 'data-row';
+    if (value && value.row) {
+      node.setAttribute(attrName, value.row);
+    }
+    return node;
+  }
+
   format(name, value) {
     // if (name === TableCell.blotName && value) {
+    console.log('xoxox', name);
     if (['row'].indexOf(name) > -1) {
       this.domNode.setAttribute(`data-${name}`, value);
       this.children.forEach(child => {
@@ -172,18 +205,38 @@ class TableCell extends BaseCell {
   }
 }
 TableCell.blotName = 'table';
+TableCell.className = 'ql-table-data-cell';
 TableCell.dataAttribute = 'data-row';
 
 class TableHeaderCell extends BaseCell {
+  static create(value) {
+    const node = super.create();
+    const attrName = 'data-header-row';
+    if (value && value.row) {
+      node.setAttribute(attrName, value.row);
+    }
+    return node;
+  }
+
   format(name, value) {
-    if (name === TableHeaderCell.blotName && value) {
-      this.domNode.setAttribute(TableHeaderCell.dataAttribute, value);
+    if (['row'].indexOf(name) > -1) {
+      this.domNode.setAttribute(`data-${name}`, value);
+      this.children.forEach(child => {
+        child.format(name, value);
+      });
     } else {
       super.format(name, value);
     }
+
+    // if (name === TableHeaderCell.blotName && value) {
+    //   this.domNode.setAttribute(TableHeaderCell.dataAttribute, value);
+    // } else {
+    //   super.format(name, value);
+    // }
   }
 }
 TableHeaderCell.tagName = ['TH', 'TD'];
+TableHeaderCell.className = 'ql-table-header-cell';
 TableHeaderCell.blotName = 'tableHeaderCell';
 TableHeaderCell.dataAttribute = 'data-header-row';
 
@@ -420,6 +473,9 @@ TableCell.allowedChildren = [CellLine];
 TableHeader.allowedChildren = [TableHeaderRow];
 TableHeaderRow.requiredContainer = TableHeader;
 
+HeaderCellLine.requiredContainer = TableHeaderCell;
+TableHeaderCell.allowedChildren = [HeaderCellLine];
+
 TableHeaderRow.allowedChildren = [TableHeaderCell];
 TableHeaderCell.requiredContainer = TableHeaderRow;
 
@@ -439,6 +495,7 @@ function cellId() {
 
 export {
   CellLine,
+  HeaderCellLine,
   TableCell,
   TableHeaderCell,
   TableRow,

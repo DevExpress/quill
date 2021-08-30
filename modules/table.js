@@ -11,12 +11,14 @@ import {
   TableHeaderCell,
   TableHeaderRow,
   TableHeader,
+  HeaderCellLine,
 } from '../formats/table';
 import isDefined from '../utils/isDefined';
 
 class Table extends Module {
   static register() {
     Quill.register(CellLine);
+    Quill.register(HeaderCellLine);
     Quill.register(TableHeaderCell);
     Quill.register(TableCell);
     Quill.register(TableHeaderRow);

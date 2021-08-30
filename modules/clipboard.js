@@ -39,7 +39,7 @@ const CLIPBOARD_CONFIG = [
   ['ol, ul', matchList],
   ['pre', matchCodeBlock],
   // ['tr', matchTable],
-  ['td', matchCell],
+  ['td, th', matchCell],
   [ELEMENT_NODE, matchDimensions],
   ['b', matchAlias.bind(matchAlias, 'bold')],
   ['i', matchAlias.bind(matchAlias, 'italic')],
@@ -135,6 +135,8 @@ class Clipboard extends Module {
       deltaEndsWith(delta, '\n') &&
       (delta.ops[delta.ops.length - 1].attributes == null ||
         formats.table ||
+        formats.tableCellLine ||
+        // delta.ops[delta.ops.length - 1].attributes.tableCellLine ||
         formats.tableHeaderCell)
     ) {
       return delta.compose(new Delta().retain(delta.length() - 1).delete(1));
@@ -340,6 +342,7 @@ function isLine(node) {
       'pre',
       'section',
       'table',
+      'tableCellLine',
       'td',
       'tr',
       'ul',
@@ -456,7 +459,11 @@ function matchDimensions(node, delta) {
     const attributes = op.attributes || {};
     const { width, height, ...rest } = attributes;
     const formats =
-      attributes.table || attributes.tableHeaderCell || isTableNode || isEmbed
+      attributes.table ||
+      attributes.tableCellLine ||
+      attributes.tableHeaderCell ||
+      isTableNode ||
+      isEmbed
         ? attributes
         : { ...rest };
     return newDelta.insert(op.insert, formats);
@@ -584,19 +591,23 @@ function matchCell(node, delta) {
     row.parentNode.tagName === 'TABLE'
       ? row.parentNode
       : row.parentNode.parentNode;
+  const isHeaderRow = row.parentNode.tagName === 'THEAD' ? true : null;
   const rows = Array.from(table.querySelectorAll('tr'));
   const cells = Array.from(row.querySelectorAll('td'));
   const rowId = rows.indexOf(row) + 1;
   const cellId = cells.indexOf(node) + 1;
+  const cellLineBlotName = isHeaderRow
+    ? 'tableHeaderCellLine'
+    : 'tableCellLine';
 
   if (delta.length() === 0) {
     delta = new Delta().insert('\n', {
-      tableCellLine: { row: rowId, cell: cellId },
+      [cellLineBlotName]: { row: rowId, cell: cellId },
     });
     return delta;
   }
 
-  return applyFormat(delta, 'tableCellLine', { row: rowId, cell: cellId });
+  return applyFormat(delta, cellLineBlotName, { row: rowId, cell: cellId });
 }
 
 function matchPlainText(node, delta) {
