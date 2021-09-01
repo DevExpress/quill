@@ -54,7 +54,7 @@ CellLine.tagName = 'P';
 class HeaderCellLine extends CellLine {}
 HeaderCellLine.blotName = 'tableHeaderCellLine';
 HeaderCellLine.className = 'ql-table-header-cell-line';
-HeaderCellLine.identityKeys = HEADER_CELL_IDENTITY_KEYS;
+HeaderCellLine.identityKeys = CELL_IDENTITY_KEYS;
 
 class BaseCell extends Container {
   checkMerge() {

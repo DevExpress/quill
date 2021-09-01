@@ -593,7 +593,7 @@ function matchCell(node, delta) {
       : row.parentNode.parentNode;
   const isHeaderRow = row.parentNode.tagName === 'THEAD' ? true : null;
   const rows = Array.from(table.querySelectorAll('tr'));
-  const cells = Array.from(row.querySelectorAll('td'));
+  const cells = Array.from(row.querySelectorAll('th,td'));
   const rowId = rows.indexOf(row) + 1;
   const cellId = cells.indexOf(node) + 1;
   const cellLineBlotName = isHeaderRow
