@@ -606,6 +606,9 @@ function matchCell(node, delta) {
     });
     return delta;
   }
+  if (!deltaEndsWith(delta, '\n')) {
+    delta.insert('\n');
+  }
 
   return applyFormat(delta, cellLineBlotName, { row: rowId, cell: cellId });
 }
