@@ -1,4 +1,5 @@
 import Block from '../blots/block';
+import Break from '../blots/break';
 import Container from '../blots/container';
 import isDefined from '../utils/isDefined';
 
@@ -353,10 +354,21 @@ class TableContainer extends Container {
       }
 
       const CellBlot = blot === TableHeader ? TableHeaderCell : TableCell;
+      const CellLineBlot = blot === TableHeader ? HeaderCellLine : CellLine;
+
       tablePart.children.forEach(row => {
         const ref = row.children.at(index);
-        const value = CellBlot.formats(row.children.head.domNode);
-        const cell = this.scroll.create(CellBlot.blotName, value);
+        const value = CellLineBlot.formats(
+          row.children.head.children.head.domNode,
+        );
+        const cell = this.scroll.create(CellBlot.blotName, { row: value.row });
+        const cellLine = this.scroll.create(CellLineBlot.blotName, {
+          row: value.row,
+        });
+        const emptyLine = this.scroll.create(Break.blotName);
+
+        cellLine.appendChild(emptyLine);
+        cell.appendChild(cellLine);
         row.insertBefore(cell, ref);
       });
     });
@@ -369,9 +381,14 @@ class TableContainer extends Container {
     }
 
     const id = tableId();
-    const row = this.scroll.create(TableRow.blotName);
+    const row = this.scroll.create(TableRow.blotName, { row: id });
     body.children.head.children.forEach(() => {
-      const cell = this.scroll.create(TableCell.blotName, id);
+      const cell = this.scroll.create(TableCell.blotName, { row: id });
+      const cellLine = this.scroll.create(CellLine.blotName, { row: id });
+      const emptyLine = this.scroll.create(Break.blotName);
+
+      cellLine.appendChild(emptyLine);
+      cell.appendChild(cellLine);
       row.appendChild(cell);
     });
     const ref = body.children.at(index);

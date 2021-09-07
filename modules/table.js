@@ -76,15 +76,16 @@ class Table extends Module {
       return [null, null, null, -1];
     }
 
-    const [cell, offset] = this.quill.getLine(range.index);
-    const allowedBlots = [TableCell.blotName, TableHeaderCell.blotName];
+    const [cellLine, offset] = this.quill.getLine(range.index);
+    const allowedBlots = [CellLine.blotName, HeaderCellLine.blotName];
     if (
-      !isDefined(cell) ||
-      allowedBlots.indexOf(cell.statics.blotName) === -1
+      !isDefined(cellLine) ||
+      allowedBlots.indexOf(cellLine.statics.blotName) === -1
     ) {
       return [null, null, null, -1];
     }
 
+    const cell = cellLine.parent;
     const row = cell.parent;
     const table = row.parent.parent;
     return [table, row, cell, offset];
@@ -166,8 +167,11 @@ class Table extends Module {
     }
 
     const delta = new Array(rows).fill(0).reduce(memo => {
+      const rowId = tableId();
       const text = new Array(columns).fill('\n').join('');
-      return memo.insert(text, { table: tableId() });
+      return memo.insert(text, {
+        tableCellLine: { row: rowId, cell: tableId() },
+      });
     }, new Delta().retain(range.index));
     this.quill.updateContents(delta, Quill.sources.USER);
     this.quill.setSelection(range.index, Quill.sources.SILENT);
