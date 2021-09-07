@@ -38,7 +38,6 @@ const CLIPBOARD_CONFIG = [
   ['li', matchIndent],
   ['ol, ul', matchList],
   ['pre', matchCodeBlock],
-  // ['tr', matchTable],
   ['td, th', matchCell],
   [ELEMENT_NODE, matchDimensions],
   ['b', matchAlias.bind(matchAlias, 'bold')],
@@ -134,9 +133,7 @@ class Clipboard extends Module {
     if (
       deltaEndsWith(delta, '\n') &&
       (delta.ops[delta.ops.length - 1].attributes == null ||
-        formats.table ||
         formats.tableCellLine ||
-        // delta.ops[delta.ops.length - 1].attributes.tableCellLine ||
         formats.tableHeaderCell)
     ) {
       return delta.compose(new Delta().retain(delta.length() - 1).delete(1));
@@ -342,7 +339,6 @@ function isLine(node) {
       'pre',
       'section',
       'table',
-      'tableCellLine',
       'td',
       'tr',
       'ul',
@@ -459,8 +455,9 @@ function matchDimensions(node, delta) {
     const attributes = op.attributes || {};
     const { width, height, ...rest } = attributes;
     const formats =
-      attributes.table ||
       attributes.tableCellLine ||
+      attributes.tableHeaderCellLine ||
+      attributes.tableCell ||
       attributes.tableHeaderCell ||
       isTableNode ||
       isEmbed
