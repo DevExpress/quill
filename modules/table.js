@@ -12,8 +12,12 @@ import {
   TableHeaderRow,
   TableHeader,
   HeaderCellLine,
+  TABLE_TAGS,
 } from '../formats/table';
 import isDefined from '../utils/isDefined';
+import { deltaEndsWith, applyFormat } from './clipboard';
+
+const ELEMENT_NODE = 1;
 
 class Table extends Module {
   static register() {
@@ -30,6 +34,12 @@ class Table extends Module {
 
   constructor(...args) {
     super(...args);
+
+    this.quill.clipboard.addTableBlot(CellLine.blotName);
+    this.quill.clipboard.addTableBlot(TableHeaderCell.blotName);
+    this.quill.clipboard.addMatcher('td, th', matchCell);
+    this.quill.clipboard.addMatcher(ELEMENT_NODE, matchDimensions);
+
     this.listenBalanceCells();
   }
 
@@ -202,6 +212,53 @@ class Table extends Module {
       });
     });
   }
+}
+
+function matchCell(node, delta) {
+  const row = node.parentNode;
+  const table =
+    row.parentNode.tagName === 'TABLE'
+      ? row.parentNode
+      : row.parentNode.parentNode;
+  const isHeaderRow = row.parentNode.tagName === 'THEAD' ? true : null;
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const cells = Array.from(row.querySelectorAll('th,td'));
+  const rowId = rows.indexOf(row) + 1;
+  const cellId = cells.indexOf(node) + 1;
+  const cellLineBlotName = isHeaderRow
+    ? 'tableHeaderCellLine'
+    : 'tableCellLine';
+
+  if (delta.length() === 0) {
+    delta = new Delta().insert('\n', {
+      [cellLineBlotName]: { row: rowId, cell: cellId },
+    });
+    return delta;
+  }
+  if (!deltaEndsWith(delta, '\n')) {
+    delta.insert('\n');
+  }
+
+  return applyFormat(delta, cellLineBlotName, { row: rowId, cell: cellId });
+}
+
+function matchDimensions(node, delta) {
+  const isTableNode = TABLE_TAGS.indexOf(node.tagName) !== -1;
+  return delta.reduce((newDelta, op) => {
+    const isEmbed = typeof op.insert === 'object';
+    const attributes = op.attributes || {};
+    const { width, height, ...rest } = attributes;
+    const formats =
+      attributes.tableCellLine ||
+      attributes.tableHeaderCellLine ||
+      attributes.tableCell ||
+      attributes.tableHeaderCell ||
+      isTableNode ||
+      isEmbed
+        ? attributes
+        : { ...rest };
+    return newDelta.insert(op.insert, formats);
+  }, new Delta());
 }
 
 export default Table;

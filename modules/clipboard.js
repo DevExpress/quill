@@ -20,7 +20,6 @@ import { DirectionAttribute, DirectionStyle } from '../formats/direction';
 import { FontStyle } from '../formats/font';
 import { SizeStyle, WidthAttribute, HeightAttribute } from '../formats/size';
 import { deleteRange } from './keyboard';
-import { TABLE_TAGS } from '../formats/table';
 
 const debug = logger('quill:clipboard');
 
@@ -38,8 +37,6 @@ const CLIPBOARD_CONFIG = [
   ['li', matchIndent],
   ['ol, ul', matchList],
   ['pre', matchCodeBlock],
-  ['td, th', matchCell],
-  [ELEMENT_NODE, matchDimensions],
   ['b', matchAlias.bind(matchAlias, 'bold')],
   ['i', matchAlias.bind(matchAlias, 'italic')],
   ['strike', matchAlias.bind(matchAlias, 'strike')],
@@ -76,6 +73,7 @@ class Clipboard extends Module {
     this.quill.root.addEventListener('cut', e => this.onCaptureCopy(e, true));
     this.quill.root.addEventListener('paste', this.onCapturePaste.bind(this));
     this.matchers = [];
+    this.tableBlots = options.tableBlots || [];
     CLIPBOARD_CONFIG.concat(this.options.matchers).forEach(
       ([selector, matcher]) => {
         this.addMatcher(selector, matcher);
@@ -85,6 +83,10 @@ class Clipboard extends Module {
 
   addMatcher(selector, matcher) {
     this.matchers.push([selector, matcher]);
+  }
+
+  addTableBlot(blotName) {
+    this.tableBlots.push(blotName);
   }
 
   convert({ html, text }, formats = {}) {
@@ -114,7 +116,7 @@ class Clipboard extends Module {
     }, new Delta());
   }
 
-  applyMatchers(html, formats) {
+  applyMatchers(html, formats = {}) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const container = doc.body;
     const nodeMatches = new WeakMap();
@@ -133,8 +135,9 @@ class Clipboard extends Module {
     if (
       deltaEndsWith(delta, '\n') &&
       (delta.ops[delta.ops.length - 1].attributes == null ||
-        formats.tableCellLine ||
-        formats.tableHeaderCell)
+        Object.values(formats).some(blotName =>
+          this.tableBlots.includes(blotName),
+        ))
     ) {
       return delta.compose(new Delta().retain(delta.length() - 1).delete(1));
     }
@@ -448,25 +451,6 @@ function matchBlot(node, delta, scroll) {
   return delta;
 }
 
-function matchDimensions(node, delta) {
-  const isTableNode = TABLE_TAGS.indexOf(node.tagName) !== -1;
-  return delta.reduce((newDelta, op) => {
-    const isEmbed = typeof op.insert === 'object';
-    const attributes = op.attributes || {};
-    const { width, height, ...rest } = attributes;
-    const formats =
-      attributes.tableCellLine ||
-      attributes.tableHeaderCellLine ||
-      attributes.tableCell ||
-      attributes.tableHeaderCell ||
-      isTableNode ||
-      isEmbed
-        ? attributes
-        : { ...rest };
-    return newDelta.insert(op.insert, formats);
-  }, new Delta());
-}
-
 function matchBreak(node, delta) {
   if (!deltaEndsWith(delta, '\n')) {
     delta.insert('\n');
@@ -571,45 +555,6 @@ function matchStyles(node, delta) {
   return delta;
 }
 
-// function matchTable(node, delta) {
-//   const table =
-//     node.parentNode.tagName === 'TABLE'
-//       ? node.parentNode
-//       : node.parentNode.parentNode;
-//   const isHeaderRow = node.parentNode.tagName === 'THEAD' ? true : null;
-//   const rows = Array.from(table.querySelectorAll('tr'));
-//   const row = rows.indexOf(node) + 1;
-//   return applyFormat(delta, isHeaderRow ? 'tableHeaderCell' : 'table', row);
-// }
-
-function matchCell(node, delta) {
-  const row = node.parentNode;
-  const table =
-    row.parentNode.tagName === 'TABLE'
-      ? row.parentNode
-      : row.parentNode.parentNode;
-  const isHeaderRow = row.parentNode.tagName === 'THEAD' ? true : null;
-  const rows = Array.from(table.querySelectorAll('tr'));
-  const cells = Array.from(row.querySelectorAll('th,td'));
-  const rowId = rows.indexOf(row) + 1;
-  const cellId = cells.indexOf(node) + 1;
-  const cellLineBlotName = isHeaderRow
-    ? 'tableHeaderCellLine'
-    : 'tableCellLine';
-
-  if (delta.length() === 0) {
-    delta = new Delta().insert('\n', {
-      [cellLineBlotName]: { row: rowId, cell: cellId },
-    });
-    return delta;
-  }
-  if (!deltaEndsWith(delta, '\n')) {
-    delta.insert('\n');
-  }
-
-  return applyFormat(delta, cellLineBlotName, { row: rowId, cell: cellId });
-}
-
 function matchPlainText(node, delta) {
   let text = node.data || '';
   text = text.replace(/\r\n/g, '\n');
@@ -655,4 +600,6 @@ export {
   matchNewline,
   matchText,
   traverse,
+  applyFormat,
+  deltaEndsWith,
 };
