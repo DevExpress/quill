@@ -1,5 +1,5 @@
 import Embed from '../blots/embed';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 
 class Formula extends Embed {
   static create(value) {

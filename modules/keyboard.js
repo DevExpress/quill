@@ -5,7 +5,7 @@ import { EmbedBlot, Scope, TextBlot } from 'parchment';
 import Quill from '../core/quill';
 import logger from '../core/logger';
 import Module from '../core/module';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 
 const debug = logger('quill:keyboard');
 

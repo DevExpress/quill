@@ -1,7 +1,8 @@
 import Block from '../../blots/block';
 import Break from '../../blots/break';
 import Container from '../../blots/container';
-import isDefined from '../../utils/isDefined';
+import isDefined from '../../utils/is_defined';
+import getId from './get_id';
 
 const CELL_IDENTITY_KEYS = ['row', 'cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
@@ -449,12 +450,6 @@ TableHeaderCell.allowedChildren = [HeaderCellLine];
 
 TableHeaderRow.allowedChildren = [TableHeaderCell];
 TableHeaderCell.requiredContainer = TableHeaderRow;
-
-function getId() {
-  return Math.random()
-    .toString(36)
-    .slice(2, 6);
-}
 
 function tableId() {
   return `row-${getId()}`;

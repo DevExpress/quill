@@ -9,7 +9,7 @@ import CursorBlot from '../blots/cursor';
 import TextBlot, { escapeText } from '../blots/text';
 import CodeBlock, { CodeBlockContainer } from '../formats/code';
 import { traverse } from './clipboard';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 
 const TokenAttributor = new ClassAttributor('code-token', 'hljs', {
   scope: Scope.INLINE,

@@ -1,5 +1,5 @@
 import EventEmitter from 'eventemitter3';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 import instances from './instances';
 import logger from './logger';
 

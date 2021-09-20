@@ -13,7 +13,7 @@ import {
   TABLE_TAGS,
 } from '../formats/table/lite';
 import { applyFormat } from './clipboard';
-import isDefined from '../utils/isDefined';
+import isDefined from '../utils/is_defined';
 
 const ELEMENT_NODE = 1;
 
@@ -33,7 +33,6 @@ class TableLite extends Module {
 
     this.quill.clipboard.addTableBlot(TableCell.blotName);
     this.quill.clipboard.addTableBlot(TableHeaderCell.blotName);
-    console.log('add matcher');
 
     this.quill.clipboard.addMatcher('tr', matchTable);
     this.quill.clipboard.addMatcher(ELEMENT_NODE, matchDimensions);

@@ -1,5 +1,5 @@
 import { EmbedBlot } from 'parchment';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 import { sanitize } from './link';
 
 const ATTRIBUTES = ['alt', 'height', 'width'];

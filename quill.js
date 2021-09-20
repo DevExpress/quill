@@ -95,11 +95,12 @@ Quill.register(
     'formats/image': Image,
     'formats/video': Video,
 
-    'modules/syntax': Syntax,
-    'modules/multiline': Multiline,
-
     'tableModules/lite': TableLite,
     'tableModules/main': Table,
+
+    'modules/syntax': Syntax,
+    'modules/multiline': Multiline,
+    'modules/table': TableLite,
   },
   true,
 );

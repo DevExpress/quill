@@ -1,7 +1,7 @@
 import Delta from 'quill-delta';
 import Emitter from '../core/emitter';
 import Module from '../core/module';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 
 class Uploader extends Module {
   constructor(quill, options) {

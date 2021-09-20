@@ -1,6 +1,6 @@
 import Delta from 'quill-delta';
 import Quill from '../core/quill';
-import MultilineBreak from '../blots/multilineBreak';
+import MultilineBreak from '../blots/multiline_break';
 import Module from '../core/module';
 
 function breakMatcher(node) {

@@ -1,7 +1,7 @@
 import { Scope } from 'parchment';
 import Quill from '../core/quill';
 import Module from '../core/module';
-import hasWindow from '../utils/hasWindow';
+import hasWindow from '../utils/has_window';
 
 class History extends Module {
   constructor(quill, options) {

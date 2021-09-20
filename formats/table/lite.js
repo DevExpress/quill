@@ -1,6 +1,7 @@
 import Block from '../../blots/block';
 import Container from '../../blots/container';
-import isDefined from '../../utils/isDefined';
+import isDefined from '../../utils/is_defined';
+import getId from './get_id';
 
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
@@ -289,10 +290,7 @@ TableHeaderRow.allowedChildren = [TableHeaderCell];
 TableHeaderCell.requiredContainer = TableHeaderRow;
 
 function tableId() {
-  const id = Math.random()
-    .toString(36)
-    .slice(2, 6);
-  return `row-${id}`;
+  return `row-${getId()}`;
 }
 
 export {

@@ -14,7 +14,7 @@ import {
   HeaderCellLine,
   TABLE_TAGS,
 } from '../formats/table';
-import isDefined from '../utils/isDefined';
+import isDefined from '../utils/is_defined';
 import { deltaEndsWith, applyFormat } from './clipboard';
 
 const ELEMENT_NODE = 1;
