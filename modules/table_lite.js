@@ -31,13 +31,27 @@ class TableLite extends Module {
   constructor(...args) {
     super(...args);
 
+    this.integrateClipboard();
+    this.addKeyboardHandlers();
+
+    this.listenBalanceCells();
+  }
+
+  integrateClipboard() {
     this.quill.clipboard.addTableBlot(TableCell.blotName);
     this.quill.clipboard.addTableBlot(TableHeaderCell.blotName);
 
     this.quill.clipboard.addMatcher('tr', matchTable);
     this.quill.clipboard.addMatcher(ELEMENT_NODE, matchDimensions);
+  }
 
-    this.listenBalanceCells();
+  addKeyboardHandlers() {
+    const bindings = TableLite.keyboardBindings;
+    Object.keys(bindings).forEach(name => {
+      if (bindings[name]) {
+        this.quill.keyboard.addBinding(bindings[name]);
+      }
+    });
   }
 
   balanceTables() {
@@ -207,6 +221,89 @@ class TableLite extends Module {
   }
 }
 
+TableLite.keyboardBindings = {
+  'table backspace': {
+    key: 'backspace',
+    format: ['table', 'tableHeaderCell'],
+    collapsed: true,
+    offset: 0,
+    handler() {},
+  },
+  'table delete': {
+    key: 'del',
+    format: ['table', 'tableHeaderCell'],
+    collapsed: true,
+    suffix: /^$/,
+    handler() {},
+  },
+  'table enter': {
+    key: 'enter',
+    shiftKey: null,
+    format: ['table'],
+    handler(range) {
+      const module = this.quill.getModule('table');
+      if (module) {
+        const { quill } = this;
+        const [table, row, cell, offset] = module.getTable(range);
+        const shift = tableSide(row, cell, offset);
+
+        if (shift == null) {
+          return;
+        }
+
+        const index = table.offset();
+        const hasHead = table.children.length > 1 && table.children.head;
+        if (shift < 0 && !hasHead) {
+          insertParagraphAbove({ quill, index, range });
+        } else {
+          insertParagraphBelow({ quill, index, table });
+        }
+      }
+    },
+  },
+  'table header enter': {
+    key: 'enter',
+    shiftKey: null,
+    format: ['tableHeaderCell'],
+    handler(range) {
+      const module = this.quill.getModule('table');
+      if (module) {
+        const { quill } = this;
+        const [table, row, cell, offset] = module.getTable(range);
+        const shift = tableSide(row, cell, offset);
+
+        if (shift == null) {
+          return;
+        }
+
+        const index = table.offset();
+        const hasBody = table.children.length > 1 && table.children.tail;
+        if (shift < 0 || (shift > 0 && hasBody)) {
+          insertParagraphAbove({ quill, index, range });
+        } else {
+          insertParagraphBelow({ quill, index, table });
+        }
+      }
+    },
+  },
+  'table tab': {
+    key: 'tab',
+    shiftKey: null,
+    format: ['table', 'tableHeaderCell'],
+    handler(range, context) {
+      const { event, line: cell } = context;
+      const offset = cell.offset(this.quill.scroll);
+      if (event.shiftKey) {
+        this.quill.setSelection(offset - 1, Quill.sources.USER);
+      } else {
+        this.quill.setSelection(offset + cell.length(), Quill.sources.USER);
+      }
+    },
+  },
+  'table down': makeTableArrowHandler(false),
+  'table up': makeTableArrowHandler(true),
+};
+
 function matchTable(node, delta) {
   const table =
     node.parentNode.tagName === 'TABLE'
@@ -230,6 +327,84 @@ function matchDimensions(node, delta) {
         : { ...rest };
     return newDelta.insert(op.insert, formats);
   }, new Delta());
+}
+
+function makeTableArrowHandler(up) {
+  return {
+    key: up ? 'upArrow' : 'downArrow',
+    collapsed: true,
+    format: ['table', 'tableHeaderCell'],
+    handler(range, context) {
+      const key = up ? 'prev' : 'next';
+      const cell = context.line;
+      const targetRow = cell.parent[key];
+      if (targetRow != null) {
+        if (
+          targetRow.statics.blotName === 'tableRow' ||
+          targetRow.statics.blotName === 'tableHeaderRow'
+        ) {
+          let targetCell = targetRow.children.head;
+          let cur = cell;
+          while (cur.prev != null) {
+            cur = cur.prev;
+            targetCell = targetCell.next;
+          }
+          const index =
+            targetCell.offset(this.quill.scroll) +
+            Math.min(context.offset, targetCell.length() - 1);
+          this.quill.setSelection(index, 0, Quill.sources.USER);
+        }
+      } else {
+        const targetLine = cell.table()[key];
+        if (targetLine != null) {
+          if (up) {
+            this.quill.setSelection(
+              targetLine.offset(this.quill.scroll) + targetLine.length() - 1,
+              0,
+              Quill.sources.USER,
+            );
+          } else {
+            this.quill.setSelection(
+              targetLine.offset(this.quill.scroll),
+              0,
+              Quill.sources.USER,
+            );
+          }
+        }
+      }
+      return false;
+    },
+  };
+}
+
+function tableSide(row, cell, offset) {
+  if (row.prev == null && row.next == null) {
+    if (cell.prev == null && cell.next == null) {
+      return offset === 0 ? -1 : 1;
+    }
+    return cell.prev == null ? -1 : 1;
+  }
+  if (row.prev == null) {
+    return -1;
+  }
+  if (row.next == null) {
+    return 1;
+  }
+  return null;
+}
+
+function insertParagraphAbove({ quill, index, range }) {
+  const insertIndex = index - 1;
+  const delta = new Delta().retain(insertIndex).insert('\n');
+  quill.updateContents(delta, Quill.sources.USER);
+  quill.setSelection(range.index + 1, range.length, Quill.sources.SILENT);
+}
+
+function insertParagraphBelow({ quill, index, table }) {
+  const insertIndex = index + table.length();
+  const delta = new Delta().retain(insertIndex).insert('\n');
+  quill.updateContents(delta, Quill.sources.USER);
+  quill.setSelection(insertIndex, Quill.sources.USER);
 }
 
 export default TableLite;

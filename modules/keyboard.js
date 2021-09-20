@@ -498,125 +498,6 @@ Keyboard.DEFAULTS = {
         this.quill.scrollIntoView();
       },
     },
-    'table backspace': {
-      key: 'backspace',
-      format: ['table', 'tableHeaderCell'],
-      collapsed: true,
-      offset: 0,
-      handler() {},
-    },
-    'table delete': {
-      key: 'del',
-      format: ['table', 'tableHeaderCell'],
-      collapsed: true,
-      suffix: /^$/,
-      handler() {},
-    },
-    // 'table enter': {
-    //   key: 'enter',
-    //   shiftKey: null,
-    //   format: ['table'],
-    //   handler(range) {
-    //     const module = this.quill.getModule('table');
-    //     if (module) {
-    //       const { quill } = this;
-    //       const [table, row, cell, offset] = module.getTable(range);
-    //       const shift = tableSide(row, cell, offset);
-
-    //       if (shift == null) {
-    //         return;
-    //       }
-
-    //       const index = table.offset();
-    //       const hasHead = table.children.length > 1 && table.children.head;
-    //       if (shift < 0 && !hasHead) {
-    //         insertParagraphAbove({ quill, index, range });
-    //       } else {
-    //         insertParagraphBelow({ quill, index, table });
-    //       }
-    //     }
-    //   },
-    // },
-    'table-cell-line enter': {
-      key: 'enter',
-      shiftKey: null,
-      format: ['tableCellLine'],
-      handler(range, context) {
-        // bugfix: a unexpected new line inserted when user compositionend with hitting Enter
-        if (this.quill.selection && this.quill.selection.composing) return;
-        if (range.length > 0) {
-          this.quill.scroll.deleteAt(range.index, range.length); // So we do not trigger text-change
-        }
-        const lineFormats = Object.keys(context.format).reduce(
-          (formats, format) => {
-            if (
-              this.quill.scroll.query(format, Scope.BLOCK) &&
-              !Array.isArray(context.format[format])
-            ) {
-              formats[format] = context.format[format];
-            }
-            return formats;
-          },
-          {},
-        );
-        // insert new cellLine with lineFormats
-        this.quill.insertText(
-          range.index,
-          '\n',
-          lineFormats.tableCellLine,
-          Quill.sources.USER,
-        );
-        // Earlier scroll.deleteAt might have messed up our selection,
-        // so insertText's built in selection preservation is not reliable
-        this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
-        this.quill.focus();
-        Object.keys(context.format).forEach(name => {
-          if (lineFormats[name] != null) return;
-          if (Array.isArray(context.format[name])) return;
-          if (name === 'link') return;
-          this.quill.format(name, context.format[name], Quill.sources.USER);
-        });
-      },
-    },
-    'table header enter': {
-      key: 'enter',
-      shiftKey: null,
-      format: ['tableHeaderCell'],
-      handler(range) {
-        const module = this.quill.getModule('table');
-        if (module) {
-          const { quill } = this;
-          const [table, row, cell, offset] = module.getTable(range);
-          const shift = tableSide(row, cell, offset);
-
-          if (shift == null) {
-            return;
-          }
-
-          const index = table.offset();
-          const hasBody = table.children.length > 1 && table.children.tail;
-          if (shift < 0 || (shift > 0 && hasBody)) {
-            insertParagraphAbove({ quill, index, range });
-          } else {
-            insertParagraphBelow({ quill, index, table });
-          }
-        }
-      },
-    },
-    'table tab': {
-      key: 'tab',
-      shiftKey: null,
-      format: ['table', 'tableHeaderCell'],
-      handler(range, context) {
-        const { event, line: cell } = context;
-        const offset = cell.offset(this.quill.scroll);
-        if (event.shiftKey) {
-          this.quill.setSelection(offset - 1, Quill.sources.USER);
-        } else {
-          this.quill.setSelection(offset + cell.length(), Quill.sources.USER);
-        }
-      },
-    },
     'list autofill': {
       key: 'space',
       shiftKey: null,
@@ -697,8 +578,6 @@ Keyboard.DEFAULTS = {
     'embed left shift': makeEmbedArrowHandler('leftArrow', true),
     'embed right': makeEmbedArrowHandler('rightArrow', false),
     'embed right shift': makeEmbedArrowHandler('rightArrow', true),
-    'table down': makeTableArrowHandler(false),
-    'table up': makeTableArrowHandler(true),
   },
 };
 
@@ -788,55 +667,6 @@ function makeFormatHandler(format) {
   };
 }
 
-function makeTableArrowHandler(up) {
-  return {
-    key: up ? 'upArrow' : 'downArrow',
-    collapsed: true,
-    format: ['table', 'tableHeaderCell'],
-    handler(range, context) {
-      // TODO move to table module
-      const key = up ? 'prev' : 'next';
-      const cell = context.line;
-      const targetRow = cell.parent[key];
-      if (targetRow != null) {
-        if (
-          targetRow.statics.blotName === 'tableRow' ||
-          targetRow.statics.blotName === 'tableHeaderRow'
-        ) {
-          let targetCell = targetRow.children.head;
-          let cur = cell;
-          while (cur.prev != null) {
-            cur = cur.prev;
-            targetCell = targetCell.next;
-          }
-          const index =
-            targetCell.offset(this.quill.scroll) +
-            Math.min(context.offset, targetCell.length() - 1);
-          this.quill.setSelection(index, 0, Quill.sources.USER);
-        }
-      } else {
-        const targetLine = cell.table()[key];
-        if (targetLine != null) {
-          if (up) {
-            this.quill.setSelection(
-              targetLine.offset(this.quill.scroll) + targetLine.length() - 1,
-              0,
-              Quill.sources.USER,
-            );
-          } else {
-            this.quill.setSelection(
-              targetLine.offset(this.quill.scroll),
-              0,
-              Quill.sources.USER,
-            );
-          }
-        }
-      }
-      return false;
-    },
-  };
-}
-
 function normalize(binding) {
   if (typeof binding === 'string' || typeof binding === 'number') {
     binding = { key: binding };
@@ -865,36 +695,6 @@ function deleteRange({ quill, range }) {
     quill.formatLine(range.index, 1, formats, Quill.sources.USER);
   }
   quill.setSelection(range.index, Quill.sources.SILENT);
-}
-
-function tableSide(row, cell, offset) {
-  if (row.prev == null && row.next == null) {
-    if (cell.prev == null && cell.next == null) {
-      return offset === 0 ? -1 : 1;
-    }
-    return cell.prev == null ? -1 : 1;
-  }
-  if (row.prev == null) {
-    return -1;
-  }
-  if (row.next == null) {
-    return 1;
-  }
-  return null;
-}
-
-function insertParagraphAbove({ quill, index, range }) {
-  const insertIndex = index - 1;
-  const delta = new Delta().retain(insertIndex).insert('\n');
-  quill.updateContents(delta, Quill.sources.USER);
-  quill.setSelection(range.index + 1, range.length, Quill.sources.SILENT);
-}
-
-function insertParagraphBelow({ quill, index, table }) {
-  const insertIndex = index + table.length();
-  const delta = new Delta().retain(insertIndex).insert('\n');
-  quill.updateContents(delta, Quill.sources.USER);
-  quill.setSelection(insertIndex, Quill.sources.USER);
 }
 
 export { Keyboard as default, SHORTKEY, normalize, deleteRange };
