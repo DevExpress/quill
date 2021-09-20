@@ -1,7 +1,7 @@
 import Delta from 'quill-delta';
+import { Scope } from 'parchment';
 import Quill from '../core/quill';
 import Module from '../core/module';
-import { Scope } from 'parchment';
 import {
   CellLine,
   TableCell,
