@@ -22,15 +22,15 @@ const ELEMENT_NODE = 1;
 
 class Table extends Module {
   static register() {
-    Quill.register(CellLine);
-    Quill.register(HeaderCellLine);
-    Quill.register(TableHeaderCell);
-    Quill.register(TableCell);
-    Quill.register(TableHeaderRow);
-    Quill.register(TableRow);
-    Quill.register(TableBody);
-    Quill.register(TableHeader);
-    Quill.register(TableContainer);
+    Quill.register(CellLine, true);
+    Quill.register(HeaderCellLine, true);
+    Quill.register(TableHeaderCell, true);
+    Quill.register(TableCell, true);
+    Quill.register(TableHeaderRow, true);
+    Quill.register(TableRow, true);
+    Quill.register(TableBody, true);
+    Quill.register(TableHeader, true);
+    Quill.register(TableContainer, true);
   }
 
   constructor(...args) {

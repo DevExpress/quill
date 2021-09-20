@@ -19,13 +19,13 @@ const ELEMENT_NODE = 1;
 
 class TableLite extends Module {
   static register() {
-    Quill.register(TableHeaderCell);
-    Quill.register(TableCell);
-    Quill.register(TableHeaderRow);
-    Quill.register(TableRow);
-    Quill.register(TableBody);
-    Quill.register(TableHeader);
-    Quill.register(TableContainer);
+    Quill.register(TableHeaderCell, true);
+    Quill.register(TableCell, true);
+    Quill.register(TableHeaderRow, true);
+    Quill.register(TableRow, true);
+    Quill.register(TableBody, true);
+    Quill.register(TableHeader, true);
+    Quill.register(TableContainer, true);
   }
 
   constructor(...args) {
