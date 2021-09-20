@@ -1,7 +1,12 @@
 import Delta from 'quill-delta';
 import Quill from '../../../core/quill';
+import TableLite from '../../../modules/table_lite';
 
 describe('Table Module', function() {
+  beforeAll(function() {
+    Quill.register({ 'modules/table': TableLite }, true);
+  });
+
   describe('insert table', function() {
     it('empty', function() {
       const quill = this.initialize(Quill, '<p><br></p>', this.container, {

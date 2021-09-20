@@ -1,5 +1,6 @@
 import Delta from 'quill-delta';
 import Editor from '../../../core/editor';
+import TableLite from '../../../modules/table_lite';
 
 const tableDelta = new Delta()
   .insert('A1')
@@ -43,6 +44,10 @@ const tableHTML = `
   </table>`;
 
 describe('Table', function() {
+  beforeAll(function() {
+    TableLite.register();
+  });
+
   it('initialize', function() {
     const editor = this.initialize(Editor, tableHTML);
     expect(editor.getDelta()).toEqual(tableDelta);

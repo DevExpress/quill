@@ -1,6 +1,7 @@
 import Delta from 'quill-delta';
 import { Range } from '../../../core/selection';
 import Quill from '../../../core';
+import TableLite from '../../../modules/table_lite';
 
 describe('Clipboard', function() {
   describe('events', function() {
@@ -257,86 +258,6 @@ describe('Clipboard', function() {
       );
     });
 
-    it('html table', function() {
-      const delta = this.clipboard.convert({
-        html:
-          '<table>' +
-          '<thead><tr><td>A1</td><td>A2</td><td>A3</td></tr></thead>' +
-          '<tbody><tr><td>B1</td><td></td><td>B3</td></tr></tbody>' +
-          '</table>',
-      });
-      expect(delta).toEqual(
-        new Delta()
-          .insert('A1\nA2\nA3\n', { tableHeaderCell: 1 })
-          .insert('B1\n\nB3\n', { table: 2 }),
-      );
-    });
-
-    it('table with dimensions', function() {
-      const delta = this.clipboard.convert({
-        html:
-          '<table>' +
-          '<thead><tr><td width="20px" height="10px">A1</td><td width="50px">A2</td><td>A3</td></tr></thead>' +
-          '<tbody><tr><td>B1</td><td></td><td height="100px">B3</td></tr></tbody>' +
-          '</table>',
-      });
-      expect(delta).toEqual(
-        new Delta()
-          .insert('A1\n', {
-            tableHeaderCell: 1,
-            width: '20px',
-            height: '10px',
-          })
-          .insert('A2\n', { tableHeaderCell: 1, width: '50px' })
-          .insert('A3\n', { tableHeaderCell: 1 })
-          .insert('B1\n\n', { table: 2 })
-          .insert('B3\n', { table: 2, height: '100px' }),
-      );
-    });
-
-    it('table with style dimensions', function() {
-      const delta = this.clipboard.convert({
-        html:
-          '<table>' +
-          '<tbody><tr><td style="width: 100px; height: 200px">A1</td><td>A2</td></tr></tbody>' +
-          '</table>',
-      });
-      expect(delta).toEqual(
-        new Delta()
-          .insert('A1\n', { table: 1, width: '100px', height: '200px' })
-          .insert('A2\n', { table: 1 }),
-      );
-    });
-
-    it('simple blocks with dimensions', function() {
-      const delta = this.clipboard.convert({
-        html: '<p width="20px" height="30px">test</p>',
-      });
-      expect(delta).toEqual(new Delta().insert('test'));
-    });
-
-    it('simple blocks with style dimensions', function() {
-      const delta = this.clipboard.convert({
-        html: '<p style="width: 100px; height: 200px">test</p>',
-      });
-      expect(delta).toEqual(new Delta().insert('test'));
-    });
-
-    it('embeds', function() {
-      const delta = this.clipboard.convert({
-        html:
-          '<div>01<img src="/assets/favicon.png" height="200" width="300">34</div>',
-      });
-      const expected = new Delta()
-        .insert('01')
-        .insert(
-          { image: '/assets/favicon.png' },
-          { height: '200', width: '300' },
-        )
-        .insert('34');
-      expect(delta).toEqual(expected);
-    });
-
     it('block embed', function() {
       const delta = this.clipboard.convert({
         html: '<p>01</p><iframe src="#"></iframe><p>34</p>',
@@ -551,6 +472,98 @@ describe('Clipboard', function() {
       });
 
       expect(delta).toEqual(new Delta().insert('<h1>123</h1>'));
+    });
+  });
+
+  describe('table matchers', function() {
+    beforeAll(function() {
+      Quill.register({ 'modules/table': TableLite }, true);
+    });
+
+    beforeEach(function() {
+      this.quill = this.initialize(Quill, '', this.container, {
+        modules: { table: true },
+      });
+    });
+
+    it('html table', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
+          '<table>' +
+          '<thead><tr><td>A1</td><td>A2</td><td>A3</td></tr></thead>' +
+          '<tbody><tr><td>B1</td><td></td><td>B3</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\nA2\nA3\n', { tableHeaderCell: 1 })
+          .insert('B1\n\nB3\n', { table: 2 }),
+      );
+    });
+
+    it('table with dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
+          '<table>' +
+          '<thead><tr><td width="20px" height="10px">A1</td><td width="50px">A2</td><td>A3</td></tr></thead>' +
+          '<tbody><tr><td>B1</td><td></td><td height="100px">B3</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\n', {
+            tableHeaderCell: 1,
+            width: '20px',
+            height: '10px',
+          })
+          .insert('A2\n', { tableHeaderCell: 1, width: '50px' })
+          .insert('A3\n', { tableHeaderCell: 1 })
+          .insert('B1\n\n', { table: 2 })
+          .insert('B3\n', { table: 2, height: '100px' }),
+      );
+    });
+
+    it('table with style dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
+          '<table>' +
+          '<tbody><tr><td style="width: 100px; height: 200px">A1</td><td>A2</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\n', { table: 1, width: '100px', height: '200px' })
+          .insert('A2\n', { table: 1 }),
+      );
+    });
+
+    it('simple blocks with dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html: '<p width="20px" height="30px">test</p>',
+      });
+      expect(delta).toEqual(new Delta().insert('test'));
+    });
+
+    it('simple blocks with style dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html: '<p style="width: 100px; height: 200px">test</p>',
+      });
+      expect(delta).toEqual(new Delta().insert('test'));
+    });
+
+    it('embeds', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
+          '<div>01<img src="/assets/favicon.png" height="200" width="300">34</div>',
+      });
+      const expected = new Delta()
+        .insert('01')
+        .insert(
+          { image: '/assets/favicon.png' },
+          { height: '200', width: '300' },
+        )
+        .insert('34');
+      expect(delta).toEqual(expected);
     });
   });
 });

@@ -1,106 +1,27 @@
-import Block from '../blots/block';
-import Break from '../blots/break';
-import Container from '../blots/container';
-import isDefined from '../utils/isDefined';
+import Block from '../../blots/block';
+import Container from '../../blots/container';
+import isDefined from '../../utils/isDefined';
 
-const CELL_IDENTITY_KEYS = ['row', 'cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
-class CellLine extends Block {
+class BaseCell extends Block {
   static create(value) {
-    const node = super.create(value);
-    CELL_IDENTITY_KEYS.forEach(key => {
-      const identityMarker = key === 'row' ? tableId : cellId;
-      node.setAttribute(`data-${key}`, value[key] || identityMarker());
-    });
-
+    const node = super.create();
+    const attrName = this.dataAttribute;
+    if (value) {
+      node.setAttribute(attrName, value);
+    } else {
+      node.setAttribute(attrName, tableId());
+    }
     return node;
   }
 
   static formats(domNode) {
-    return CELL_IDENTITY_KEYS.reduce((formats, attribute) => {
-      if (domNode.hasAttribute(`data-${attribute}`)) {
-        formats[attribute] =
-          domNode.getAttribute(`data-${attribute}`) || undefined;
-      }
-      return formats;
-    }, {});
-  }
-
-  optimize(...args) {
-    const rowId = this.domNode.getAttribute('data-row');
-    if (
-      this.statics.requiredContainer &&
-      !(this.parent instanceof this.statics.requiredContainer)
-    ) {
-      this.wrap(this.statics.requiredContainer.blotName, { row: rowId });
+    const attrName = this.dataAttribute;
+    if (domNode.hasAttribute(attrName)) {
+      return domNode.getAttribute(attrName);
     }
-
-    super.optimize(...args);
-  }
-
-  format(name, value) {
-    if (CELL_IDENTITY_KEYS.indexOf(name) > -1) {
-      if (value) {
-        this.domNode.setAttribute(`data-${name}`, value);
-      } else {
-        this.domNode.removeAttribute(`data-${name}`);
-      }
-    } else {
-      super.format(name, value);
-    }
-  }
-
-  cell() {
-    return this.parent;
-  }
-}
-CellLine.blotName = 'tableCellLine';
-CellLine.className = 'ql-table-cell-line';
-CellLine.tagName = 'P';
-
-class HeaderCellLine extends CellLine {}
-HeaderCellLine.blotName = 'tableHeaderCellLine';
-HeaderCellLine.className = 'ql-table-header-cell-line';
-
-class BaseCell extends Container {
-  checkMerge() {
-    if (super.checkMerge() && this.next.children.head != null) {
-      const thisHead = this.children.head.formats()[
-        this.children.head.statics.blotName
-      ];
-      const thisTail = this.children.tail.formats()[
-        this.children.tail.statics.blotName
-      ];
-      const nextHead = this.next.children.head.formats()[
-        this.next.children.head.statics.blotName
-      ];
-      const nextTail = this.next.children.tail.formats()[
-        this.next.children.tail.statics.blotName
-      ];
-
-      return (
-        thisHead.cell === thisTail.cell &&
-        thisHead.cell === nextHead.cell &&
-        thisHead.cell === nextTail.cell
-      );
-    }
-    return false;
-  }
-
-  formats() {
-    const formats = {};
-
-    if (
-      this.domNode.hasAttribute('data-row') ||
-      this.domNode.hasAttribute('data-header-row')
-    ) {
-      formats.row =
-        this.domNode.getAttribute('data-row') ||
-        this.domNode.getAttribute('data-header-row');
-    }
-
-    return formats;
+    return undefined;
   }
 
   cellOffset() {
@@ -124,84 +45,42 @@ class BaseCell extends Container {
   table() {
     return this.row() && this.row().table();
   }
-
-  optimize(...args) {
-    const rowId =
-      this.domNode.getAttribute('data-row') ||
-      this.domNode.getAttribute('data-header-row');
-
-    if (
-      this.statics.requiredContainer &&
-      !(this.parent instanceof this.statics.requiredContainer)
-    ) {
-      this.wrap(this.statics.requiredContainer.blotName, { row: rowId });
-    }
-    super.optimize(...args);
-  }
 }
 BaseCell.tagName = ['TD', 'TH'];
 
 class TableCell extends BaseCell {
-  static create(value) {
-    const node = super.create();
-    const attrName = 'data-row';
-    if (value && value.row) {
-      node.setAttribute(attrName, value.row);
-    }
-    return node;
-  }
-
   format(name, value) {
-    if (['row'].indexOf(name) > -1) {
-      this.domNode.setAttribute(`data-${name}`, value);
-      this.children.forEach(child => {
-        child.format(name, value);
-      });
+    if (name === TableCell.blotName && value) {
+      this.domNode.setAttribute(TableCell.dataAttribute, value);
     } else {
       super.format(name, value);
     }
   }
 }
-TableCell.blotName = 'tableCell';
-TableCell.className = 'ql-table-data-cell';
+TableCell.blotName = 'table';
 TableCell.dataAttribute = 'data-row';
 
 class TableHeaderCell extends BaseCell {
-  static create(value) {
-    const node = super.create();
-    const attrName = 'data-header-row';
-    if (value && value.row) {
-      node.setAttribute(attrName, value.row);
-    }
-    return node;
-  }
-
   format(name, value) {
-    if (['row'].indexOf(name) > -1) {
-      this.domNode.setAttribute(`data-${name}`, value);
-      this.children.forEach(child => {
-        child.format(name, value);
-      });
+    if (name === TableHeaderCell.blotName && value) {
+      this.domNode.setAttribute(TableHeaderCell.dataAttribute, value);
     } else {
       super.format(name, value);
     }
   }
 }
 TableHeaderCell.tagName = ['TH', 'TD'];
-TableHeaderCell.className = 'ql-table-header-cell';
 TableHeaderCell.blotName = 'tableHeaderCell';
 TableHeaderCell.dataAttribute = 'data-header-row';
 
 class BaseRow extends Container {
   checkMerge() {
     if (super.checkMerge() && isDefined(this.next.children.head)) {
-      const formatName = 'row';
-
+      const formatName = this.childFormatName;
       const thisHead = this.children.head.formats();
       const thisTail = this.children.tail.formats();
       const nextHead = this.next.children.head.formats();
       const nextTail = this.next.children.tail.formats();
-
       return (
         thisHead[formatName] === thisTail[formatName] &&
         thisHead[formatName] === nextHead[formatName] &&
@@ -226,6 +105,7 @@ class BaseRow extends Container {
         if (next) {
           next.optimize();
         }
+        // We might be able to merge with prev now
         if (this.prev) {
           this.prev.optimize();
         }
@@ -242,21 +122,6 @@ class BaseRow extends Container {
 
   table() {
     return this.parent && this.parent.parent;
-  }
-
-  static create(value) {
-    const node = super.create(value);
-    node.setAttribute('data-row', value.row);
-    return node;
-  }
-
-  formats() {
-    return ['row'].reduce((formats, attrName) => {
-      if (this.domNode.hasAttribute(`data-${attrName}`)) {
-        formats[attrName] = this.domNode.getAttribute(`data-${attrName}`);
-      }
-      return formats;
-    }, {});
   }
 }
 BaseRow.tagName = 'TR';
@@ -281,11 +146,11 @@ TableHeaderRow.blotName = 'tableHeaderRow';
 
 class TableBody extends Container {}
 TableBody.blotName = 'tableBody';
-TableBody.tagName = 'TBODY';
+TableBody.tagName = ['TBODY'];
 
 class TableHeader extends Container {}
 TableHeader.blotName = 'tableHeader';
-TableHeader.tagName = 'THEAD';
+TableHeader.tagName = ['THEAD'];
 
 class TableContainer extends Container {
   balanceCells() {
@@ -316,11 +181,6 @@ class TableContainer extends Container {
           value = CellClass.formats(row.children.head.domNode);
         }
         const blot = this.scroll.create(CellClass.blotName, value);
-        const cellLine = this.scroll.create(
-          CellClass.allowedChildren[0].blotName,
-          value,
-        );
-        blot.appendChild(cellLine);
         row.appendChild(blot);
         blot.optimize(); // Add break blot
       });
@@ -354,21 +214,10 @@ class TableContainer extends Container {
       }
 
       const CellBlot = blot === TableHeader ? TableHeaderCell : TableCell;
-      const CellLineBlot = blot === TableHeader ? HeaderCellLine : CellLine;
-
       tablePart.children.forEach(row => {
         const ref = row.children.at(index);
-        const value = CellLineBlot.formats(
-          row.children.head.children.head.domNode,
-        );
-        const cell = this.scroll.create(CellBlot.blotName, { row: value.row });
-        const cellLine = this.scroll.create(CellLineBlot.blotName, {
-          row: value.row,
-        });
-        const emptyLine = this.scroll.create(Break.blotName);
-
-        cellLine.appendChild(emptyLine);
-        cell.appendChild(cellLine);
+        const value = CellBlot.formats(row.children.head.domNode);
+        const cell = this.scroll.create(CellBlot.blotName, value);
         row.insertBefore(cell, ref);
       });
     });
@@ -381,14 +230,9 @@ class TableContainer extends Container {
     }
 
     const id = tableId();
-    const row = this.scroll.create(TableRow.blotName, { row: id });
+    const row = this.scroll.create(TableRow.blotName);
     body.children.head.children.forEach(() => {
-      const cell = this.scroll.create(TableCell.blotName, { row: id });
-      const cellLine = this.scroll.create(CellLine.blotName, { row: id });
-      const emptyLine = this.scroll.create(Break.blotName);
-
-      cellLine.appendChild(emptyLine);
-      cell.appendChild(cellLine);
+      const cell = this.scroll.create(TableCell.blotName, id);
       row.appendChild(cell);
     });
     const ref = body.children.at(index);
@@ -438,35 +282,20 @@ TableRow.requiredContainer = TableBody;
 TableRow.allowedChildren = [TableCell];
 TableCell.requiredContainer = TableRow;
 
-CellLine.requiredContainer = TableCell;
-TableCell.allowedChildren = [CellLine];
-
 TableHeader.allowedChildren = [TableHeaderRow];
 TableHeaderRow.requiredContainer = TableHeader;
-
-HeaderCellLine.requiredContainer = TableHeaderCell;
-TableHeaderCell.allowedChildren = [HeaderCellLine];
 
 TableHeaderRow.allowedChildren = [TableHeaderCell];
 TableHeaderCell.requiredContainer = TableHeaderRow;
 
-function getId() {
-  return Math.random()
+function tableId() {
+  const id = Math.random()
     .toString(36)
     .slice(2, 6);
-}
-
-function tableId() {
-  return `row-${getId()}`;
-}
-
-function cellId() {
-  return `cell-${getId()}`;
+  return `row-${id}`;
 }
 
 export {
-  CellLine,
-  HeaderCellLine,
   TableCell,
   TableHeaderCell,
   TableRow,
