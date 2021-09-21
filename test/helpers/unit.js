@@ -63,6 +63,7 @@ function compareHTML(actual, expected, ignoreClassId, ignoreUI = true) {
     'height',
     'data-row',
     'data-header-row',
+    'data-cell',
     'contenteditable',
   ];
   if (ignoreClassId) {

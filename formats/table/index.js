@@ -90,15 +90,19 @@ class BaseCell extends Container {
   }
 
   formats() {
+    return BaseCell.cellFormats(this.domNode);
+  }
+
+  static cellFormats(domNode) {
     const formats = {};
 
     if (
-      this.domNode.hasAttribute('data-row') ||
-      this.domNode.hasAttribute('data-header-row')
+      domNode.hasAttribute('data-row') ||
+      domNode.hasAttribute('data-header-row')
     ) {
       formats.row =
-        this.domNode.getAttribute('data-row') ||
-        this.domNode.getAttribute('data-header-row');
+        domNode.getAttribute('data-row') ||
+        domNode.getAttribute('data-header-row');
     }
 
     return formats;
@@ -316,7 +320,7 @@ class TableContainer extends Container {
       new Array(maxColCount - row.children.length).fill(0).forEach(() => {
         let value;
         if (isDefined(row.children.head)) {
-          value = CellClass.formats(row.children.head.domNode);
+          value = CellClass.cellFormats(row.children.head.domNode);
         }
         const blot = this.scroll.create(CellClass.blotName, value);
         const cellLine = this.scroll.create(
@@ -416,7 +420,12 @@ class TableContainer extends Container {
     const ref = this.children.at(0);
     newHeader.appendChild(row);
     body.children.head.children.forEach(() => {
-      const cell = this.scroll.create(TableHeaderCell.blotName, id);
+      const cell = this.scroll.create(TableHeaderCell.blotName, { row: id });
+      const cellLine = this.scroll.create(HeaderCellLine.blotName, { row: id });
+      const emptyLine = this.scroll.create(Break.blotName);
+
+      cellLine.appendChild(emptyLine);
+      cell.appendChild(cellLine);
       row.appendChild(cell);
       cell.optimize();
     });

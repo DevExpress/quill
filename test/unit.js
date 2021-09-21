@@ -29,7 +29,8 @@ import './unit/modules/clipboard';
 import './unit/modules/history';
 import './unit/modules/keyboard';
 import './unit/modules/syntax';
-import './unit/modules/table';
+import './unit/modules/table_lite';
+import './unit/modules/table_main';
 
 // Syntax version will otherwise be registered
 Quill.register(CodeBlockContainer, true);
