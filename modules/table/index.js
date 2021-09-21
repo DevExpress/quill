@@ -238,7 +238,18 @@ Table.keyboardBindings = {
     format: ['tableCellLine', 'tableHeaderCellLine'],
     collapsed: true,
     offset: 0,
-    handler() {},
+    handler(range) {
+      const [line] = this.quill.getLine(range.index);
+      if (
+        !line.prev ||
+        ['tableCellLine', 'tableHeaderCellLine'].indexOf(
+          line.prev.statics.blotName,
+        ) === -1
+      ) {
+        return false;
+      }
+      return true;
+    },
   },
   'table delete': {
     key: 'del',
