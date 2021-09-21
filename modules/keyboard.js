@@ -109,53 +109,61 @@ class Keyboard extends Module {
         this.addBinding(this.options.bindings[name]);
       }
     });
-    this.addBinding({ key: 'enter', shiftKey: null }, this.handleEnter);
-    this.addBinding(
-      { key: 'enter', metaKey: null, ctrlKey: null, altKey: null },
-      () => {},
-    );
-    if (hasWindow() && /Firefox/i.test(navigator.userAgent)) {
-      // Need to handle delete and backspace for Firefox in the general case #1171
+
+    this.addInternalBindings();
+
+    this.listen();
+  }
+
+  addInternalBindings() {
+    this.quill.once(Quill.events.CONTENT_SETTED, () => {
+      this.addBinding({ key: 'enter', shiftKey: null }, this.handleEnter);
       this.addBinding(
-        { key: 'backspace' },
-        { collapsed: true },
-        this.handleBackspace,
+        { key: 'enter', metaKey: null, ctrlKey: null, altKey: null },
+        () => {},
       );
-      this.addBinding({ key: 'del' }, { collapsed: true }, this.handleDelete);
-    } else {
+      if (hasWindow() && /Firefox/i.test(navigator.userAgent)) {
+        // Need to handle delete and backspace for Firefox in the general case #1171
+        this.addBinding(
+          { key: 'backspace' },
+          { collapsed: true },
+          this.handleBackspace,
+        );
+        this.addBinding({ key: 'del' }, { collapsed: true }, this.handleDelete);
+      } else {
+        this.addBinding(
+          { key: 'backspace' },
+          { collapsed: true, prefix: /^.?$/ },
+          this.handleBackspace,
+        );
+        this.addBinding(
+          { key: 'del' },
+          { collapsed: true, suffix: /^.?$/ },
+          this.handleDelete,
+        );
+      }
       this.addBinding(
         { key: 'backspace' },
-        { collapsed: true, prefix: /^.?$/ },
-        this.handleBackspace,
+        { collapsed: false },
+        this.handleDeleteRange,
       );
       this.addBinding(
         { key: 'del' },
-        { collapsed: true, suffix: /^.?$/ },
-        this.handleDelete,
+        { collapsed: false },
+        this.handleDeleteRange,
       );
-    }
-    this.addBinding(
-      { key: 'backspace' },
-      { collapsed: false },
-      this.handleDeleteRange,
-    );
-    this.addBinding(
-      { key: 'del' },
-      { collapsed: false },
-      this.handleDeleteRange,
-    );
-    this.addBinding(
-      {
-        key: 'backspace',
-        altKey: null,
-        ctrlKey: null,
-        metaKey: null,
-        shiftKey: null,
-      },
-      { collapsed: true, offset: 0 },
-      this.handleBackspace,
-    );
-    this.listen();
+      this.addBinding(
+        {
+          key: 'backspace',
+          altKey: null,
+          ctrlKey: null,
+          metaKey: null,
+          shiftKey: null,
+        },
+        { collapsed: true, offset: 0 },
+        this.handleBackspace,
+      );
+    });
   }
 
   addBinding(keyBinding, context = {}, handler = {}) {

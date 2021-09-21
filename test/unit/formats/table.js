@@ -1,6 +1,6 @@
 import Delta from 'quill-delta';
 import Editor from '../../../core/editor';
-import TableLite from '../../../modules/table_lite';
+import TableLite from '../../../modules/table/lite';
 
 const tableDelta = new Delta()
   .insert('A1')

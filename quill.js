@@ -39,7 +39,7 @@ import CodeBlock, { Code as InlineCode } from './formats/code';
 import Syntax from './modules/syntax';
 import Table from './modules/table';
 import Multiline from './modules/multiline';
-import TableLite from './modules/table_lite';
+import TableLite from './modules/table/lite';
 
 Quill.register(
   {

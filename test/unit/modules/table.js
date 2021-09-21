@@ -1,6 +1,6 @@
 import Delta from 'quill-delta';
 import Quill from '../../../core/quill';
-import TableLite from '../../../modules/table_lite';
+import TableLite from '../../../modules/table/lite';
 
 describe('Table Module', function() {
   beforeAll(function() {

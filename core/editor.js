@@ -302,9 +302,10 @@ function convertHTML(blot, index, length, isRoot = false) {
     }
     const { outerHTML, innerHTML } = blot.domNode;
     const [start, end] = outerHTML.split(`>${innerHTML}<`);
-    // TODO cleanup
     if (start === '<table') {
-      return `<table style="border: 1px solid #000;">${parts.join('')}<${end}`;
+      return `<table style="border: 1px solid #000;">${parts
+        .join('')
+        .replace(/(\s?data-.+?=["'].*?["'])/g, '')}<${end}`;
     }
     return `${start}>${parts.join('')}<${end}`;
   }

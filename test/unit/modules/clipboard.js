@@ -1,7 +1,7 @@
 import Delta from 'quill-delta';
 import { Range } from '../../../core/selection';
 import Quill from '../../../core';
-import TableLite from '../../../modules/table_lite';
+import TableLite from '../../../modules/table/lite';
 
 describe('Clipboard', function() {
   describe('events', function() {

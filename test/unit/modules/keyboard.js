@@ -163,6 +163,9 @@ describe('Keyboard', function() {
       it(`handle ${key} keydown event`, function() {
         const quillMock = {
           root: document.createElement('div'),
+          once: (eventName, handler) => {
+            handler();
+          },
         };
         let counter = 0;
         // eslint-disable-next-line no-new

@@ -1,6 +1,6 @@
 import Delta from 'quill-delta';
-import Quill from '../core/quill';
-import Module from '../core/module';
+import Quill from '../../core/quill';
+import Module from '../../core/module';
 import {
   TableCell,
   TableRow,
@@ -11,9 +11,13 @@ import {
   TableHeaderRow,
   TableHeader,
   TABLE_TAGS,
-} from '../formats/table/lite';
-import { applyFormat } from './clipboard';
-import isDefined from '../utils/is_defined';
+} from '../../formats/table/lite';
+import { applyFormat } from '../clipboard';
+import isDefined from '../../utils/is_defined';
+import makeTableArrowHandler from './utils/make_table_arrow_handler';
+import insertParagraphAbove from './utils/insert_pr_below';
+import insertParagraphBelow from './utils/insert_pr_above';
+import tableSide from './utils/table_side';
 
 const ELEMENT_NODE = 1;
 
@@ -246,14 +250,14 @@ TableLite.keyboardBindings = {
         const { quill } = this;
         const [table, row, cell, offset] = module.getTable(range);
         const shift = tableSide(row, cell, offset);
+        const hasHead = table.children.length > 1 && table.children.head;
 
-        if (shift == null) {
+        if (shift == null || (shift < 0 && hasHead)) {
           return;
         }
 
         const index = table.offset();
-        const hasHead = table.children.length > 1 && table.children.head;
-        if (shift < 0 && !hasHead) {
+        if (shift < 0) {
           insertParagraphAbove({ quill, index, range });
         } else {
           insertParagraphBelow({ quill, index, table });
@@ -300,8 +304,8 @@ TableLite.keyboardBindings = {
       }
     },
   },
-  'table down': makeTableArrowHandler(false),
-  'table up': makeTableArrowHandler(true),
+  'table down': makeTableArrowHandler(false, ['table', 'tableHeaderCell']),
+  'table up': makeTableArrowHandler(true, ['table', 'tableHeaderCell']),
 };
 
 function matchTable(node, delta) {
@@ -327,84 +331,6 @@ function matchDimensions(node, delta) {
         : { ...rest };
     return newDelta.insert(op.insert, formats);
   }, new Delta());
-}
-
-function makeTableArrowHandler(up) {
-  return {
-    key: up ? 'upArrow' : 'downArrow',
-    collapsed: true,
-    format: ['table', 'tableHeaderCell'],
-    handler(range, context) {
-      const key = up ? 'prev' : 'next';
-      const cell = context.line;
-      const targetRow = cell.parent[key];
-      if (targetRow != null) {
-        if (
-          targetRow.statics.blotName === 'tableRow' ||
-          targetRow.statics.blotName === 'tableHeaderRow'
-        ) {
-          let targetCell = targetRow.children.head;
-          let cur = cell;
-          while (cur.prev != null) {
-            cur = cur.prev;
-            targetCell = targetCell.next;
-          }
-          const index =
-            targetCell.offset(this.quill.scroll) +
-            Math.min(context.offset, targetCell.length() - 1);
-          this.quill.setSelection(index, 0, Quill.sources.USER);
-        }
-      } else {
-        const targetLine = cell.table()[key];
-        if (targetLine != null) {
-          if (up) {
-            this.quill.setSelection(
-              targetLine.offset(this.quill.scroll) + targetLine.length() - 1,
-              0,
-              Quill.sources.USER,
-            );
-          } else {
-            this.quill.setSelection(
-              targetLine.offset(this.quill.scroll),
-              0,
-              Quill.sources.USER,
-            );
-          }
-        }
-      }
-      return false;
-    },
-  };
-}
-
-function tableSide(row, cell, offset) {
-  if (row.prev == null && row.next == null) {
-    if (cell.prev == null && cell.next == null) {
-      return offset === 0 ? -1 : 1;
-    }
-    return cell.prev == null ? -1 : 1;
-  }
-  if (row.prev == null) {
-    return -1;
-  }
-  if (row.next == null) {
-    return 1;
-  }
-  return null;
-}
-
-function insertParagraphAbove({ quill, index, range }) {
-  const insertIndex = index - 1;
-  const delta = new Delta().retain(insertIndex).insert('\n');
-  quill.updateContents(delta, Quill.sources.USER);
-  quill.setSelection(range.index + 1, range.length, Quill.sources.SILENT);
-}
-
-function insertParagraphBelow({ quill, index, table }) {
-  const insertIndex = index + table.length();
-  const delta = new Delta().retain(insertIndex).insert('\n');
-  quill.updateContents(delta, Quill.sources.USER);
-  quill.setSelection(insertIndex, Quill.sources.USER);
 }
 
 export default TableLite;

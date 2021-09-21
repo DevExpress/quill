@@ -1,7 +1,7 @@
 import Delta from 'quill-delta';
 import { Scope } from 'parchment';
-import Quill from '../core/quill';
-import Module from '../core/module';
+import Quill from '../../core/quill';
+import Module from '../../core/module';
 import {
   CellLine,
   TableCell,
@@ -14,9 +14,13 @@ import {
   TableHeader,
   HeaderCellLine,
   TABLE_TAGS,
-} from '../formats/table';
-import isDefined from '../utils/is_defined';
-import { deltaEndsWith, applyFormat } from './clipboard';
+} from '../../formats/table';
+import isDefined from '../../utils/is_defined';
+import { deltaEndsWith, applyFormat } from '../clipboard';
+import makeTableArrowHandler from './utils/make_table_arrow_handler';
+import insertParagraphAbove from './utils/insert_pr_below';
+import insertParagraphBelow from './utils/insert_pr_above';
+import tableSide from './utils/table_side';
 
 const ELEMENT_NODE = 1;
 
@@ -244,7 +248,7 @@ Table.keyboardBindings = {
     suffix: /^$/,
     handler() {},
   },
-  'table-cell-line enter': {
+  'table cell enter': {
     key: 'enter',
     shiftKey: null,
     format: ['tableCellLine'],
@@ -324,8 +328,14 @@ Table.keyboardBindings = {
       }
     },
   },
-  'table down': makeTableArrowHandler(false),
-  'table up': makeTableArrowHandler(true),
+  'table down': makeTableArrowHandler(false, [
+    'tableCellLine',
+    'tableHeaderCellLine',
+  ]),
+  'table up': makeTableArrowHandler(true, [
+    'tableCellLine',
+    'tableHeaderCellLine',
+  ]),
 };
 
 function matchCell(node, delta) {
@@ -373,84 +383,6 @@ function matchDimensions(node, delta) {
         : { ...rest };
     return newDelta.insert(op.insert, formats);
   }, new Delta());
-}
-
-function makeTableArrowHandler(up) {
-  return {
-    key: up ? 'upArrow' : 'downArrow',
-    collapsed: true,
-    format: ['table', 'tableHeaderCell'],
-    handler(range, context) {
-      const key = up ? 'prev' : 'next';
-      const cell = context.line;
-      const targetRow = cell.parent[key];
-      if (targetRow != null) {
-        if (
-          targetRow.statics.blotName === 'tableRow' ||
-          targetRow.statics.blotName === 'tableHeaderRow'
-        ) {
-          let targetCell = targetRow.children.head;
-          let cur = cell;
-          while (cur.prev != null) {
-            cur = cur.prev;
-            targetCell = targetCell.next;
-          }
-          const index =
-            targetCell.offset(this.quill.scroll) +
-            Math.min(context.offset, targetCell.length() - 1);
-          this.quill.setSelection(index, 0, Quill.sources.USER);
-        }
-      } else {
-        const targetLine = cell.table()[key];
-        if (targetLine != null) {
-          if (up) {
-            this.quill.setSelection(
-              targetLine.offset(this.quill.scroll) + targetLine.length() - 1,
-              0,
-              Quill.sources.USER,
-            );
-          } else {
-            this.quill.setSelection(
-              targetLine.offset(this.quill.scroll),
-              0,
-              Quill.sources.USER,
-            );
-          }
-        }
-      }
-      return false;
-    },
-  };
-}
-
-function tableSide(row, cell, offset) {
-  if (row.prev == null && row.next == null) {
-    if (cell.prev == null && cell.next == null) {
-      return offset === 0 ? -1 : 1;
-    }
-    return cell.prev == null ? -1 : 1;
-  }
-  if (row.prev == null) {
-    return -1;
-  }
-  if (row.next == null) {
-    return 1;
-  }
-  return null;
-}
-
-function insertParagraphAbove({ quill, index, range }) {
-  const insertIndex = index - 1;
-  const delta = new Delta().retain(insertIndex).insert('\n');
-  quill.updateContents(delta, Quill.sources.USER);
-  quill.setSelection(range.index + 1, range.length, Quill.sources.SILENT);
-}
-
-function insertParagraphBelow({ quill, index, table }) {
-  const insertIndex = index + table.length();
-  const delta = new Delta().retain(insertIndex).insert('\n');
-  quill.updateContents(delta, Quill.sources.USER);
-  quill.setSelection(insertIndex, Quill.sources.USER);
 }
 
 export default Table;
