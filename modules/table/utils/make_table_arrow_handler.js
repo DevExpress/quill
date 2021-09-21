@@ -7,7 +7,9 @@ export default function makeTableArrowHandler(up, formats) {
     format: formats,
     handler(range, context) {
       const key = up ? 'prev' : 'next';
-      const cell = context.line;
+      const { line } = context;
+      const cell =
+        line.statics.blotName.indexOf('Line') > -1 ? line.parent : line;
       const targetTablePart = cell.parent.parent[key];
       const targetRow =
         cell.parent[key] || (targetTablePart && targetTablePart.children.head);

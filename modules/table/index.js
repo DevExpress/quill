@@ -18,9 +18,6 @@ import {
 import isDefined from '../../utils/is_defined';
 import { deltaEndsWith, applyFormat } from '../clipboard';
 import makeTableArrowHandler from './utils/make_table_arrow_handler';
-import insertParagraphAbove from './utils/insert_pr_below';
-import insertParagraphBelow from './utils/insert_pr_above';
-import tableSide from './utils/table_side';
 
 const ELEMENT_NODE = 1;
 
@@ -197,10 +194,12 @@ class Table extends Module {
 
     const delta = new Array(rows).fill(0).reduce(memo => {
       const rowId = tableId();
-      const text = new Array(columns).fill('\n').join('');
-      return memo.insert(text, {
-        tableCellLine: { row: rowId, cell: tableId() },
+      new Array(columns).fill('\n').forEach(text => {
+        memo.insert(text, {
+          tableCellLine: { row: rowId, cell: tableId() },
+        });
       });
+      return memo;
     }, new Delta().retain(range.index));
     this.quill.updateContents(delta, Quill.sources.USER);
     this.quill.setSelection(range.index, Quill.sources.SILENT);
@@ -251,12 +250,11 @@ Table.keyboardBindings = {
   'table cell enter': {
     key: 'enter',
     shiftKey: null,
-    format: ['tableCellLine'],
+    format: ['tableCellLine', 'tableHeaderCellLine'],
     handler(range, context) {
-      // bugfix: a unexpected new line inserted when user compositionend with hitting Enter
       if (this.quill.selection && this.quill.selection.composing) return;
       if (range.length > 0) {
-        this.quill.scroll.deleteAt(range.index, range.length); // So we do not trigger text-change
+        this.quill.scroll.deleteAt(range.index, range.length);
       }
       const lineFormats = Object.keys(context.format).reduce(
         (formats, format) => {
@@ -270,15 +268,12 @@ Table.keyboardBindings = {
         },
         {},
       );
-      // insert new cellLine with lineFormats
       this.quill.insertText(
         range.index,
         '\n',
         lineFormats.tableCellLine,
         Quill.sources.USER,
       );
-      // Earlier scroll.deleteAt might have messed up our selection,
-      // so insertText's built in selection preservation is not reliable
       this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
       this.quill.focus();
       Object.keys(context.format).forEach(name => {
@@ -287,31 +282,6 @@ Table.keyboardBindings = {
         if (name === 'link') return;
         this.quill.format(name, context.format[name], Quill.sources.USER);
       });
-    },
-  },
-  'table header enter': {
-    key: 'enter',
-    shiftKey: null,
-    format: ['tableHeaderCellLine'],
-    handler(range) {
-      const module = this.quill.getModule('table');
-      if (module) {
-        const { quill } = this;
-        const [table, row, cell, offset] = module.getTable(range);
-        const shift = tableSide(row, cell, offset);
-
-        if (shift == null) {
-          return;
-        }
-
-        const index = table.offset();
-        const hasBody = table.children.length > 1 && table.children.tail;
-        if (shift < 0 || (shift > 0 && hasBody)) {
-          insertParagraphAbove({ quill, index, range });
-        } else {
-          insertParagraphBelow({ quill, index, table });
-        }
-      }
     },
   },
   'table tab': {

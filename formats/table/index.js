@@ -247,7 +247,9 @@ class BaseRow extends Container {
 
   static create(value) {
     const node = super.create(value);
-    node.setAttribute('data-row', value.row);
+    if (value && value.row) {
+      node.setAttribute('data-row', value.row);
+    }
     return node;
   }
 
