@@ -20,6 +20,7 @@ import { deltaEndsWith, applyFormat } from '../clipboard';
 import makeTableArrowHandler from './utils/make_table_arrow_handler';
 
 const ELEMENT_NODE = 1;
+const EMPTY_RESULT = [null, null, null, -1];
 
 class Table extends Module {
   static register() {
@@ -99,7 +100,7 @@ class Table extends Module {
 
   getTable(range = this.quill.getSelection()) {
     if (!isDefined(range)) {
-      return [null, null, null, -1];
+      return EMPTY_RESULT;
     }
 
     const [cellLine, offset] = this.quill.getLine(range.index);
@@ -108,7 +109,7 @@ class Table extends Module {
       !isDefined(cellLine) ||
       allowedBlots.indexOf(cellLine.statics.blotName) === -1
     ) {
-      return [null, null, null, -1];
+      return EMPTY_RESULT;
     }
 
     const cell = cellLine.parent;
@@ -263,7 +264,7 @@ Table.keyboardBindings = {
     shiftKey: null,
     format: ['tableCellLine', 'tableHeaderCellLine'],
     handler(range, context) {
-      if (this.quill.selection && this.quill.selection.composing) return;
+      if (this.quill.selection?.composing) return;
       if (range.length > 0) {
         this.quill.scroll.deleteAt(range.index, range.length);
       }

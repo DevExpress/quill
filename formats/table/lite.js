@@ -44,7 +44,7 @@ class BaseCell extends Block {
   }
 
   table() {
-    return this.row() && this.row().table();
+    return this.row()?.table();
   }
 }
 BaseCell.tagName = ['TD', 'TH'];
@@ -122,7 +122,7 @@ class BaseRow extends Container {
   }
 
   table() {
-    return this.parent && this.parent.parent;
+    return this.parent?.parent;
   }
 }
 BaseRow.tagName = 'TR';

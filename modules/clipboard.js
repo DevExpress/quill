@@ -73,7 +73,7 @@ class Clipboard extends Module {
     this.quill.root.addEventListener('cut', e => this.onCaptureCopy(e, true));
     this.quill.root.addEventListener('paste', this.onCapturePaste.bind(this));
     this.matchers = [];
-    this.tableBlots = options.tableBlots || [];
+    this.tableBlots = options.tableBlots ?? [];
     CLIPBOARD_CONFIG.concat(this.options.matchers).forEach(
       ([selector, matcher]) => {
         this.addMatcher(selector, matcher);
@@ -511,7 +511,7 @@ function matchNewline(node, delta, scroll) {
           return delta.insert('\n');
         }
         const match = scroll.query(nextSibling);
-        if (match && match.prototype instanceof BlockEmbed) {
+        if (match?.prototype instanceof BlockEmbed) {
           return delta.insert('\n');
         }
         nextSibling = nextSibling.firstChild;

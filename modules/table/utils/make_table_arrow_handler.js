@@ -12,7 +12,7 @@ export default function makeTableArrowHandler(up, formats) {
         line.statics.blotName.indexOf('Line') > -1 ? line.parent : line;
       const targetTablePart = cell.parent.parent[key];
       const targetRow =
-        cell.parent[key] || (targetTablePart && targetTablePart.children.head);
+        cell.parent[key] || (targetTablePart?.children.head);
       if (targetRow != null) {
         if (
           targetRow.statics.blotName === 'tableRow' ||

@@ -20,6 +20,7 @@ import insertParagraphBelow from './utils/insert_pr_above';
 import tableSide from './utils/table_side';
 
 const ELEMENT_NODE = 1;
+const EMPTY_RESULT = [null, null, null, -1];
 
 class TableLite extends Module {
   static register() {
@@ -98,7 +99,7 @@ class TableLite extends Module {
 
   getTable(range = this.quill.getSelection()) {
     if (!isDefined(range)) {
-      return [null, null, null, -1];
+      return EMPTY_RESULT;
     }
 
     const [cell, offset] = this.quill.getLine(range.index);
@@ -107,7 +108,7 @@ class TableLite extends Module {
       !isDefined(cell) ||
       allowedBlots.indexOf(cell.statics.blotName) === -1
     ) {
-      return [null, null, null, -1];
+      return EMPTY_RESULT;
     }
 
     const row = cell.parent;

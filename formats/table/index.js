@@ -12,7 +12,7 @@ class CellLine extends Block {
     const node = super.create(value);
     CELL_IDENTITY_KEYS.forEach(key => {
       const identityMarker = key === 'row' ? tableId : cellId;
-      node.setAttribute(`data-${key}`, value[key] || identityMarker());
+      node.setAttribute(`data-${key}`, value[key] ?? identityMarker());
     });
 
     return node;
@@ -20,9 +20,10 @@ class CellLine extends Block {
 
   static formats(domNode) {
     return CELL_IDENTITY_KEYS.reduce((formats, attribute) => {
-      if (domNode.hasAttribute(`data-${attribute}`)) {
+      const attrName = `data-${attribute}`;
+      if (domNode.hasAttribute(attrName)) {
         formats[attribute] =
-          domNode.getAttribute(`data-${attribute}`) || undefined;
+          domNode.getAttribute(attrName) || undefined;
       }
       return formats;
     }, {});
@@ -42,10 +43,11 @@ class CellLine extends Block {
 
   format(name, value) {
     if (CELL_IDENTITY_KEYS.indexOf(name) > -1) {
+      const attrName = `data-${name}`;
       if (value) {
-        this.domNode.setAttribute(`data-${name}`, value);
+        this.domNode.setAttribute(attrName, value);
       } else {
-        this.domNode.removeAttribute(`data-${name}`);
+        this.domNode.removeAttribute(attrName);
       }
     } else {
       super.format(name, value);
@@ -101,7 +103,7 @@ class BaseCell extends Container {
       domNode.hasAttribute('data-header-row')
     ) {
       formats.row =
-        domNode.getAttribute('data-row') ||
+        domNode.getAttribute('data-row') ??
         domNode.getAttribute('data-header-row');
     }
 
@@ -127,12 +129,12 @@ class BaseCell extends Container {
   }
 
   table() {
-    return this.row() && this.row().table();
+    return this.row()?.table();
   }
 
   optimize(...args) {
     const rowId =
-      this.domNode.getAttribute('data-row') ||
+      this.domNode.getAttribute('data-row') ??
       this.domNode.getAttribute('data-header-row');
 
     if (
@@ -150,7 +152,7 @@ class TableCell extends BaseCell {
   static create(value) {
     const node = super.create();
     const attrName = 'data-row';
-    if (value && value.row) {
+    if (value?.row) {
       node.setAttribute(attrName, value.row);
     }
     return node;
@@ -246,21 +248,22 @@ class BaseRow extends Container {
   }
 
   table() {
-    return this.parent && this.parent.parent;
+    return this.parent?.parent;
   }
 
   static create(value) {
     const node = super.create(value);
-    if (value && value.row) {
+    if (value?.row) {
       node.setAttribute('data-row', value.row);
     }
     return node;
   }
 
   formats() {
-    return ['row'].reduce((formats, attrName) => {
-      if (this.domNode.hasAttribute(`data-${attrName}`)) {
-        formats[attrName] = this.domNode.getAttribute(`data-${attrName}`);
+    return ['row'].reduce((formats, attrPart) => {
+      const attrName = `data-${attrPart}`;
+      if (this.domNode.hasAttribute(attrName)) {
+        formats[attrName] = this.domNode.getAttribute(attrName);
       }
       return formats;
     }, {});
