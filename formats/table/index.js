@@ -22,8 +22,7 @@ class CellLine extends Block {
     return CELL_IDENTITY_KEYS.reduce((formats, attribute) => {
       const attrName = `data-${attribute}`;
       if (domNode.hasAttribute(attrName)) {
-        formats[attribute] =
-          domNode.getAttribute(attrName) || undefined;
+        formats[attribute] = domNode.getAttribute(attrName) || undefined;
       }
       return formats;
     }, {});
