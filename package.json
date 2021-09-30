@@ -6,6 +6,7 @@
   "main": "dist/dx-quill.js",
   "homepage": "https://js.devexpress.com/",
   "files": [
+    "attributors",
     "blots",
     "core",
     "formats",

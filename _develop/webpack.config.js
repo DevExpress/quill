@@ -22,12 +22,14 @@ const constantPack = new webpack.DefinePlugin({
 const source = [
   'quill.js',
   'core.js',
+  'attributors',
   'blots',
   'core',
   'formats',
   'modules',
-  'utils',
   'test',
+  'themes',
+  'utils',
 ].map(file => {
   return path.resolve(__dirname, '..', file);
 });

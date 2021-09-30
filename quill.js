@@ -40,6 +40,18 @@ import Syntax from './modules/syntax';
 import Table from './modules/table';
 import Multiline from './modules/multiline';
 import TableLite from './modules/table/lite';
+import {
+  CellBackgroundColorStyle,
+  CellBorderColorStyle,
+  CellBorderStyle,
+  CellBorderWidthStyle,
+  CellPaddingBottomStyle,
+  CellPaddingLeftStyle,
+  CellPaddingRightStyle,
+  CellPaddingStyle,
+  CellPaddingTopStyle,
+  CellVerticalAlignStyle,
+} from './formats/table/attributors/table';
 
 Quill.register(
   {
@@ -60,6 +72,16 @@ Quill.register(
     'attributors/style/direction': DirectionStyle,
     'attributors/style/font': FontStyle,
     'attributors/style/size': SizeStyle,
+    'attributors/style/tableBackground': CellBackgroundColorStyle,
+    'attributors/style/tableBorder': CellBorderStyle,
+    'attributors/style/tableBorderWidth': CellBorderWidthStyle,
+    'attributors/style/tableBorderColor': CellBorderColorStyle,
+    'attributors/style/tablePadding': CellPaddingStyle,
+    'attributors/style/tablePaddingTop': CellPaddingTopStyle,
+    'attributors/style/tablePaddingBottom': CellPaddingBottomStyle,
+    'attributors/style/tablePaddingLeft': CellPaddingLeftStyle,
+    'attributors/style/tablePaddingRight': CellPaddingRightStyle,
+    'attributors/style/tableVerticalAlign': CellVerticalAlignStyle,
   },
   true,
 );
@@ -94,6 +116,17 @@ Quill.register(
     'formats/formula': Formula,
     'formats/image': Image,
     'formats/video': Video,
+
+    'formats/tableBorder': CellBorderStyle,
+    'formats/tableBorderWidth': CellBorderWidthStyle,
+    'formats/tableBorderColor': CellBorderColorStyle,
+    'formats/tableBackground': CellBackgroundColorStyle,
+    'formats/tablePadding': CellPaddingStyle,
+    'formats/tablePaddingTop': CellPaddingTopStyle,
+    'formats/tablePaddingBottom': CellPaddingBottomStyle,
+    'formats/tablePaddingLeft': CellPaddingLeftStyle,
+    'formats/tablePaddingRight': CellPaddingRightStyle,
+    'formats/tableVerticalAlign': CellVerticalAlignStyle,
 
     'tableModules/lite': TableLite,
     'tableModules/main': Table,
