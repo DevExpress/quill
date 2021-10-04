@@ -1,9 +1,13 @@
+import prepareAttributor from './prepare_attributor';
 import prepareStyleAttributor from './prepare_style_attributor';
 
 const cellConfig = {
   name: 'cell',
   allowedTags: ['TH', 'TD'],
 };
+
+const CellHeightAttribute = prepareAttributor(cellConfig, 'height');
+const CellWidthAttribute = prepareAttributor(cellConfig, 'width');
 
 const CellVerticalAlignStyle = prepareStyleAttributor(
   cellConfig,
@@ -51,6 +55,19 @@ const CellPaddingRightStyle = prepareStyleAttributor(
   'right',
 );
 
+const CELL_FORMATS = {
+  cellBorder: CellBorderStyle,
+  cellBorderWidth: CellBorderWidthStyle,
+  cellBorderColor: CellBorderColorStyle,
+  cellBackgroundColor: CellBackgroundColorStyle,
+  cellPadding: CellPaddingStyle,
+  cellPaddingTop: CellPaddingTopStyle,
+  cellPaddingBottom: CellPaddingBottomStyle,
+  cellPaddingLeft: CellPaddingLeftStyle,
+  cellPaddingRight: CellPaddingRightStyle,
+  cellVerticalAlign: CellVerticalAlignStyle,
+};
+
 export {
   CellVerticalAlignStyle,
   CellBackgroundColorStyle,
@@ -62,4 +79,7 @@ export {
   CellPaddingBottomStyle,
   CellPaddingLeftStyle,
   CellPaddingRightStyle,
+  CellHeightAttribute,
+  CellWidthAttribute,
+  CELL_FORMATS,
 };

@@ -55,6 +55,24 @@ class Editor {
         }
         scrollLength += length;
       }
+      if (attributes.tableHeaderCellLine) {
+        this.scroll.formatAt(
+          index,
+          length,
+          'tableHeaderCellLine',
+          attributes.tableHeaderCellLine,
+        );
+        delete attributes.tableHeaderCellLine;
+      }
+      if (attributes.tableCellLine) {
+        this.scroll.formatAt(
+          index,
+          length,
+          'tableCellLine',
+          attributes.tableCellLine,
+        );
+        delete attributes.tableCellLine;
+      }
       Object.keys(attributes).forEach(name => {
         this.scroll.formatAt(index, length, name, attributes[name]);
       });

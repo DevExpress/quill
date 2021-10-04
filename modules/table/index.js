@@ -18,9 +18,57 @@ import {
 import isDefined from '../../utils/is_defined';
 import { deltaEndsWith, applyFormat } from '../clipboard';
 import makeTableArrowHandler from './utils/make_table_arrow_handler';
+import ElementAttributor from '../../attributors/element_attributor';
+import ElementStyleAttributor from '../../attributors/element_style';
+import {
+  TableAlignStyle,
+  TableBackgroundColorStyle,
+  TableBorderColorStyle,
+  TableBorderStyle,
+  TableBorderWidthStyle,
+} from '../../formats/table/attributors/table';
+import {
+  CellBackgroundColorStyle,
+  CellBorderColorStyle,
+  CellBorderStyle,
+  CellBorderWidthStyle,
+  CellPaddingBottomStyle,
+  CellPaddingLeftStyle,
+  CellPaddingRightStyle,
+  CellPaddingStyle,
+  CellPaddingTopStyle,
+  CellVerticalAlignStyle,
+} from '../../formats/table/attributors/cell';
 
 const ELEMENT_NODE = 1;
 const EMPTY_RESULT = [null, null, null, -1];
+
+const TABLE_ATTRIBUTORS = [
+  TableAlignStyle,
+  TableBackgroundColorStyle,
+  TableBorderStyle,
+  TableBorderColorStyle,
+  TableBorderWidthStyle,
+].reduce((memo, attr) => {
+  memo[attr.keyName] = attr;
+  return memo;
+}, {});
+
+const CELL_ATTRIBUTORS = [
+  CellBackgroundColorStyle,
+  CellBorderColorStyle,
+  CellBorderStyle,
+  CellBorderWidthStyle,
+  CellPaddingBottomStyle,
+  CellPaddingLeftStyle,
+  CellPaddingRightStyle,
+  CellPaddingStyle,
+  CellPaddingTopStyle,
+  CellVerticalAlignStyle,
+].reduce((memo, attr) => {
+  memo[attr.keyName] = attr;
+  return memo;
+}, {});
 
 class Table extends Module {
   static register() {
@@ -52,6 +100,8 @@ class Table extends Module {
     );
 
     this.quill.clipboard.addMatcher('td, th', matchCell);
+    this.quill.clipboard.addMatcher('table', matchTableAttributor);
+    this.quill.clipboard.addMatcher('td, th', matchCellAttributor);
     this.quill.clipboard.addMatcher(ELEMENT_NODE, matchDimensions);
   }
 
@@ -372,6 +422,50 @@ function matchDimensions(node, delta) {
         : { ...rest };
     return newDelta.insert(op.insert, formats);
   }, new Delta());
+}
+
+function matchTableAttributor(node, delta, scroll) {
+  const attributes = ElementAttributor.keys(node);
+  const styles = ElementStyleAttributor.keys(node);
+  const formats = {};
+  attributes.concat(styles).forEach(name => {
+    let attr = scroll.query(name, Scope.ATTRIBUTE);
+    if (attr != null) {
+      formats[attr.attrName] = attr.value(node);
+      if (formats[attr.attrName]) return;
+    }
+    attr = TABLE_ATTRIBUTORS[name];
+    if (attr != null && (attr.attrName === name || attr.keyName === name)) {
+      attr = TABLE_ATTRIBUTORS[name];
+      formats[attr.attrName] = attr.value(node) || undefined;
+    }
+  });
+  if (Object.keys(formats).length > 0) {
+    return applyFormat(delta, formats);
+  }
+  return delta;
+}
+
+function matchCellAttributor(node, delta, scroll) {
+  const attributes = ElementAttributor.keys(node);
+  const styles = ElementStyleAttributor.keys(node);
+  const formats = {};
+  attributes.concat(styles).forEach(name => {
+    let attr = scroll.query(name, Scope.ATTRIBUTE);
+    if (attr != null) {
+      formats[attr.attrName] = attr.value(node);
+      if (formats[attr.attrName]) return;
+    }
+    attr = CELL_ATTRIBUTORS[name];
+    if (attr != null && (attr.attrName === name || attr.keyName === name)) {
+      attr = CELL_ATTRIBUTORS[name];
+      formats[attr.attrName] = attr.value(node) || undefined;
+    }
+  });
+  if (Object.keys(formats).length > 0) {
+    return applyFormat(delta, formats);
+  }
+  return delta;
 }
 
 export default Table;

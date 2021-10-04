@@ -2,6 +2,8 @@ import Block from '../../blots/block';
 import Break from '../../blots/break';
 import Container from '../../blots/container';
 import isDefined from '../../utils/is_defined';
+import { CELL_FORMATS } from './attributors/cell';
+import { TABLE_FORMATS } from './attributors/table';
 import getId from './get_id';
 
 const CELL_IDENTITY_KEYS = ['row', 'cell'];
@@ -34,7 +36,15 @@ class CellLine extends Block {
       this.statics.requiredContainer &&
       !(this.parent instanceof this.statics.requiredContainer)
     ) {
-      this.wrap(this.statics.requiredContainer.blotName, { row: rowId });
+      const { domNode } = this;
+      const formats = { row: rowId };
+      Object.keys(CELL_FORMATS).forEach(format => {
+        const value = domNode.dataset[format.toLowerCase()];
+        if (value) {
+          formats[format] = value;
+        }
+      });
+      this.wrap(this.statics.requiredContainer.blotName, formats);
     }
 
     super.optimize(...args);
@@ -43,6 +53,13 @@ class CellLine extends Block {
   format(name, value) {
     if (CELL_IDENTITY_KEYS.indexOf(name) > -1) {
       const attrName = `data-${name}`;
+      if (value) {
+        this.domNode.setAttribute(attrName, value);
+      } else {
+        this.domNode.removeAttribute(attrName);
+      }
+    } else if (/^((table)|(cell))\w*/.test(name)) {
+      const attrName = `data-${name.toLowerCase()}`;
       if (value) {
         this.domNode.setAttribute(attrName, value);
       } else {
@@ -66,6 +83,18 @@ HeaderCellLine.blotName = 'tableHeaderCellLine';
 HeaderCellLine.className = 'ql-table-header-cell-line';
 
 class BaseCell extends Container {
+  static create(value) {
+    const node = super.create(value);
+
+    if (value) {
+      Object.keys(value).forEach(format => {
+        CELL_FORMATS[format]?.add(node, value[format]);
+      });
+    }
+
+    return node;
+  }
+
   checkMerge() {
     if (super.checkMerge() && this.next.children.head != null) {
       const thisHead = this.children.head.formats()[
@@ -149,7 +178,7 @@ BaseCell.tagName = ['TD', 'TH'];
 
 class TableCell extends BaseCell {
   static create(value) {
-    const node = super.create();
+    const node = super.create(value);
     const attrName = 'data-row';
     if (value?.row) {
       node.setAttribute(attrName, value.row);
@@ -174,7 +203,7 @@ TableCell.dataAttribute = 'data-row';
 
 class TableHeaderCell extends BaseCell {
   static create(value) {
-    const node = super.create();
+    const node = super.create(value);
     const attrName = 'data-header-row';
     if (value && value.row) {
       node.setAttribute(attrName, value.row);
@@ -288,7 +317,25 @@ class TableHeaderRow extends BaseRow {
 }
 TableHeaderRow.blotName = 'tableHeaderRow';
 
-class TableBody extends Container {}
+class TableBody extends Container {
+  optimize(...args) {
+    if (
+      this.statics.requiredContainer &&
+      !(this.parent instanceof this.statics.requiredContainer)
+    ) {
+      const { domNode } = this.children.head.children.head.children.head;
+      const formats = {};
+      Object.keys(TABLE_FORMATS).forEach(format => {
+        const value = domNode.dataset[format.toLowerCase()];
+        if (value) {
+          formats[format] = value;
+        }
+      });
+      this.wrap(this.statics.requiredContainer.blotName, formats);
+    }
+    super.optimize(...args);
+  }
+}
 TableBody.blotName = 'tableBody';
 TableBody.tagName = 'TBODY';
 
@@ -297,6 +344,17 @@ TableHeader.blotName = 'tableHeader';
 TableHeader.tagName = 'THEAD';
 
 class TableContainer extends Container {
+  static create(value) {
+    const node = super.create(value);
+
+    if (value) {
+      Object.keys(value).forEach(format => {
+        TABLE_FORMATS[format]?.add(node, value[format]);
+      });
+    }
+    return node;
+  }
+
   balanceCells() {
     const headerRows = this.descendants(TableHeaderRow);
     const bodyRows = this.descendants(TableRow);
@@ -437,6 +495,22 @@ class TableContainer extends Container {
   rows() {
     const body = this.children.head;
     return isDefined(body) ? body.children.map(row => row) : [];
+  }
+
+  formats() {
+    const formats = {};
+    const childElem = this.cells()[0].domNode.firstElementChild;
+    Object.keys(TABLE_FORMATS).forEach(format => {
+      const value = childElem.dataset[format.toLowerCase()];
+      if (value) {
+        formats[format] = value;
+      }
+    });
+    return formats;
+  }
+
+  format(name, value) {
+    super.format(name, value);
   }
 }
 TableContainer.blotName = 'tableContainer';
