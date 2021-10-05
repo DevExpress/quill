@@ -18,6 +18,8 @@ import insertParagraphAbove from './utils/insert_pr_below';
 import insertParagraphBelow from './utils/insert_pr_above';
 import tableSide from './utils/table_side';
 import prepareAttributeMatcher from './utils/prepare_attr_matcher';
+import { TABLE_FORMATS } from '../../formats/table/attributors/table';
+import { CELL_FORMATS } from '../../formats/table/attributors/cell';
 
 const EMPTY_RESULT = [null, null, null, -1];
 
@@ -30,6 +32,12 @@ class TableLite extends Module {
     Quill.register(TableBody, true);
     Quill.register(TableHeader, true);
     Quill.register(TableContainer, true);
+
+    [TABLE_FORMATS, CELL_FORMATS].forEach(formats => {
+      Object.keys(formats).forEach(name => {
+        Quill.register({ [`formats/${name}`]: formats[name] }, true);
+      });
+    });
   }
 
   constructor(...args) {
@@ -37,6 +45,9 @@ class TableLite extends Module {
 
     this.tableBlots = [TableCell.blotName, TableHeaderCell.blotName];
 
+    this.tableBlots.forEach(blotName => {
+      this.quill.editor.addImmediateFormat(blotName);
+    });
     this.integrateClipboard();
     this.addKeyboardHandlers();
 

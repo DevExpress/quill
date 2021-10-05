@@ -15,6 +15,11 @@ class Editor {
   constructor(scroll) {
     this.scroll = scroll;
     this.delta = this.getDelta();
+    this.immediateFormats = new Set();
+  }
+
+  addImmediateFormat(name) {
+    this.immediateFormats.add(name);
   }
 
   applyDelta(delta) {
@@ -56,28 +61,12 @@ class Editor {
         scrollLength += length;
       }
       const keys = Object.keys(attributes);
-      if (keys.indexOf('table') > -1) {
-        this.scroll.formatAt(index, length, 'table', attributes.table);
-        delete attributes.table;
-      }
-      if (keys.indexOf('tableHeaderCellLine') > -1) {
-        this.scroll.formatAt(
-          index,
-          length,
-          'tableHeaderCellLine',
-          attributes.tableHeaderCellLine,
-        );
-        delete attributes.tableHeaderCellLine;
-      }
-      if (keys.indexOf('tableCellLine') > -1) {
-        this.scroll.formatAt(
-          index,
-          length,
-          'tableCellLine',
-          attributes.tableCellLine,
-        );
-        delete attributes.tableCellLine;
-      }
+      this.immediateFormats.forEach(format => {
+        if (keys.indexOf(format) > -1) {
+          this.scroll.formatAt(index, length, format, attributes[format]);
+          delete attributes[format];
+        }
+      });
       Object.keys(attributes).forEach(name => {
         this.scroll.formatAt(index, length, name, attributes[name]);
       });

@@ -18,6 +18,8 @@ import isDefined from '../../utils/is_defined';
 import { deltaEndsWith, applyFormat } from '../clipboard';
 import makeTableArrowHandler from './utils/make_table_arrow_handler';
 import prepareAttributeMatcher from './utils/prepare_attr_matcher';
+import { TABLE_FORMATS } from '../../formats/table/attributors/table';
+import { CELL_FORMATS } from '../../formats/table/attributors/cell';
 
 const EMPTY_RESULT = [null, null, null, -1];
 
@@ -32,6 +34,12 @@ class Table extends Module {
     Quill.register(TableBody, true);
     Quill.register(TableHeader, true);
     Quill.register(TableContainer, true);
+
+    [TABLE_FORMATS, CELL_FORMATS].forEach(formats => {
+      Object.keys(formats).forEach(name => {
+        Quill.register({ [`formats/${name}`]: formats[name] }, true);
+      });
+    });
   }
 
   constructor(...args) {
@@ -39,6 +47,9 @@ class Table extends Module {
 
     this.tableBlots = [CellLine.blotName, HeaderCellLine.blotName];
 
+    this.tableBlots.forEach(blotName => {
+      this.quill.editor.addImmediateFormat(blotName);
+    });
     this.integrateClipboard();
     this.addKeyboardHandlers();
 
@@ -46,9 +57,9 @@ class Table extends Module {
   }
 
   integrateClipboard() {
-    this.tableBlots.forEach(blotName =>
-      this.quill.clipboard.addTableBlot(blotName),
-    );
+    this.tableBlots.forEach(blotName => {
+      this.quill.clipboard.addTableBlot(blotName);
+    });
 
     this.quill.clipboard.addMatcher('td, th', matchCell);
     this.quill.clipboard.addMatcher('table', prepareAttributeMatcher('table'));
