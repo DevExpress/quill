@@ -15,6 +15,8 @@ const CellVerticalAlignStyle = prepareStyleAttributor(
   'align',
 );
 
+const CellTextAlignStyle = prepareStyleAttributor(cellConfig, 'text', 'align');
+
 const CellBackgroundColorStyle = prepareStyleAttributor(
   cellConfig,
   'background',
@@ -72,6 +74,7 @@ const CELL_FORMATS = {
   cellPaddingLeft: CellPaddingLeftStyle,
   cellPaddingRight: CellPaddingRightStyle,
   cellVerticalAlign: CellVerticalAlignStyle,
+  cellTextAlign: CellTextAlignStyle,
   cellWidth: CellWidthAttribute,
   cellHeight: CellHeightAttribute,
 };
@@ -88,6 +91,7 @@ const CELL_ATTRIBUTORS = [
   CellPaddingStyle,
   CellPaddingTopStyle,
   CellVerticalAlignStyle,
+  CellTextAlignStyle,
   CellWidthAttribute,
   CellHeightAttribute,
 ].reduce((memo, attr) => {
@@ -97,6 +101,7 @@ const CELL_ATTRIBUTORS = [
 
 export {
   CellVerticalAlignStyle,
+  CellTextAlignStyle,
   CellBackgroundColorStyle,
   CellBorderStyle,
   CellBorderStyleStyle,

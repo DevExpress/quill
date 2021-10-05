@@ -52,6 +52,7 @@ import {
   CellPaddingRightStyle,
   CellPaddingStyle,
   CellPaddingTopStyle,
+  CellTextAlignStyle,
   CellVerticalAlignStyle,
   CellWidthAttribute,
 } from './formats/table/attributors/cell';
@@ -106,6 +107,7 @@ Quill.register(
     'attributors/style/cellPaddingLeft': CellPaddingLeftStyle,
     'attributors/style/cellPaddingRight': CellPaddingRightStyle,
     'attributors/style/cellVerticalAlign': CellVerticalAlignStyle,
+    'attributors/style/cellTextAlign': CellTextAlignStyle,
   },
   true,
 );
@@ -158,6 +160,7 @@ Quill.register(
     'formats/cellPaddingLeft': CellPaddingLeftStyle,
     'formats/cellPaddingRight': CellPaddingRightStyle,
     'formats/cellVerticalAlign': CellVerticalAlignStyle,
+    'formats/cellTextAlign': CellTextAlignStyle,
     'formats/cellHeight': CellHeightAttribute,
     'formats/cellWidth': CellWidthAttribute,
 

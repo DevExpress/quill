@@ -55,6 +55,10 @@ class Editor {
         }
         scrollLength += length;
       }
+      if (attributes.table) {
+        this.scroll.formatAt(index, length, 'table', attributes.table);
+        delete attributes.table;
+      }
       if (attributes.tableHeaderCellLine) {
         this.scroll.formatAt(
           index,

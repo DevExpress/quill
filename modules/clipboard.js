@@ -401,31 +401,33 @@ function matchAlias(format, node, delta) {
 }
 
 function matchAttributor(node, delta, scroll) {
-  const attributes = Attributor.keys(node);
-  const classes = ClassAttributor.keys(node);
-  const styles = StyleAttributor.keys(node);
-  const formats = {};
-  attributes
-    .concat(classes)
-    .concat(styles)
-    .forEach(name => {
-      let attr = scroll.query(name, Scope.ATTRIBUTE);
-      if (attr != null) {
-        formats[attr.attrName] = attr.value(node);
-        if (formats[attr.attrName]) return;
-      }
-      attr = ATTRIBUTE_ATTRIBUTORS[name];
-      if (attr != null && (attr.attrName === name || attr.keyName === name)) {
-        formats[attr.attrName] = attr.value(node) || undefined;
-      }
-      attr = STYLE_ATTRIBUTORS[name];
-      if (attr != null && (attr.attrName === name || attr.keyName === name)) {
+  if (['TD', 'TH', 'TABLE'].indexOf(node.tagName) === -1) {
+    const attributes = Attributor.keys(node);
+    const classes = ClassAttributor.keys(node);
+    const styles = StyleAttributor.keys(node);
+    const formats = {};
+    attributes
+      .concat(classes)
+      .concat(styles)
+      .forEach(name => {
+        let attr = scroll.query(name, Scope.ATTRIBUTE);
+        if (attr != null) {
+          formats[attr.attrName] = attr.value(node);
+          if (formats[attr.attrName]) return;
+        }
+        attr = ATTRIBUTE_ATTRIBUTORS[name];
+        if (attr != null && (attr.attrName === name || attr.keyName === name)) {
+          formats[attr.attrName] = attr.value(node) || undefined;
+        }
         attr = STYLE_ATTRIBUTORS[name];
-        formats[attr.attrName] = attr.value(node) || undefined;
-      }
-    });
-  if (Object.keys(formats).length > 0) {
-    return applyFormat(delta, formats);
+        if (attr != null && (attr.attrName === name || attr.keyName === name)) {
+          attr = STYLE_ATTRIBUTORS[name];
+          formats[attr.attrName] = attr.value(node) || undefined;
+        }
+      });
+    if (Object.keys(formats).length > 0) {
+      return applyFormat(delta, formats);
+    }
   }
   return delta;
 }
