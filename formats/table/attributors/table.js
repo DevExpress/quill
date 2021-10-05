@@ -3,7 +3,7 @@ import prepareStyleAttributor from './prepare_style_attributor';
 
 const tableConfig = {
   name: 'table',
-  allowedTags: ['TABLE', 'TD', 'TH'],
+  allowedTags: ['TABLE'],
 };
 
 const TableHeightAttribute = prepareAttributor(tableConfig, 'height');

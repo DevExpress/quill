@@ -1,10 +1,58 @@
 import Delta from 'quill-delta';
 import Quill from '../../../core/quill';
 import TableMain from '../../../modules/table';
+import capitalize from '../../../utils/capitalize';
 
 describe('Table Module', function() {
   beforeAll(function() {
     Quill.register({ 'modules/table': TableMain }, true);
+  });
+
+  describe('clipboard integration', function() {
+    it('formatted table', function() {
+      const quill = this.initialize(Quill, '<p><br></p>', this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      const markup = `
+      <table style="border: 2px dashed green; background-color: azure;" width="800px" height="600px">
+        <tbody>
+          <tr><td style="border: 2px solid red; text-align: center; vertical-align: bottom; background-color: aliceblue; padding-top: 10px;">a1</td><td width="100px" height="100px" style="padding: 20px;">a2</td><td>a3</td></tr>
+        </tbody>
+      </table>
+      `;
+      const delta = quill.clipboard.convert({ html: markup });
+      const tableAttrs = {
+        tableBackgroundColor: 'azure',
+        tableBorder: '2px dashed green',
+        tableHeight: '600px',
+        tableWidth: '800px',
+      };
+      expect(delta).toEqual(
+        new Delta()
+          .insert('a1\n', {
+            cellBackgroundColor: 'aliceblue',
+            cellBorder: '2px solid red',
+            cellPaddingTop: '10px',
+            cellTextAlign: 'center',
+            cellVerticalAlign: 'bottom',
+            tableCellLine: { row: 1, cell: 1 },
+            ...tableAttrs,
+          })
+          .insert('a2\n', {
+            cellHeight: '100px',
+            cellPadding: '20px',
+            cellWidth: '100px',
+            tableCellLine: { row: 1, cell: 2 },
+            ...tableAttrs,
+          })
+          .insert('a3\n', {
+            tableCellLine: { row: 1, cell: 3 },
+            ...tableAttrs,
+          }),
+      );
+    });
   });
 
   describe('insert table', function() {
@@ -647,6 +695,149 @@ describe('Table Module', function() {
         `,
         true,
       );
+    });
+  });
+
+  describe('customize table', function() {
+    beforeEach(function() {
+      const tableHTML = `
+        <table>
+          <tbody>
+            <tr><td>a1</td><td>a2</td></tr>
+          </tbody>
+        </table>
+      `;
+      this.quill = this.initialize(Quill, tableHTML, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      this.table = this.quill.getModule('table');
+    });
+
+    ['width', 'height'].forEach(attribute => {
+      it(`${attribute} table attribute`, function() {
+        this.quill.setSelection(1, 0);
+        this.table
+          .getTable()[0]
+          .format(`table${capitalize(attribute)}`, '100px');
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table ${attribute}="100px">
+              <tbody>
+                <tr>
+                  <td><p>a1</p></td>
+                  <td><p>a2</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+    });
+
+    ['width', 'height'].forEach(attribute => {
+      it(`${attribute} cell attribute`, function() {
+        this.quill.setSelection(1, 0);
+        this.table
+          .getTable()[2]
+          .format(`cell${capitalize(attribute)}`, '100px');
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <tbody>
+                <tr>
+                  <td ${attribute}="100px"><p>a1</p></td>
+                  <td><p>a2</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+    });
+
+    [
+      { formatName: 'border', styleName: 'border', value: '1px solid red' },
+      { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
+      { formatName: 'borderColor', styleName: 'border-color', value: 'green' },
+      { formatName: 'borderStyle', styleName: 'border-style', value: 'dashed' },
+      {
+        formatName: 'backgroundColor',
+        styleName: 'background-color',
+        value: 'red',
+      },
+    ].forEach(({ formatName, styleName, value }) => {
+      it(`${formatName} table style`, function() {
+        this.quill.setSelection(1, 0);
+        this.table
+          .getTable()[0]
+          .format(`table${capitalize(formatName)}`, value);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table style="${styleName}: ${value};">
+              <tbody>
+                <tr>
+                  <td><p>a1</p></td>
+                  <td><p>a2</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+    });
+
+    [
+      { formatName: 'border', styleName: 'border', value: '1px solid red' },
+      { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
+      { formatName: 'borderColor', styleName: 'border-color', value: 'green' },
+      { formatName: 'borderStyle', styleName: 'border-style', value: 'dashed' },
+      {
+        formatName: 'backgroundColor',
+        styleName: 'background-color',
+        value: 'red',
+      },
+      {
+        formatName: 'verticalAlign',
+        styleName: 'vertical-align',
+        value: 'bottom',
+      },
+      {
+        formatName: 'textAlign',
+        styleName: 'text-align',
+        value: 'center',
+      },
+      { formatName: 'padding', styleName: 'padding', value: '20px' },
+      { formatName: 'paddingTop', styleName: 'padding-top', value: '5px' },
+      { formatName: 'paddingLeft', styleName: 'padding-left', value: '5px' },
+      { formatName: 'paddingRight', styleName: 'padding-right', value: '5px' },
+      {
+        formatName: 'paddingBottom',
+        styleName: 'padding-bottom',
+        value: '5px',
+      },
+    ].forEach(({ formatName, styleName, value }) => {
+      it(`${formatName} cell style`, function() {
+        this.quill.setSelection(1, 0);
+        this.table.getTable()[2].format(`cell${capitalize(formatName)}`, value);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <tbody>
+                <tr>
+                  <td style="${styleName}: ${value};"><p>a1</p></td>
+                  <td><p>a2</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
     });
   });
 });
