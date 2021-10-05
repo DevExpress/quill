@@ -16,12 +16,7 @@ import List from './formats/list';
 import { BackgroundClass, BackgroundStyle } from './formats/background';
 import { ColorClass, ColorStyle } from './formats/color';
 import { FontClass, FontStyle } from './formats/font';
-import {
-  SizeClass,
-  SizeStyle,
-  WidthAttribute,
-  HeightAttribute,
-} from './formats/size';
+import { SizeClass, SizeStyle } from './formats/size';
 
 import Bold from './formats/bold';
 import Italic from './formats/italic';
@@ -47,6 +42,7 @@ import {
   CellBorderStyleStyle,
   CellBorderWidthStyle,
   CellHeightAttribute,
+  CellHeightStyle,
   CellPaddingBottomStyle,
   CellPaddingLeftStyle,
   CellPaddingRightStyle,
@@ -55,6 +51,7 @@ import {
   CellTextAlignStyle,
   CellVerticalAlignStyle,
   CellWidthAttribute,
+  CellWidthStyle,
 } from './formats/table/attributors/cell';
 import {
   TableAlignStyle,
@@ -64,14 +61,14 @@ import {
   TableBorderStyleStyle,
   TableBorderWidthStyle,
   TableHeightAttribute,
+  TableHeightStyle,
   TableWidthAttribute,
+  TableWidthStyle,
 } from './formats/table/attributors/table';
 
 Quill.register(
   {
     'attributors/attribute/direction': DirectionAttribute,
-    'attributors/attribute/width': WidthAttribute,
-    'attributors/attribute/height': HeightAttribute,
     'attributors/attribute/tableWidth': TableWidthAttribute,
     'attributors/attribute/tableHeight': TableHeightAttribute,
     'attributors/attribute/cellWidth': CellWidthAttribute,
@@ -96,6 +93,8 @@ Quill.register(
     'attributors/style/tableBorderStyle': TableBorderStyleStyle,
     'attributors/style/tableBorderColor': TableBorderColorStyle,
     'attributors/style/tableBorderWidth': TableBorderWidthStyle,
+    'attributors/style/tableWidth': TableWidthStyle,
+    'attributors/style/tableHeight': TableHeightStyle,
     'attributors/style/cellBackground': CellBackgroundColorStyle,
     'attributors/style/cellBorder': CellBorderStyle,
     'attributors/style/cellBorderStyle': CellBorderStyleStyle,
@@ -108,6 +107,8 @@ Quill.register(
     'attributors/style/cellPaddingRight': CellPaddingRightStyle,
     'attributors/style/cellVerticalAlign': CellVerticalAlignStyle,
     'attributors/style/cellTextAlign': CellTextAlignStyle,
+    'attributors/style/cellWidth': CellWidthStyle,
+    'attributors/style/cellHeight': CellHeightStyle,
   },
   true,
 );

@@ -27,7 +27,7 @@ class BaseCell extends Block {
   }
 
   format(name, value) {
-    if (/^table\w*/.test(name)) {
+    if (TABLE_FORMATS[name]) {
       const attrName = `data-${name.toLowerCase()}`;
       if (value) {
         this.domNode.setAttribute(attrName, value);

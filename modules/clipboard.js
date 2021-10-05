@@ -18,8 +18,9 @@ import CodeBlock from '../formats/code';
 import { ColorStyle } from '../formats/color';
 import { DirectionAttribute, DirectionStyle } from '../formats/direction';
 import { FontStyle } from '../formats/font';
-import { SizeStyle, WidthAttribute, HeightAttribute } from '../formats/size';
+import { SizeStyle } from '../formats/size';
 import { deleteRange } from './keyboard';
+import capitalize from '../utils/capitalize';
 
 const debug = logger('quill:clipboard');
 
@@ -44,15 +45,13 @@ const CLIPBOARD_CONFIG = [
 ];
 
 const HTML_TEXT_MATCHERS = [matchText, matchNewline];
-const ATTRIBUTE_ATTRIBUTORS = [
-  AlignAttribute,
-  DirectionAttribute,
-  WidthAttribute,
-  HeightAttribute,
-].reduce((memo, attr) => {
-  memo[attr.keyName] = attr;
-  return memo;
-}, {});
+const ATTRIBUTE_ATTRIBUTORS = [AlignAttribute, DirectionAttribute].reduce(
+  (memo, attr) => {
+    memo[attr.keyName] = attr;
+    return memo;
+  },
+  {},
+);
 
 const STYLE_ATTRIBUTORS = [
   AlignStyle,
@@ -529,7 +528,8 @@ function matchStyles(node, delta) {
 
   ['height', 'width'].forEach(dimension => {
     if (['TD', 'TH'].indexOf(node.tagName) !== -1 && style[dimension]) {
-      formats[dimension] = style[dimension];
+      const name = `cell${capitalize(dimension)}`;
+      formats[name] = style[dimension];
     }
   });
   if (style.fontStyle === 'italic') {

@@ -58,7 +58,7 @@ class CellLine extends Block {
       } else {
         this.domNode.removeAttribute(attrName);
       }
-    } else if (/^((table)|(cell))\w*/.test(name)) {
+    } else if (TABLE_FORMATS[name] || CELL_FORMATS[name]) {
       const attrName = `data-${name.toLowerCase()}`;
       if (value) {
         this.domNode.setAttribute(attrName, value);
@@ -134,6 +134,13 @@ class BaseCell extends Container {
         domNode.getAttribute('data-row') ??
         domNode.getAttribute('data-header-row');
     }
+
+    Object.keys(CELL_FORMATS).forEach(format => {
+      const value = domNode.firstElementChild?.dataset[format.toLowerCase()];
+      if (value) {
+        formats[format] = value;
+      }
+    });
 
     return formats;
   }

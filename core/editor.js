@@ -55,11 +55,12 @@ class Editor {
         }
         scrollLength += length;
       }
-      if (attributes.table) {
+      const keys = Object.keys(attributes);
+      if (keys.indexOf('table') > -1) {
         this.scroll.formatAt(index, length, 'table', attributes.table);
         delete attributes.table;
       }
-      if (attributes.tableHeaderCellLine) {
+      if (keys.indexOf('tableHeaderCellLine') > -1) {
         this.scroll.formatAt(
           index,
           length,
@@ -68,7 +69,7 @@ class Editor {
         );
         delete attributes.tableHeaderCellLine;
       }
-      if (attributes.tableCellLine) {
+      if (keys.indexOf('tableCellLine') > -1) {
         this.scroll.formatAt(
           index,
           length,

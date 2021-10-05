@@ -513,13 +513,13 @@ describe('Clipboard', function() {
         new Delta()
           .insert('A1\n', {
             tableHeaderCell: 1,
-            width: '20px',
-            height: '10px',
+            cellWidth: '20px',
+            cellHeight: '10px',
           })
-          .insert('A2\n', { tableHeaderCell: 1, width: '50px' })
+          .insert('A2\n', { tableHeaderCell: 1, cellWidth: '50px' })
           .insert('A3\n', { tableHeaderCell: 1 })
           .insert('B1\n\n', { table: 2 })
-          .insert('B3\n', { table: 2, height: '100px' }),
+          .insert('B3\n', { table: 2, cellHeight: '100px' }),
       );
     });
 
@@ -532,7 +532,7 @@ describe('Clipboard', function() {
       });
       expect(delta).toEqual(
         new Delta()
-          .insert('A1\n', { table: 1, width: '100px', height: '200px' })
+          .insert('A1\n', { table: 1, cellWidth: '100px', cellHeight: '200px' })
           .insert('A2\n', { table: 1 }),
       );
     });

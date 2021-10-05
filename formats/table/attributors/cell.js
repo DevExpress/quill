@@ -8,6 +8,8 @@ const cellConfig = {
 
 const CellHeightAttribute = prepareAttributor(cellConfig, 'height');
 const CellWidthAttribute = prepareAttributor(cellConfig, 'width');
+const CellHeightStyle = prepareStyleAttributor(cellConfig, 'height');
+const CellWidthStyle = prepareStyleAttributor(cellConfig, 'width');
 
 const CellVerticalAlignStyle = prepareStyleAttributor(
   cellConfig,
@@ -112,6 +114,8 @@ export {
   CellPaddingBottomStyle,
   CellPaddingLeftStyle,
   CellPaddingRightStyle,
+  CellHeightStyle,
+  CellWidthStyle,
   CellHeightAttribute,
   CellWidthAttribute,
   CELL_FORMATS,

@@ -8,6 +8,8 @@ const tableConfig = {
 
 const TableHeightAttribute = prepareAttributor(tableConfig, 'height');
 const TableWidthAttribute = prepareAttributor(tableConfig, 'width');
+const TableHeightStyle = prepareStyleAttributor(tableConfig, 'height');
+const TableWidthStyle = prepareStyleAttributor(tableConfig, 'width');
 
 const TableAlignStyle = prepareStyleAttributor(tableConfig, 'float');
 
@@ -66,6 +68,8 @@ export {
   TableBorderStyleStyle,
   TableBorderWidthStyle,
   TableBorderColorStyle,
+  TableHeightStyle,
+  TableWidthStyle,
   TableWidthAttribute,
   TableHeightAttribute,
   TABLE_FORMATS,
