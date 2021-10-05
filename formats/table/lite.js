@@ -3,6 +3,7 @@ import Container from '../../blots/container';
 import isDefined from '../../utils/is_defined';
 import { TABLE_FORMATS } from './attributors/table';
 import getId from './get_id';
+import toggleAttribute from './toggle_attribute';
 
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 
@@ -10,11 +11,7 @@ class BaseCell extends Block {
   static create(value) {
     const node = super.create();
     const attrName = this.dataAttribute;
-    if (value) {
-      node.setAttribute(attrName, value);
-    } else {
-      node.setAttribute(attrName, tableId());
-    }
+    toggleAttribute(node, attrName, value ?? tableId());
     return node;
   }
 
@@ -29,11 +26,7 @@ class BaseCell extends Block {
   format(name, value) {
     if (TABLE_FORMATS[name]) {
       const attrName = `data-${name.toLowerCase()}`;
-      if (value) {
-        this.domNode.setAttribute(attrName, value);
-      } else {
-        this.domNode.removeAttribute(attrName);
-      }
+      toggleAttribute(this.domNode, attrName, value);
     } else {
       super.format(name, value);
     }

@@ -5,6 +5,7 @@ import isDefined from '../../utils/is_defined';
 import { CELL_FORMATS } from './attributors/cell';
 import { TABLE_FORMATS } from './attributors/table';
 import getId from './get_id';
+import toggleAttribute from './toggle_attribute';
 
 const CELL_IDENTITY_KEYS = ['row', 'cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
@@ -51,20 +52,13 @@ class CellLine extends Block {
   }
 
   format(name, value) {
-    if (CELL_IDENTITY_KEYS.indexOf(name) > -1) {
-      const attrName = `data-${name}`;
-      if (value) {
-        this.domNode.setAttribute(attrName, value);
-      } else {
-        this.domNode.removeAttribute(attrName);
-      }
-    } else if (TABLE_FORMATS[name] || CELL_FORMATS[name]) {
+    if (
+      CELL_IDENTITY_KEYS.indexOf(name) > -1 ||
+      TABLE_FORMATS[name] ||
+      CELL_FORMATS[name]
+    ) {
       const attrName = `data-${name.toLowerCase()}`;
-      if (value) {
-        this.domNode.setAttribute(attrName, value);
-      } else {
-        this.domNode.removeAttribute(attrName);
-      }
+      toggleAttribute(this.domNode, attrName, value);
     } else {
       super.format(name, value);
     }
