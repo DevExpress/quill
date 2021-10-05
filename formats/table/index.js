@@ -193,7 +193,7 @@ class TableCell extends BaseCell {
         child.format(name, value);
       });
     } else {
-      super.format(name, value);
+      CELL_FORMATS[name]?.add(this.domNode, value);
     }
   }
 }
@@ -510,7 +510,7 @@ class TableContainer extends Container {
   }
 
   format(name, value) {
-    super.format(name, value);
+    TABLE_FORMATS[name]?.add(this.domNode, value);
   }
 }
 TableContainer.blotName = 'tableContainer';

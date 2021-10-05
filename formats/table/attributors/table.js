@@ -1,9 +1,13 @@
+import prepareAttributor from './prepare_attributor';
 import prepareStyleAttributor from './prepare_style_attributor';
 
 const tableConfig = {
   name: 'table',
   allowedTags: ['TABLE', 'TD', 'TH'],
 };
+
+const TableHeightAttribute = prepareAttributor(tableConfig, 'height');
+const TableWidthAttribute = prepareAttributor(tableConfig, 'width');
 
 const TableAlignStyle = prepareStyleAttributor(tableConfig, 'float');
 
@@ -14,6 +18,11 @@ const TableBackgroundColorStyle = prepareStyleAttributor(
 );
 
 const TableBorderStyle = prepareStyleAttributor(tableConfig, 'border');
+const TableBorderStyleStyle = prepareStyleAttributor(
+  tableConfig,
+  'border',
+  'style',
+);
 const TableBorderWidthStyle = prepareStyleAttributor(
   tableConfig,
   'border',
@@ -29,15 +38,36 @@ const TABLE_FORMATS = {
   tableAlign: TableAlignStyle,
   tableBackgroundColor: TableBackgroundColorStyle,
   tableBorder: TableBorderStyle,
+  tableBorderStyle: TableBorderStyleStyle,
   tableBorderWidth: TableBorderWidthStyle,
   tableBorderColor: TableBorderColorStyle,
+  tableWidth: TableWidthAttribute,
+  tableHeight: TableHeightAttribute,
 };
+
+const TABLE_ATTRIBUTORS = [
+  TableAlignStyle,
+  TableBackgroundColorStyle,
+  TableBorderStyle,
+  TableBorderStyleStyle,
+  TableBorderColorStyle,
+  TableBorderWidthStyle,
+  TableWidthAttribute,
+  TableHeightAttribute,
+].reduce((memo, attr) => {
+  memo[attr.keyName] = attr;
+  return memo;
+}, {});
 
 export {
   TableAlignStyle,
   TableBackgroundColorStyle,
   TableBorderStyle,
+  TableBorderStyleStyle,
   TableBorderWidthStyle,
   TableBorderColorStyle,
+  TableWidthAttribute,
+  TableHeightAttribute,
   TABLE_FORMATS,
+  TABLE_ATTRIBUTORS,
 };

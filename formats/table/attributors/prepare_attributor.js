@@ -6,7 +6,7 @@ export default function prepareAttributor(
   attrName,
 ) {
   return new ElementAttributor(
-    `${name}${capitalize(attrName)}}`,
+    `${name}${capitalize(attrName)}`,
     attrName,
     elementConfig,
   );

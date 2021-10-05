@@ -22,6 +22,11 @@ const CellBackgroundColorStyle = prepareStyleAttributor(
 );
 
 const CellBorderStyle = prepareStyleAttributor(cellConfig, 'border');
+const CellBorderStyleStyle = prepareStyleAttributor(
+  cellConfig,
+  'border',
+  'style',
+);
 const CellBorderWidthStyle = prepareStyleAttributor(
   cellConfig,
   'border',
@@ -57,6 +62,7 @@ const CellPaddingRightStyle = prepareStyleAttributor(
 
 const CELL_FORMATS = {
   cellBorder: CellBorderStyle,
+  cellBorderStyle: CellBorderStyleStyle,
   cellBorderWidth: CellBorderWidthStyle,
   cellBorderColor: CellBorderColorStyle,
   cellBackgroundColor: CellBackgroundColorStyle,
@@ -66,12 +72,34 @@ const CELL_FORMATS = {
   cellPaddingLeft: CellPaddingLeftStyle,
   cellPaddingRight: CellPaddingRightStyle,
   cellVerticalAlign: CellVerticalAlignStyle,
+  cellWidth: CellWidthAttribute,
+  cellHeight: CellHeightAttribute,
 };
+
+const CELL_ATTRIBUTORS = [
+  CellBackgroundColorStyle,
+  CellBorderColorStyle,
+  CellBorderStyle,
+  CellBorderStyleStyle,
+  CellBorderWidthStyle,
+  CellPaddingBottomStyle,
+  CellPaddingLeftStyle,
+  CellPaddingRightStyle,
+  CellPaddingStyle,
+  CellPaddingTopStyle,
+  CellVerticalAlignStyle,
+  CellWidthAttribute,
+  CellHeightAttribute,
+].reduce((memo, attr) => {
+  memo[attr.keyName] = attr;
+  return memo;
+}, {});
 
 export {
   CellVerticalAlignStyle,
   CellBackgroundColorStyle,
   CellBorderStyle,
+  CellBorderStyleStyle,
   CellBorderWidthStyle,
   CellBorderColorStyle,
   CellPaddingStyle,
@@ -82,4 +110,5 @@ export {
   CellHeightAttribute,
   CellWidthAttribute,
   CELL_FORMATS,
+  CELL_ATTRIBUTORS,
 };
