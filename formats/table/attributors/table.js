@@ -11,7 +11,10 @@ const TableWidthAttribute = prepareAttributor(tableConfig, 'width');
 const TableHeightStyle = prepareStyleAttributor(tableConfig, 'height');
 const TableWidthStyle = prepareStyleAttributor(tableConfig, 'width');
 
-const TableAlignStyle = prepareStyleAttributor(tableConfig, 'float');
+const TableAlignStyle = prepareStyleAttributor(
+  { formatName: 'align', ...tableConfig },
+  'float',
+);
 
 const TableBackgroundColorStyle = prepareStyleAttributor(
   tableConfig,
