@@ -27,6 +27,9 @@ class BaseCell extends Block {
     if (TABLE_FORMATS[name]) {
       const attrName = `data-${name.toLowerCase()}`;
       toggleAttribute(this.domNode, attrName, value);
+      this.row()
+        ?.table()
+        ?.format(name, value);
     } else {
       super.format(name, value);
     }
@@ -40,7 +43,7 @@ class BaseCell extends Block {
   }
 
   row() {
-    return this.parent;
+    return 'table' in this.parent ? this.parent : null;
   }
 
   rowOffset() {

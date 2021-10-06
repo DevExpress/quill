@@ -431,15 +431,12 @@ describe('Table Module', function() {
           table: true,
         },
       });
-      this.table = this.quill.getModule('table');
     });
 
     ['width', 'height'].forEach(attribute => {
       it(`${attribute} table attribute`, function() {
         this.quill.setSelection(1, 0);
-        this.table
-          .getTable()[0]
-          .format(`table${capitalize(attribute)}`, '100px');
+        this.quill.format(`table${capitalize(attribute)}`, '100px');
         expect(this.quill.root).toEqualHTML(
           `
             <table ${attribute}="100px">
@@ -459,9 +456,7 @@ describe('Table Module', function() {
     ['width', 'height'].forEach(attribute => {
       it(`${attribute} cell attribute`, function() {
         this.quill.setSelection(1, 0);
-        this.table
-          .getTable()[2]
-          .format(`cell${capitalize(attribute)}`, '100px');
+        this.quill.format(`cell${capitalize(attribute)}`, '100px');
         expect(this.quill.root).toEqualHTML(
           `
             <table>
@@ -491,9 +486,7 @@ describe('Table Module', function() {
     ].forEach(({ formatName, styleName, value }) => {
       it(`${formatName} table style`, function() {
         this.quill.setSelection(1, 0);
-        this.table
-          .getTable()[0]
-          .format(`table${capitalize(formatName)}`, value);
+        this.quill.format(`table${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
           `
             <table style="${styleName}: ${value};">
@@ -542,7 +535,7 @@ describe('Table Module', function() {
     ].forEach(({ formatName, styleName, value }) => {
       it(`${formatName} cell style`, function() {
         this.quill.setSelection(1, 0);
-        this.table.getTable()[2].format(`cell${capitalize(formatName)}`, value);
+        this.quill.format(`cell${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
           `
             <table>

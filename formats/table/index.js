@@ -59,13 +59,23 @@ class CellLine extends Block {
     ) {
       const attrName = `data-${name.toLowerCase()}`;
       toggleAttribute(this.domNode, attrName, value);
+
+      if (CELL_FORMATS[name]) {
+        this.cell()?.format(name, value);
+      }
+
+      if (TABLE_FORMATS[name]) {
+        this.cell()
+          ?.table()
+          ?.format(name, value);
+      }
     } else {
       super.format(name, value);
     }
   }
 
   cell() {
-    return this.parent;
+    return 'row' in this.parent ? this.parent : null;
   }
 }
 CellLine.blotName = 'tableCellLine';
@@ -147,7 +157,7 @@ class BaseCell extends Container {
   }
 
   row() {
-    return this.parent;
+    return 'table' in this.parent ? this.parent : null;
   }
 
   rowOffset() {
