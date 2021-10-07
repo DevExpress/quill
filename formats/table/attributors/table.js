@@ -11,9 +11,10 @@ const TableWidthAttribute = prepareAttributor(tableConfig, 'width');
 const TableHeightStyle = prepareStyleAttributor(tableConfig, 'height');
 const TableWidthStyle = prepareStyleAttributor(tableConfig, 'width');
 
-const TableAlignStyle = prepareStyleAttributor(
-  { formatName: 'align', ...tableConfig },
-  'float',
+const TableTextAlignStyle = prepareStyleAttributor(
+  tableConfig,
+  'text',
+  'align',
 );
 
 const TableBackgroundColorStyle = prepareStyleAttributor(
@@ -40,7 +41,7 @@ const TableBorderColorStyle = prepareStyleAttributor(
 );
 
 const TABLE_FORMATS = {
-  tableAlign: TableAlignStyle,
+  tableTextAlign: TableTextAlignStyle,
   tableBackgroundColor: TableBackgroundColorStyle,
   tableBorder: TableBorderStyle,
   tableBorderStyle: TableBorderStyleStyle,
@@ -51,7 +52,7 @@ const TABLE_FORMATS = {
 };
 
 const TABLE_ATTRIBUTORS = [
-  TableAlignStyle,
+  TableTextAlignStyle,
   TableBackgroundColorStyle,
   TableBorderStyle,
   TableBorderStyleStyle,
@@ -65,7 +66,7 @@ const TABLE_ATTRIBUTORS = [
 }, {});
 
 export {
-  TableAlignStyle,
+  TableTextAlignStyle,
   TableBackgroundColorStyle,
   TableBorderStyle,
   TableBorderStyleStyle,

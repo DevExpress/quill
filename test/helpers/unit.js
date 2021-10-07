@@ -64,7 +64,7 @@ function compareHTML(actual, expected, ignoreClassId, ignoreUI = true) {
     'data-row',
     'data-header-row',
     'data-cell',
-    'data-tablealign',
+    'data-tabletextalign',
     'data-tableborder',
     'data-tablebordercolor',
     'data-tableborderstyle',

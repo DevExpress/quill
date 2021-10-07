@@ -54,7 +54,7 @@ import {
   CellWidthStyle,
 } from './formats/table/attributors/cell';
 import {
-  TableAlignStyle,
+  TableTextAlignStyle,
   TableBackgroundColorStyle,
   TableBorderColorStyle,
   TableBorderStyle,
@@ -87,7 +87,7 @@ Quill.register(
     'attributors/style/direction': DirectionStyle,
     'attributors/style/font': FontStyle,
     'attributors/style/size': SizeStyle,
-    'attributors/style/tableAlign': TableAlignStyle,
+    'attributors/style/tableTextAlign': TableTextAlignStyle,
     'attributors/style/tableBackgroundColor': TableBackgroundColorStyle,
     'attributors/style/tableBorder': TableBorderStyle,
     'attributors/style/tableBorderStyle': TableBorderStyleStyle,

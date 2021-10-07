@@ -474,7 +474,7 @@ describe('Table Module', function() {
     });
 
     [
-      { formatName: 'align', styleName: 'float', value: 'right' },
+      { formatName: 'textAlign', styleName: 'text-align', value: 'right' },
       { formatName: 'border', styleName: 'border', value: '1px solid red' },
       { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
       { formatName: 'borderColor', styleName: 'border-color', value: 'green' },
