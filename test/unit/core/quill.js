@@ -3,6 +3,7 @@ import Quill, { expandConfig, overload } from '../../../core/quill';
 import Theme from '../../../core/theme';
 import Emitter from '../../../core/emitter';
 import { Range } from '../../../core/selection';
+import TableMain from '../../../modules/table';
 
 describe('Quill', function() {
   it('imports', function() {
@@ -833,6 +834,7 @@ describe('Quill', function() {
     });
 
     it('should skip table data attributes', function() {
+      Quill.register({ 'modules/table': TableMain }, true);
       const instance = this.initialize(
         Quill,
         `<p>123</p>
