@@ -322,7 +322,15 @@ class TableContainer extends Container {
   }
 
   format(name, value) {
-    TABLE_FORMATS[name]?.add(this.domNode, value);
+    const tableFormat = TABLE_FORMATS[name];
+    if (tableFormat) {
+      const attrName = `data-${name.toLowerCase()}`;
+      this.cells().forEach(cell => {
+        toggleAttribute(cell.domNode, attrName, value);
+      });
+
+      tableFormat.add(this.domNode, value);
+    }
   }
 }
 TableContainer.blotName = 'tableContainer';
