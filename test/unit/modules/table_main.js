@@ -837,8 +837,10 @@ describe('Table Module', function() {
     it(`get table formats after formatting`, function() {
       this.quill.setSelection(4, 0);
       const formats = this.quill.getFormat();
+
       this.quill.format('tableBorderColor', 'red');
       formats.tableBorderColor = 'red';
+
       expect(this.quill.getFormat()).toEqual(formats);
     });
   });
