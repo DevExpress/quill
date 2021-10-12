@@ -831,5 +831,28 @@ describe('Quill', function() {
 
       expect(instance.getSemanticHTML()).toEqual(expected);
     });
+
+    it('should skip table data attributes', function() {
+      const instance = this.initialize(
+        Quill,
+        `<p>123</p>
+        <table>
+          <tr><td>1</td><td>2</td></tr>
+        </table>`,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+      const expected = `<p>123</p><table style="border-style: dashed; border-width: 2px;"><tbody><tr><td>1</td><td>2</td></tr></tbody></table>`;
+
+      instance.setSelection(5, 0);
+      instance.format('tableBorderStyle', 'dashed');
+      instance.format('tableBorderWidth', '2px');
+
+      expect(instance.getSemanticHTML()).toEqual(expected);
+    });
   });
 });

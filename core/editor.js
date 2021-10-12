@@ -314,8 +314,8 @@ function convertHTML(blot, index, length, isRoot = false) {
     }
     const { outerHTML, innerHTML } = blot.domNode;
     const [start, end] = outerHTML.split(`>${innerHTML}<`);
-    if (start === '<table') {
-      return `<table style="border: 1px solid #000;">${parts
+    if (start.indexOf('<table') === 0) {
+      return `${start.replace(/(\sdata-.+?=["'].*?["'])/g, '')}>${parts
         .join('')
         .replace(/(\sdata-.+?=["'].*?["'])/g, '')}<${end}`;
     }
