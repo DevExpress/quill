@@ -47,8 +47,8 @@ const TABLE_FORMATS = {
   tableBorderStyle: TableBorderStyleStyle,
   tableBorderWidth: TableBorderWidthStyle,
   tableBorderColor: TableBorderColorStyle,
-  tableWidth: TableWidthAttribute,
-  tableHeight: TableHeightAttribute,
+  tableWidth: TableWidthStyle,
+  tableHeight: TableHeightStyle,
 };
 
 const TABLE_ATTRIBUTORS = [
@@ -58,6 +58,8 @@ const TABLE_ATTRIBUTORS = [
   TableBorderStyleStyle,
   TableBorderColorStyle,
   TableBorderWidthStyle,
+  TableHeightStyle,
+  TableWidthStyle,
   TableWidthAttribute,
   TableHeightAttribute,
 ].reduce((memo, attr) => {

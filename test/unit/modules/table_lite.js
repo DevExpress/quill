@@ -433,47 +433,9 @@ describe('Table Module', function() {
       });
     });
 
-    ['width', 'height'].forEach(attribute => {
-      it(`${attribute} table attribute`, function() {
-        this.quill.setSelection(1, 0);
-        this.quill.format(`table${capitalize(attribute)}`, '100px');
-        expect(this.quill.root).toEqualHTML(
-          `
-            <table ${attribute}="100px">
-              <tbody>
-                <tr>
-                  <td>a1</td>
-                  <td>a2</td>
-                </tr>
-              </tbody>
-            </table>
-          `,
-          true,
-        );
-      });
-    });
-
-    ['width', 'height'].forEach(attribute => {
-      it(`${attribute} cell attribute`, function() {
-        this.quill.setSelection(1, 0);
-        this.quill.format(`cell${capitalize(attribute)}`, '100px');
-        expect(this.quill.root).toEqualHTML(
-          `
-            <table>
-              <tbody>
-                <tr>
-                  <td ${attribute}="100px">a1</td>
-                  <td>a2</td>
-                </tr>
-              </tbody>
-            </table>
-          `,
-          true,
-        );
-      });
-    });
-
     [
+      { formatName: 'width', styleName: 'width', value: '100px' },
+      { formatName: 'height', styleName: 'height', value: '100px' },
       { formatName: 'textAlign', styleName: 'text-align', value: 'right' },
       { formatName: 'border', styleName: 'border', value: '1px solid red' },
       { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
@@ -505,6 +467,8 @@ describe('Table Module', function() {
     });
 
     [
+      { formatName: 'width', styleName: 'width', value: '100px' },
+      { formatName: 'height', styleName: 'height', value: '100px' },
       { formatName: 'border', styleName: 'border', value: '1px solid red' },
       { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
       { formatName: 'borderColor', styleName: 'border-color', value: 'green' },

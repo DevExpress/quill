@@ -77,8 +77,8 @@ const CELL_FORMATS = {
   cellPaddingRight: CellPaddingRightStyle,
   cellVerticalAlign: CellVerticalAlignStyle,
   cellTextAlign: CellTextAlignStyle,
-  cellWidth: CellWidthAttribute,
-  cellHeight: CellHeightAttribute,
+  cellWidth: CellWidthStyle,
+  cellHeight: CellHeightStyle,
 };
 
 const CELL_ATTRIBUTORS = [
@@ -94,6 +94,8 @@ const CELL_ATTRIBUTORS = [
   CellPaddingTopStyle,
   CellVerticalAlignStyle,
   CellTextAlignStyle,
+  CellHeightStyle,
+  CellWidthStyle,
   CellWidthAttribute,
   CellHeightAttribute,
 ].reduce((memo, attr) => {
