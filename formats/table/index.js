@@ -99,6 +99,10 @@ class BaseCell extends Container {
     return node;
   }
 
+  format(name, value) {
+    CELL_FORMATS[name]?.add(this.domNode, value);
+  }
+
   checkMerge() {
     if (super.checkMerge() && this.next.children.head != null) {
       const thisHead = this.children.head.formats()[
@@ -204,7 +208,7 @@ class TableCell extends BaseCell {
         child.format(name, value);
       });
     } else {
-      CELL_FORMATS[name]?.add(this.domNode, value);
+      super.format(name, value);
     }
   }
 }

@@ -2,6 +2,10 @@ import Delta from 'quill-delta';
 import Quill from '../../../core/quill';
 import TableMain from '../../../modules/table';
 import capitalize from '../../../utils/capitalize';
+import {
+  CELL_STYLE_TESTS_PRESET,
+  TABLE_STYLE_TESTS_PRESET,
+} from '../../helpers/table_format_presets';
 
 describe('Table Module', function() {
   beforeAll(function() {
@@ -714,20 +718,7 @@ describe('Table Module', function() {
       });
     });
 
-    [
-      { formatName: 'width', styleName: 'width', value: '100px' },
-      { formatName: 'height', styleName: 'height', value: '100px' },
-      { formatName: 'textAlign', styleName: 'text-align', value: 'right' },
-      { formatName: 'border', styleName: 'border', value: '1px solid red' },
-      { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
-      { formatName: 'borderColor', styleName: 'border-color', value: 'green' },
-      { formatName: 'borderStyle', styleName: 'border-style', value: 'dashed' },
-      {
-        formatName: 'backgroundColor',
-        styleName: 'background-color',
-        value: 'red',
-      },
-    ].forEach(({ formatName, styleName, value }) => {
+    TABLE_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
       it(`${formatName} table style`, function() {
         this.quill.setSelection(1, 0);
         this.quill.format(`table${capitalize(formatName)}`, value);
@@ -747,38 +738,7 @@ describe('Table Module', function() {
       });
     });
 
-    [
-      { formatName: 'width', styleName: 'width', value: '100px' },
-      { formatName: 'height', styleName: 'height', value: '100px' },
-      { formatName: 'border', styleName: 'border', value: '1px solid red' },
-      { formatName: 'borderWidth', styleName: 'border-width', value: '2px' },
-      { formatName: 'borderColor', styleName: 'border-color', value: 'green' },
-      { formatName: 'borderStyle', styleName: 'border-style', value: 'dashed' },
-      {
-        formatName: 'backgroundColor',
-        styleName: 'background-color',
-        value: 'red',
-      },
-      {
-        formatName: 'verticalAlign',
-        styleName: 'vertical-align',
-        value: 'bottom',
-      },
-      {
-        formatName: 'textAlign',
-        styleName: 'text-align',
-        value: 'center',
-      },
-      { formatName: 'padding', styleName: 'padding', value: '20px' },
-      { formatName: 'paddingTop', styleName: 'padding-top', value: '5px' },
-      { formatName: 'paddingLeft', styleName: 'padding-left', value: '5px' },
-      { formatName: 'paddingRight', styleName: 'padding-right', value: '5px' },
-      {
-        formatName: 'paddingBottom',
-        styleName: 'padding-bottom',
-        value: '5px',
-      },
-    ].forEach(({ formatName, styleName, value }) => {
+    CELL_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
       it(`${formatName} cell style`, function() {
         this.quill.setSelection(1, 0);
         this.quill.format(`cell${capitalize(formatName)}`, value);
@@ -806,6 +766,78 @@ describe('Table Module', function() {
       formats.tableBorderColor = 'red';
 
       expect(this.quill.getFormat()).toEqual(formats);
+    });
+  });
+
+  describe('customize table with headers', function() {
+    beforeEach(function() {
+      const tableHTML = `
+        <table>
+          <thead>
+            <tr><th><p>h1</p></th><th><p>h2</p></th</tr>
+          </thead>
+          <tbody>
+            <tr><td><p>a1</p></td><td><p>a2</p></td></tr>
+          </tbody>
+        </table>
+      `;
+      this.quill = this.initialize(Quill, tableHTML, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+    });
+
+    TABLE_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
+      it(`${formatName} table style`, function() {
+        this.quill.setSelection(1, 0);
+        this.quill.format(`table${capitalize(formatName)}`, value);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table style="${styleName}: ${value};">
+              <thead>
+                <tr>
+                  <th><p>h1</p></th>
+                  <th><p>h2</p></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><p>a1</p></td>
+                  <td><p>a2</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+    });
+
+    CELL_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
+      it(`${formatName} cell style`, function() {
+        this.quill.setSelection(1, 0);
+        this.quill.format(`cell${capitalize(formatName)}`, value);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <thead>
+                <tr>
+                  <th style="${styleName}: ${value};"><p>h1</p></th>
+                  <th><p>h2</p></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><p>a1</p></td>
+                  <td><p>a2</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
     });
   });
 });
