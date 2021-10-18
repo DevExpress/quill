@@ -8,6 +8,7 @@ import CursorBlot from '../blots/cursor';
 import Block, { BlockEmbed, bubbleFormats } from '../blots/block';
 import Break from '../blots/break';
 import TextBlot, { escapeText } from '../blots/text';
+import removeClass from '../utils/remove_class';
 
 const ASCII = /^[ -~]*$/;
 
@@ -312,6 +313,9 @@ function convertHTML(blot, index, length, isRoot = false) {
     if (isRoot || blot.statics.blotName === 'list') {
       return parts.join('');
     }
+
+    handleTableBlots(blot);
+
     const { outerHTML, innerHTML } = blot.domNode;
     const [start, end] = outerHTML.split(`>${innerHTML}<`);
     if (start.indexOf('<table') === 0) {
@@ -327,6 +331,18 @@ function convertHTML(blot, index, length, isRoot = false) {
 function handleBreakLine(linkedList, parts) {
   if (linkedList.length === 1 && linkedList.head instanceof Break) {
     parts.push('<br>');
+  }
+}
+
+function handleTableBlots(blot) {
+  const BLOTS_WITH_SERVICE_CLASS = [
+    'tableCellLine',
+    'tableHeaderCellLine',
+    'tableCell',
+    'tableHeaderCell',
+  ];
+  if (BLOTS_WITH_SERVICE_CLASS.indexOf(blot.statics.blotName) > -1) {
+    removeClass(blot.domNode, blot.statics.className);
   }
 }
 
