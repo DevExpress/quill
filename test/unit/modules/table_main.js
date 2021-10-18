@@ -280,7 +280,7 @@ describe('Table Module', function() {
           table: true,
         },
       });
-      expect(quill.root).toEqualHTML(markup);
+      expect(quill.root).toEqualHTML(markup, true);
     });
 
     it('split', function() {
@@ -308,6 +308,7 @@ describe('Table Module', function() {
           </tbody>
         </table>
         <p>23</p>`,
+        true,
       );
     });
   });
@@ -358,6 +359,7 @@ describe('Table Module', function() {
           </tbody>
         </table>
       `,
+        true,
       );
     });
 
@@ -386,6 +388,7 @@ describe('Table Module', function() {
             </tbody>
           </table>
         `,
+        true,
       );
     });
 
