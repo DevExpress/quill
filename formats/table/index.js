@@ -2,6 +2,7 @@ import Block from '../../blots/block';
 import Break from '../../blots/break';
 import Container from '../../blots/container';
 import isDefined from '../../utils/is_defined';
+import removeClass from '../../utils/remove_class';
 import { CELL_FORMATS } from './attributors/cell';
 import { TABLE_FORMATS } from './attributors/table';
 import getId from './get_id';
@@ -13,6 +14,8 @@ const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 class CellLine extends Block {
   static create(value) {
     const node = super.create(value);
+
+    removeClass(node, CellLine.className);
     CELL_IDENTITY_KEYS.forEach(key => {
       const identityMarker = key === 'row' ? tableId : cellId;
       node.setAttribute(`data-${key}`, value[key] ?? identityMarker());
@@ -82,7 +85,14 @@ CellLine.blotName = 'tableCellLine';
 CellLine.className = 'ql-table-cell-line';
 CellLine.tagName = 'P';
 
-class HeaderCellLine extends CellLine {}
+class HeaderCellLine extends CellLine {
+  static create(value) {
+    const node = super.create(value);
+
+    removeClass(node, HeaderCellLine.className);
+    return node;
+  }
+}
 HeaderCellLine.blotName = 'tableHeaderCellLine';
 HeaderCellLine.className = 'ql-table-header-cell-line';
 
@@ -195,9 +205,12 @@ class TableCell extends BaseCell {
   static create(value) {
     const node = super.create(value);
     const attrName = 'data-row';
+
     if (value?.row) {
       node.setAttribute(attrName, value.row);
     }
+
+    removeClass(node, TableCell.className);
     return node;
   }
 
@@ -220,9 +233,12 @@ class TableHeaderCell extends BaseCell {
   static create(value) {
     const node = super.create(value);
     const attrName = 'data-header-row';
+
     if (value && value.row) {
       node.setAttribute(attrName, value.row);
     }
+
+    removeClass(node, TableHeaderCell.className);
     return node;
   }
 

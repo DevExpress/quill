@@ -848,7 +848,7 @@ describe('Quill', function() {
           },
         },
       );
-      const expected = `<p>123</p><table style="border-style: dashed; border-width: 2px;"><tbody><tr><td class="ql-table-data-cell"><p class="ql-table-cell-line">1</p></td><td class="ql-table-data-cell"><p class="ql-table-cell-line">2</p></td></tr></tbody></table>`;
+      const expected = `<p>123</p><table style="border-style: dashed; border-width: 2px;"><tbody><tr><td><p>1</p></td><td><p>2</p></td></tr></tbody></table>`;
 
       instance.setSelection(5, 0);
       instance.format('tableBorderStyle', 'dashed');
