@@ -155,7 +155,7 @@ class TableHeaderRow extends BaseRow {
 }
 TableHeaderRow.blotName = 'tableHeaderRow';
 
-class TableBody extends Container {
+class RowContainer extends Container {
   optimize(...args) {
     if (
       this.statics.requiredContainer &&
@@ -174,10 +174,12 @@ class TableBody extends Container {
     super.optimize(...args);
   }
 }
+
+class TableBody extends RowContainer {}
 TableBody.blotName = 'tableBody';
 TableBody.tagName = ['TBODY'];
 
-class TableHeader extends Container {}
+class TableHeader extends RowContainer {}
 TableHeader.blotName = 'tableHeader';
 TableHeader.tagName = ['THEAD'];
 

@@ -165,6 +165,32 @@ describe('Table Module', function() {
       expect(quill.root).toEqualHTML(markup, true);
     });
 
+    it('initial markup with formatting', function() {
+      const markup = `
+      <table style="background-color: azure;">
+        <tbody>
+          <tr>
+            <td style="background-color: aliceblue;">
+              <p>a1</p>
+            </td>
+            <td style="padding: 20px;">
+              <p>a2</p>
+            </td>
+            <td>
+              <p>a3</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      `;
+      const quill = this.initialize(Quill, markup, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      expect(quill.root).toEqualHTML(markup, true);
+    });
+
     it('head', function() {
       const quill = this.initialize(
         Quill,
@@ -216,6 +242,45 @@ describe('Table Module', function() {
         </table>`,
         true,
       );
+    });
+
+    it('initial markup with thead and formatting', function() {
+      const markup = `
+      <table style="background-color: azure;">
+        <thead>
+          <tr>
+            <th>
+              <p>h1</p>
+            </th>
+            <th>
+              <p>h2</p>
+            </th>
+            <th>
+              <p>h3</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="background-color: aliceblue;">
+              <p>a1</p>
+            </td>
+            <td style="padding: 20px;">
+              <p>a2</p>
+            </td>
+            <td>
+              <p>a3</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      `;
+      const quill = this.initialize(Quill, markup, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      expect(quill.root).toEqualHTML(markup, true);
     });
 
     it('split', function() {

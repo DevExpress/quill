@@ -76,6 +76,25 @@ describe('Table Module', function() {
       `);
     });
 
+    it('initial markup with formatting', function() {
+      const markup = `
+      <table style="background-color: azure;">
+        <tbody>
+          <tr>
+            <td style="background-color: aliceblue;">a1</td>
+            <td style="padding: 20px;">a2</td>
+            <td>a3</td></tr>
+        </tbody>
+      </table>
+      `;
+      const quill = this.initialize(Quill, markup, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      expect(quill.root).toEqualHTML(markup);
+    });
+
     it('head', function() {
       const quill = this.initialize(
         Quill,
@@ -117,6 +136,33 @@ describe('Table Module', function() {
           </tr>
         </tbody>
       </table>`);
+    });
+
+    it('initial markup with thead and formatting', function() {
+      const markup = `
+      <table style="background-color: azure;">
+        <thead>
+          <tr>
+            <th>h1</th>
+            <th>h2</th>
+            <th>h3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="background-color: aliceblue;">a1</td>
+            <td style="padding: 20px;">a2</td>
+            <td>a3</td>
+          </tr>
+        </tbody>
+      </table>
+      `;
+      const quill = this.initialize(Quill, markup, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      expect(quill.root).toEqualHTML(markup);
     });
 
     it('split', function() {
