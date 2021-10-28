@@ -177,7 +177,9 @@ class Clipboard extends Module {
   }
 
   onCapturePaste(e) {
-    if (e.defaultPrevented || !this.quill.isEnabled()) return;
+    if (e.defaultPrevented || !this.quill.isEnabled()) {
+      return;
+    }
 
     this.raiseCallback('onPaste', e);
 
@@ -189,24 +191,30 @@ class Clipboard extends Module {
 
     const range = this.quill.getSelection(true);
 
-    if (range == null) return;
+    if (range == null) {
+      return;
+    }
+
     const html = e.clipboardData.getData('text/html');
-    const text = e.clipboardData.getData('text/plain');
     const files = Array.from(e.clipboardData.files || []);
     if (!html && files.length > 0) {
       this.quill.uploader.upload(range, files);
       return;
     }
+
     if (html && files.length > 0) {
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      if (
-        doc.body.childElementCount === 1 &&
-        doc.body.firstElementChild.tagName === 'IMG'
-      ) {
+      const { body } = new DOMParser().parseFromString(html, 'text/html');
+      const documentContainsImage =
+        body.childElementCount === 1 &&
+        body.firstElementChild.tagName === 'IMG';
+
+      if (documentContainsImage) {
         this.quill.uploader.upload(range, files);
         return;
       }
     }
+
+    const text = e.clipboardData.getData('text/plain');
     this.onPaste(range, { html, text });
   }
 
