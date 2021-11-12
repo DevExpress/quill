@@ -26,19 +26,19 @@ const tableHTML = `
   <table>
     <tbody>
       <tr>
-        <td data-row="a">A1</td>
-        <td data-row="a">A2</td>
-        <td data-row="a">A3</td>
+        <td data-tablelite-row="a">A1</td>
+        <td data-tablelite-row="a">A2</td>
+        <td data-tablelite-row="a">A3</td>
       </tr>
       <tr>
-        <td data-row="b">B1</td>
-        <td data-row="b">B2</td>
-        <td data-row="b">B3</td>
+        <td data-tablelite-row="b">B1</td>
+        <td data-tablelite-row="b">B2</td>
+        <td data-tablelite-row="b">B3</td>
       </tr>
       <tr>
-        <td data-row="c">C1</td>
-        <td data-row="c">C2</td>
-        <td data-row="c">C3</td>
+        <td data-tablelite-row="c">C1</td>
+        <td data-tablelite-row="c">C2</td>
+        <td data-tablelite-row="c">C3</td>
       </tr>
     </tbody>
   </table>`;
@@ -64,7 +64,7 @@ describe('Table', function() {
     const editor = this.initialize(Editor, '<p>Test</p>');
     editor.formatLine(0, 5, { table: 'a' });
     expect(this.container).toEqualHTML(
-      '<table><tbody><tr><td data-row="a">Test</td></tr></tbody></table>',
+      '<table><tbody><tr><td data-tablelite-row="a">Test</td></tr></tbody></table>',
     );
   });
 
@@ -72,14 +72,14 @@ describe('Table', function() {
     const editor = this.initialize(Editor, '<h1>Test</h1>');
     editor.formatLine(0, 5, { table: 'a' });
     expect(this.container).toEqualHTML(
-      '<table><tbody><tr><td data-row="a">Test</td></tr></tbody></table>',
+      '<table><tbody><tr><td data-tablelite-row="a">Test</td></tr></tbody></table>',
     );
   });
 
   it('remove format plaintext', function() {
     const editor = this.initialize(
       Editor,
-      '<table><tr><td data-row="a">Test</td></tr></table>',
+      '<table><tr><td data-tablelite-row="a">Test</td></tr></table>',
     );
     editor.formatLine(0, 5, { table: null, tableHeaderCell: null });
     expect(this.container).toEqualHTML('<p>Test</p>');
@@ -88,7 +88,7 @@ describe('Table', function() {
   it('remove format replace', function() {
     const editor = this.initialize(
       Editor,
-      '<table><tr><td data-row="a">Test</td></tr></table>',
+      '<table><tr><td data-tablelite-row="a">Test</td></tr></table>',
     );
     editor.formatLine(0, 5, { header: 1 });
     expect(this.container).toEqualHTML('<h1>Test</h1>');
@@ -100,8 +100,8 @@ describe('Table', function() {
       `
       <table>
         <tbody>
-          <tr><td data-row="a">A</td></tr>
-          <tr><td data-row="a">B</td></tr>
+          <tr><td data-tablelite-row="a">A</td></tr>
+          <tr><td data-tablelite-row="a">B</td></tr>
         </tbody>
       </table>
     `,
@@ -110,7 +110,7 @@ describe('Table', function() {
     expect(this.container).toEqualHTML(`
       <table>
         <tbody>
-          <tr><td data-row="a">A</td><td data-row="a">B</td></tr>
+          <tr><td data-tablelite-row="a">A</td><td data-tablelite-row="a">B</td></tr>
         </tbody>
       </table>
     `);
@@ -122,7 +122,7 @@ describe('Table', function() {
       `
       <table>
         <tbody>
-          <tr><td data-row="a">A</td><td data-row="b">B</td></tr>
+          <tr><td data-tablelite-row="a">A</td><td data-tablelite-row="b">B</td></tr>
         </tbody>
       </table>
     `,
@@ -131,8 +131,8 @@ describe('Table', function() {
     expect(this.container).toEqualHTML(`
       <table>
         <tbody>
-          <tr><td data-row="a">A</td></tr>
-          <tr><td data-row="b">B</td></tr>
+          <tr><td data-tablelite-row="a">A</td></tr>
+          <tr><td data-tablelite-row="b">B</td></tr>
         </tbody>
       </table>
     `);
@@ -144,8 +144,8 @@ describe('Table', function() {
       `
       <table>
         <tbody>
-          <tr><td data-row="a">A</td><td data-row="b">B1</td></tr>
-          <tr><td data-row="b">B2</td></tr>
+          <tr><td data-tablelite-row="a">A</td><td data-tablelite-row="b">B1</td></tr>
+          <tr><td data-tablelite-row="b">B2</td></tr>
         </tbody>
       </table>
     `,
@@ -154,8 +154,8 @@ describe('Table', function() {
     expect(this.container).toEqualHTML(`
       <table>
         <tbody>
-          <tr><td data-row="a">A</td></tr>
-          <tr><td data-row="b">B1</td><td data-row="b">B2</td></tr>
+          <tr><td data-tablelite-row="a">A</td></tr>
+          <tr><td data-tablelite-row="b">B1</td><td data-tablelite-row="b">B2</td></tr>
         </tbody>
       </table>
     `);
@@ -167,11 +167,11 @@ describe('Table', function() {
       `
       <table>
         <tbody>
-          <tr><td data-row="1"><br></td><td data-row="1"><br></td><td data-row="1"><br></td></tr>
-          <tr><td data-row="2"><br></td><td data-row="2"><br></td><td data-row="2"><br></td></tr>
-          <tr><td data-row="3"><br></td><td data-row="3"><br></td></tr>
-          <tr><td data-row="3"><br></td><td data-row="4"><br></td></tr>
-          <tr><td data-row="4"><br></td><td data-row="4"><br></td></tr>
+          <tr><td data-tablelite-row="1"><br></td><td data-tablelite-row="1"><br></td><td data-tablelite-row="1"><br></td></tr>
+          <tr><td data-tablelite-row="2"><br></td><td data-tablelite-row="2"><br></td><td data-tablelite-row="2"><br></td></tr>
+          <tr><td data-tablelite-row="3"><br></td><td data-tablelite-row="3"><br></td></tr>
+          <tr><td data-tablelite-row="3"><br></td><td data-tablelite-row="4"><br></td></tr>
+          <tr><td data-tablelite-row="4"><br></td><td data-tablelite-row="4"><br></td></tr>
         </tbody>
       </table>
     `,
@@ -180,10 +180,10 @@ describe('Table', function() {
     expect(this.container).toEqualHTML(`
       <table>
         <tbody>
-          <tr><td data-row="1"><br></td><td data-row="1"><br></td><td data-row="1"><br></td></tr>
-          <tr><td data-row="2"><br></td><td data-row="2"><br></td><td data-row="2"><br></td></tr>
-          <tr><td data-row="3"><br></td><td data-row="3"><br></td><td data-row="3"><br></td></tr>
-          <tr><td data-row="4"><br></td><td data-row="4"><br></td><td data-row="4"><br></td></tr>
+          <tr><td data-tablelite-row="1"><br></td><td data-tablelite-row="1"><br></td><td data-tablelite-row="1"><br></td></tr>
+          <tr><td data-tablelite-row="2"><br></td><td data-tablelite-row="2"><br></td><td data-tablelite-row="2"><br></td></tr>
+          <tr><td data-tablelite-row="3"><br></td><td data-tablelite-row="3"><br></td><td data-tablelite-row="3"><br></td></tr>
+          <tr><td data-tablelite-row="4"><br></td><td data-tablelite-row="4"><br></td><td data-tablelite-row="4"><br></td></tr>
         </tbody>
       </table>
     `);
@@ -195,16 +195,16 @@ describe('Table', function() {
       `<table>
         <tbody>
           <tr>
-            <td data-row="a">A1</td>
+            <td data-tablelite-row="a">A1</td>
           </tr>
           <tr>
-            <td data-row="b">B1</td>
-            <td data-row="b">B2</td>
+            <td data-tablelite-row="b">B1</td>
+            <td data-tablelite-row="b">B2</td>
           </tr>
           <tr>
-            <td data-row="c">C1</td>
-            <td data-row="c">C2</td>
-            <td data-row="c">C3</td>
+            <td data-tablelite-row="c">C1</td>
+            <td data-tablelite-row="c">C2</td>
+            <td data-tablelite-row="c">C3</td>
           </tr>
         </tbody>
       </table>`,
@@ -214,19 +214,19 @@ describe('Table', function() {
       `<table>
         <tbody>
           <tr>
-            <td data-row="a">A1</td>
-            <td data-row="a"><br></td>
-            <td data-row="a"><br></td>
+            <td data-tablelite-row="a">A1</td>
+            <td data-tablelite-row="a"><br></td>
+            <td data-tablelite-row="a"><br></td>
           </tr>
           <tr>
-            <td data-row="b">B1</td>
-            <td data-row="b">B2</td>
-            <td data-row="b"><br></td>
+            <td data-tablelite-row="b">B1</td>
+            <td data-tablelite-row="b">B2</td>
+            <td data-tablelite-row="b"><br></td>
           </tr>
           <tr>
-            <td data-row="c">C1</td>
-            <td data-row="c">C2</td>
-            <td data-row="c">C3</td>
+            <td data-tablelite-row="c">C1</td>
+            <td data-tablelite-row="c">C2</td>
+            <td data-tablelite-row="c">C3</td>
           </tr>
         </tbody>
       </table>`,
@@ -241,12 +241,12 @@ describe('Table', function() {
       `<table>
         <tbody>
           <tr>
-            <td data-row="a">a</td>
-            <td data-row="a">b</td>
+            <td data-tablelite-row="a">a</td>
+            <td data-tablelite-row="a">b</td>
           </tr>
           <tr>
-            <td data-row="b">1</td>
-            <td data-row="b">2</td>
+            <td data-tablelite-row="b">1</td>
+            <td data-tablelite-row="b">2</td>
           </tr>
         </tbody>
       </table>`,
@@ -262,12 +262,12 @@ describe('Table', function() {
       `<table>
         <tbody>
           <tr>
-            <td data-row="a"><br></td>
-            <td data-row="a"><br></td>
+            <td data-tablelite-row="a"><br></td>
+            <td data-tablelite-row="a"><br></td>
           </tr>
           <tr>
-            <td data-row="b"><br></td>
-            <td data-row="b"><br></td>
+            <td data-tablelite-row="b"><br></td>
+            <td data-tablelite-row="b"><br></td>
           </tr>
         </tbody>
       </table>
@@ -287,18 +287,18 @@ describe('Table', function() {
       `<table>
         <tbody>
           <tr>
-            <td data-row="1">A1</td>
-            <td data-row="1">B1</td>
-            <td data-row="1">C1</td>
+            <td data-tablelite-row="1">A1</td>
+            <td data-tablelite-row="1">B1</td>
+            <td data-tablelite-row="1">C1</td>
           </tr>
           <tr>
-            <td data-row="2">A2</td>
-            <td data-row="2">B2</td>
-            <td data-row="2">C2</td>
+            <td data-tablelite-row="2">A2</td>
+            <td data-tablelite-row="2">B2</td>
+            <td data-tablelite-row="2">C2</td>
           </tr>
           <tr>
-            <td data-row="3">A3</td>
-            <td data-row="3">B3</td>
+            <td data-tablelite-row="3">A3</td>
+            <td data-tablelite-row="3">B3</td>
           </tr>
         </tbody>
       </table>
@@ -313,11 +313,11 @@ describe('Table', function() {
       <table>
         <tbody>
           <tr>
-            <td data-row="1">A1</td>
+            <td data-tablelite-row="1">A1</td>
           </tr>
           <tr>
-            <td data-row="2"><br></td>
-            <td data-row="2">B1</td>
+            <td data-tablelite-row="2"><br></td>
+            <td data-tablelite-row="2">B1</td>
           </tr>
         </tbody>
       </table>`,
@@ -332,12 +332,12 @@ describe('Table', function() {
       `<table>
         <tbody>
           <tr>
-            <td data-row="1">A1</td>
-            <td data-row="1"><br></td>
+            <td data-tablelite-row="1">A1</td>
+            <td data-tablelite-row="1"><br></td>
           </tr>
           <tr>
-            <td data-row="2"><br></td>
-            <td data-row="2">B1</td>
+            <td data-tablelite-row="2"><br></td>
+            <td data-tablelite-row="2">B1</td>
           </tr>
         </tbody>
       </table>`,
@@ -349,14 +349,14 @@ describe('Table', function() {
     <table>
       <thead>
         <tr>
-          <th data-row="1">H1</th>
-          <th data-row="1">H2</th>
+          <th data-tablelite-row="1">H1</th>
+          <th data-tablelite-row="1">H2</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td data-row="a">A1</td>
-          <td data-row="a">A2</td>
+          <td data-tablelite-row="a">A1</td>
+          <td data-tablelite-row="a">A2</td>
         </tr>
       </tbody>
     </table>`;

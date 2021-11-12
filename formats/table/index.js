@@ -9,13 +9,14 @@ import toggleAttribute from './toggle_attribute';
 
 const CELL_IDENTITY_KEYS = ['row', 'cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
+const DATA_PREFIX = 'data-table-';
 
 class CellLine extends Block {
   static create(value) {
     const node = super.create(value);
     CELL_IDENTITY_KEYS.forEach(key => {
       const identityMarker = key === 'row' ? tableId : cellId;
-      node.setAttribute(`data-${key}`, value[key] ?? identityMarker());
+      node.setAttribute(`${DATA_PREFIX}${key}`, value[key] ?? identityMarker());
     });
 
     return node;
@@ -23,7 +24,7 @@ class CellLine extends Block {
 
   static formats(domNode) {
     return CELL_IDENTITY_KEYS.reduce((formats, attribute) => {
-      const attrName = `data-${attribute}`;
+      const attrName = `${DATA_PREFIX}${attribute}`;
       if (domNode.hasAttribute(attrName)) {
         formats[attribute] = domNode.getAttribute(attrName) || undefined;
       }
@@ -32,7 +33,7 @@ class CellLine extends Block {
   }
 
   optimize(...args) {
-    const rowId = this.domNode.getAttribute('data-row');
+    const rowId = this.domNode.getAttribute(`${DATA_PREFIX}row`);
     if (
       this.statics.requiredContainer &&
       !(this.parent instanceof this.statics.requiredContainer)
@@ -52,12 +53,9 @@ class CellLine extends Block {
   }
 
   format(name, value) {
-    if (
-      CELL_IDENTITY_KEYS.indexOf(name) > -1 ||
-      TABLE_FORMATS[name] ||
-      CELL_FORMATS[name]
-    ) {
-      const attrName = `data-${name.toLowerCase()}`;
+    const isCell = CELL_IDENTITY_KEYS.indexOf(name) > -1;
+    if (isCell || TABLE_FORMATS[name] || CELL_FORMATS[name]) {
+      const attrName = `data-${isCell ? 'table-' : ''}${name.toLowerCase()}`;
       toggleAttribute(this.domNode, attrName, value);
 
       if (CELL_FORMATS[name]) {
@@ -135,12 +133,12 @@ class BaseCell extends Container {
     const formats = {};
 
     if (
-      domNode.hasAttribute('data-row') ||
-      domNode.hasAttribute('data-header-row')
+      domNode.hasAttribute(`${DATA_PREFIX}row`) ||
+      domNode.hasAttribute(`${DATA_PREFIX}header-row`)
     ) {
       formats.row =
-        domNode.getAttribute('data-row') ??
-        domNode.getAttribute('data-header-row');
+        domNode.getAttribute(`${DATA_PREFIX}row`) ??
+        domNode.getAttribute(`${DATA_PREFIX}header-row`);
     }
 
     Object.keys(CELL_FORMATS).forEach(format => {
@@ -177,8 +175,8 @@ class BaseCell extends Container {
 
   optimize(...args) {
     const rowId =
-      this.domNode.getAttribute('data-row') ??
-      this.domNode.getAttribute('data-header-row');
+      this.domNode.getAttribute(`${DATA_PREFIX}row`) ??
+      this.domNode.getAttribute(`${DATA_PREFIX}header-row`);
 
     if (
       this.statics.requiredContainer &&
@@ -194,7 +192,7 @@ BaseCell.tagName = ['TD', 'TH'];
 class TableCell extends BaseCell {
   static create(value) {
     const node = super.create(value);
-    const attrName = 'data-row';
+    const attrName = `${DATA_PREFIX}row`;
     if (value?.row) {
       node.setAttribute(attrName, value.row);
     }
@@ -202,8 +200,8 @@ class TableCell extends BaseCell {
   }
 
   format(name, value) {
-    if (['row'].indexOf(name) > -1) {
-      this.domNode.setAttribute(`data-${name}`, value);
+    if (name === 'row') {
+      this.domNode.setAttribute(`${DATA_PREFIX}${name}`, value);
       this.children.forEach(child => {
         child.format(name, value);
       });
@@ -214,12 +212,12 @@ class TableCell extends BaseCell {
 }
 TableCell.blotName = 'tableCell';
 TableCell.className = 'ql-table-data-cell';
-TableCell.dataAttribute = 'data-row';
+TableCell.dataAttribute = `${DATA_PREFIX}row`;
 
 class TableHeaderCell extends BaseCell {
   static create(value) {
     const node = super.create(value);
-    const attrName = 'data-header-row';
+    const attrName = `${DATA_PREFIX}header-row`;
     if (value && value.row) {
       node.setAttribute(attrName, value.row);
     }
@@ -227,8 +225,8 @@ class TableHeaderCell extends BaseCell {
   }
 
   format(name, value) {
-    if (['row'].indexOf(name) > -1) {
-      this.domNode.setAttribute(`data-${name}`, value);
+    if (name === 'row') {
+      this.domNode.setAttribute(`${DATA_PREFIX}${name}`, value);
       this.children.forEach(child => {
         child.format(name, value);
       });
@@ -240,7 +238,7 @@ class TableHeaderCell extends BaseCell {
 TableHeaderCell.tagName = ['TH', 'TD'];
 TableHeaderCell.className = 'ql-table-header-cell';
 TableHeaderCell.blotName = 'tableHeaderCell';
-TableHeaderCell.dataAttribute = 'data-header-row';
+TableHeaderCell.dataAttribute = `${DATA_PREFIX}header-row`;
 
 class BaseRow extends Container {
   checkMerge() {
@@ -297,19 +295,20 @@ class BaseRow extends Container {
   static create(value) {
     const node = super.create(value);
     if (value?.row) {
-      node.setAttribute('data-row', value.row);
+      node.setAttribute(`${DATA_PREFIX}row`, value.row);
     }
     return node;
   }
 
   formats() {
-    return ['row'].reduce((formats, attrPart) => {
-      const attrName = `data-${attrPart}`;
-      if (this.domNode.hasAttribute(attrName)) {
-        formats[attrName] = this.domNode.getAttribute(attrName);
-      }
-      return formats;
-    }, {});
+    const formats = {};
+    const attrName = `${DATA_PREFIX}row`;
+
+    if (this.domNode.hasAttribute(attrName)) {
+      formats[attrName] = this.domNode.getAttribute(attrName);
+    }
+
+    return formats;
   }
 }
 BaseRow.tagName = 'TR';

@@ -102,14 +102,14 @@ describe('Table Module', function() {
         <table>
           <thead>
             <tr>
-              <th data-header-row="1">H1</th>
-              <th data-header-row="1">H2</th>
+              <th data-tablelite-header-row="1">H1</th>
+              <th data-tablelite-header-row="1">H2</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td data-row="a">A1</td>
-              <td data-row="a">A2</td>
+              <td data-tablelite-row="a">A1</td>
+              <td data-tablelite-row="a">A2</td>
             </tr>
           </tbody>
         </table>`,
@@ -125,14 +125,14 @@ describe('Table Module', function() {
       <table>
         <thead>
           <tr>
-            <th data-header-row="1">H1</th>
-            <th data-header-row="1">H2</th>
+            <th data-tablelite-header-row="1">H1</th>
+            <th data-tablelite-header-row="1">H2</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td data-row="a">A1</td>
-            <td data-row="a">A2</td>
+            <td data-tablelite-row="a">A1</td>
+            <td data-tablelite-row="a">A2</td>
           </tr>
         </tbody>
       </table>`);
@@ -216,6 +216,38 @@ describe('Table Module', function() {
           </tbody>
         </table>
       `);
+    });
+
+    it('old table module markup', function() {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr>
+            <td data-row="1">1</td>
+            <td data-row="2">2</td>
+          </tr>
+        </table>`,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+
+      expect(quill.root).toEqualHTML(
+        `
+          <table>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>2</td>
+            </tr>
+          </tbody>
+        </table>
+      `,
+        true,
+      );
     });
   });
 

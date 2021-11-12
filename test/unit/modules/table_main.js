@@ -196,22 +196,22 @@ describe('Table Module', function() {
         Quill,
         `<table>
           <thead>
-            <tr data-row="1">
-              <th class="ql-table-header-cell" data-header-row="1">
-                <p class="ql-table-header-cell-line" data-row="1" data-cell="1">H1</p>
+            <tr data-table-row="1">
+              <th class="ql-table-header-cell" data-table-header-row="1">
+                <p class="ql-table-header-cell-line" data-table-row="1" data-table-cell="1">H1</p>
               </th>
-              <th class="ql-table-header-cell" data-header-row="1">
-                <p class="ql-table-header-cell-line" data-row="1" data-cell="2">H2</p>
+              <th class="ql-table-header-cell" data-table-header-row="1">
+                <p class="ql-table-header-cell-line" data-table-row="1" data-table-cell="2">H2</p>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr data-row="2">
-              <td class="ql-table-data-cell" data-row="2">
-                <p class="ql-table-cell-line" data-row="2" data-cell="1">A1</p>
+            <tr data-table-row="2">
+              <td class="ql-table-data-cell" data-table-row="2">
+                <p class="ql-table-cell-line" data-table-row="2" data-table-cell="1">A1</p>
               </td>
-              <td class="ql-table-data-cell" data-row="2">
-                <p class="ql-table-cell-line" data-row="2" data-cell="2">A2</p>
+              <td class="ql-table-data-cell" data-table-row="2">
+                <p class="ql-table-cell-line" data-table-row="2" data-table-cell="2">A2</p>
               </td>
             </tr>
           </tbody>
@@ -308,6 +308,38 @@ describe('Table Module', function() {
           </tbody>
         </table>
         <p>23</p>`,
+        true,
+      );
+    });
+
+    it('old table module markup', function() {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr>
+            <td data-row="1">1</td>
+            <td data-row="2">2</td>
+          </tr>
+        </table>`,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+
+      expect(quill.root).toEqualHTML(
+        `
+          <table>
+          <tbody>
+            <tr>
+              <td><p>1</p></td>
+              <td><p>2</p></td>
+            </tr>
+          </tbody>
+        </table>
+      `,
         true,
       );
     });

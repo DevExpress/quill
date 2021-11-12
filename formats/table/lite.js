@@ -6,6 +6,7 @@ import getId from './get_id';
 import toggleAttribute from './toggle_attribute';
 
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
+const DATA_PREFIX = 'data-tablelite-';
 
 class BaseCell extends Block {
   static create(value) {
@@ -69,7 +70,7 @@ class TableCell extends BaseCell {
   }
 }
 TableCell.blotName = 'table';
-TableCell.dataAttribute = 'data-row';
+TableCell.dataAttribute = `${DATA_PREFIX}row`;
 
 class TableHeaderCell extends BaseCell {
   format(name, value) {
@@ -82,7 +83,7 @@ class TableHeaderCell extends BaseCell {
 }
 TableHeaderCell.tagName = ['TH', 'TD'];
 TableHeaderCell.blotName = 'tableHeaderCell';
-TableHeaderCell.dataAttribute = 'data-header-row';
+TableHeaderCell.dataAttribute = `${DATA_PREFIX}header-row`;
 
 class BaseRow extends Container {
   checkMerge() {
