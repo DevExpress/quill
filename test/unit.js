@@ -31,6 +31,7 @@ import './unit/modules/keyboard';
 import './unit/modules/syntax';
 import './unit/modules/table_lite';
 import './unit/modules/table_main';
+import './unit/modules/uploader';
 
 // Syntax version will otherwise be registered
 Quill.register(CodeBlockContainer, true);

@@ -57,10 +57,10 @@ class Uploader extends Module {
     const uploads = [];
     const { mimetypes, handler, imageBlot } = this.options;
 
-    Array.from(files).forEach(file => {
+    Array.from(files)?.forEach(file => {
       if (file) {
         let result = false;
-        mimetypes.forEach(mimetype => {
+        mimetypes?.forEach(mimetype => {
           const checkRegExpMimeType =
             mimetype instanceof RegExp && mimetype.test(file.type);
 
