@@ -28,6 +28,11 @@ describe('Uploader', function() {
         type: 'text/html',
       };
 
+      const iconFile = {
+        name: 'test.icon',
+        type: 'image/vnd.microsoft.icon',
+      };
+
       const uploaderInstance = new Uploader(quillMock, {
         mimetypes: Uploader.DEFAULTS.mimetypes,
         handler: (range, files) => {
@@ -35,9 +40,14 @@ describe('Uploader', function() {
         },
       });
 
-      uploaderInstance.upload(testRange, [gifFile, pngFile, htmlFile]);
+      uploaderInstance.upload(testRange, [
+        gifFile,
+        pngFile,
+        htmlFile,
+        iconFile,
+      ]);
 
-      expect(uploads).toEqual([gifFile, pngFile]);
+      expect(uploads).toEqual([gifFile, pngFile, iconFile]);
     });
   });
 });
