@@ -55,32 +55,9 @@ class Uploader extends Module {
 
   upload(range, files) {
     const uploads = [];
-<<<<<<< HEAD
-    const { mimetypes, handler, imageBlot } = this.options;
-
-    Array.from(files)?.forEach(file => {
-      if (file) {
-        let result = false;
-        mimetypes?.forEach(mimetype => {
-          const checkRegExpMimeType =
-            mimetype instanceof RegExp && mimetype.test(file.type);
-
-          if (checkRegExpMimeType || mimetype === file.type) {
-            result = true;
-            return false;
-          }
-
-          return false;
-        });
-
-        if (result) {
-          uploads.push(file);
-        }
-=======
     Array.from(files).forEach(file => {
       if (file && this.options.mimetypes.indexOf(file.type) !== -1) {
         uploads.push(file);
->>>>>>> parent of a0455d42 (support regex values for mimetypes and allow gif images uploading)
       }
     });
     if (uploads.length > 0) {
