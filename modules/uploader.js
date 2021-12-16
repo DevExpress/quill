@@ -67,7 +67,16 @@ class Uploader extends Module {
 }
 
 Uploader.DEFAULTS = {
-  mimetypes: ['image/png', 'image/jpeg'],
+  mimetypes: [
+    'image/png',
+    'image/jpeg',
+    'image/pjpeg',
+    'image/gif',
+    'image/webp',
+    'image/bmp',
+    'image/svg+xml',
+    'image/vnd.microsoft.icon',
+  ],
   imageBlot: 'image',
   handler(range, files, blotName) {
     const promises = files.map(file => {
