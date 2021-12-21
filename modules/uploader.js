@@ -29,13 +29,19 @@ class Uploader extends Module {
 
   addDropHandler() {
     this.quill.root.addEventListener('drop', e => {
-      e.preventDefault();
-      let native;
+      const noFiles = e.dataTransfer.files.length === 0;
       const { onDrop } = this.options;
 
       if (onDrop && typeof onDrop === 'function') {
         onDrop(e);
       }
+
+      if (noFiles) {
+        return;
+      }
+
+      e.preventDefault();
+      let native;
 
       if (document.caretRangeFromPoint) {
         native = document.caretRangeFromPoint(e.clientX, e.clientY);
