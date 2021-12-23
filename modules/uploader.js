@@ -29,13 +29,19 @@ class Uploader extends Module {
 
   addDropHandler() {
     this.quill.root.addEventListener('drop', e => {
-      e.preventDefault();
-      let native;
+      const noFiles = e.dataTransfer.files.length === 0;
       const { onDrop } = this.options;
 
       if (onDrop && typeof onDrop === 'function') {
         onDrop(e);
       }
+
+      if (noFiles) {
+        return;
+      }
+
+      e.preventDefault();
+      let native;
 
       if (document.caretRangeFromPoint) {
         native = document.caretRangeFromPoint(e.clientX, e.clientY);
@@ -67,7 +73,16 @@ class Uploader extends Module {
 }
 
 Uploader.DEFAULTS = {
-  mimetypes: ['image/png', 'image/jpeg'],
+  mimetypes: [
+    'image/png',
+    'image/jpeg',
+    'image/pjpeg',
+    'image/gif',
+    'image/webp',
+    'image/bmp',
+    'image/svg+xml',
+    'image/vnd.microsoft.icon',
+  ],
   imageBlot: 'image',
   handler(range, files, blotName) {
     const promises = files.map(file => {
