@@ -70,8 +70,8 @@ describe('Uploader', function() {
         root: document.createElement('input'),
       };
 
-      // eslint-disable-next-line no-unused-vars
-      const uploaderInstance = new Uploader(quillMock);
+      // eslint-disable-next-line no-new
+      new Uploader(quillMock);
       const dataTransferInstance = new DataTransfer();
       dataTransferInstance.setData('text/plain', 'just text');
       const dropEvent = new DragEvent('drop', {
@@ -89,8 +89,8 @@ describe('Uploader', function() {
         root: document.createElement('input'),
       };
 
-      // eslint-disable-next-line no-unused-vars
-      const uploaderInstance = new Uploader(quillMock);
+      // eslint-disable-next-line no-new
+      new Uploader(quillMock);
       const dataTransferInstance = new DataTransfer();
       const fileContent = ['<u>test</u>'];
 
