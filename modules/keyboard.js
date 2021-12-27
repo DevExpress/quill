@@ -71,6 +71,7 @@ const SHORTKEY =
 
 class Keyboard extends Module {
   static match(evt, binding) {
+    console.log('match');
     if (
       ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
         return !!binding[key] !== evt[key] && binding[key] !== null;
@@ -80,7 +81,8 @@ class Keyboard extends Module {
     }
     return (
       binding.key === Keyboard.normalizeKeyName(evt) ||
-      binding.key === evt.which
+      binding.key === evt.which ||
+      binding.key === evt.code
     );
   }
 
@@ -97,7 +99,7 @@ class Keyboard extends Module {
           KEY_CODES[normalizedKey] || String.fromCharCode(normalizedKey);
       }
     }
-
+    console.log(normalizedKey);
     return normalizedKey;
   }
 
@@ -167,6 +169,8 @@ class Keyboard extends Module {
   }
 
   addBinding(keyBinding, context = {}, handler = {}) {
+    console.log('addBinding: ');
+    console.log(keyBinding);
     const binding = normalize(keyBinding);
     if (binding == null) {
       debug.warn('Attempted to add invalid keyboard binding', binding);
@@ -178,7 +182,15 @@ class Keyboard extends Module {
     if (typeof handler === 'function') {
       handler = { handler };
     }
-    const keys = Array.isArray(binding.key) ? binding.key : [binding.key];
+
+    const keyCode = binding.code;
+
+    const primaryPropery = keyCode ? 'code' : 'key';
+
+    const keys = Array.isArray(binding[primaryPropery])
+      ? binding[primaryPropery]
+      : [binding[primaryPropery]];
+
     keys.forEach(key => {
       const singleBinding = {
         ...binding,
@@ -193,14 +205,40 @@ class Keyboard extends Module {
 
   listen() {
     this.quill.root.addEventListener('keydown', evt => {
+      if (evt.keyCode !== 17) {
+        console.log(evt.keyCode);
+      }
+
+      // 1
+
       if (evt.defaultPrevented || evt.isComposing) return;
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
-      const bindings = (this.bindings[keyName] || []).concat(
-        this.bindings[evt.which] || [],
-      );
+
+      const keyCode = evt.code;
+      const bindings = (
+        this.bindings[keyName] ||
+        this.bindings[keyCode] ||
+        []
+      ).concat(this.bindings[evt.which] || []);
+
+      // 2
+
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
-      if (matches.length === 0) return;
+
+      console.log(matches);
+
+      // if (evt.keyCode === 66) {
+      //   console.log(matches.length);
+      //   evt.preventDefault();
+      // }
+
+      if (matches.length === 0) {
+        return;
+      }
+
+      // 6 working
+
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
       const [line, offset] = this.quill.getLine(range.index);
@@ -213,6 +251,9 @@ class Keyboard extends Module {
         leafStart instanceof TextBlot
           ? leafStart.value().slice(0, offsetStart)
           : '';
+
+      // 5 working
+
       const suffixText =
         leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
       const curContext = {
@@ -225,7 +266,11 @@ class Keyboard extends Module {
         suffix: suffixText,
         event: evt,
       };
+
+      // 4 working
       const prevented = matches.some(binding => {
+        // 3 working
+
         if (
           binding.collapsed != null &&
           binding.collapsed !== curContext.collapsed
@@ -271,13 +316,7 @@ class Keyboard extends Module {
     });
   }
 
-  raiseOnKeydownCallback(event) {
-    const callback = this.options.onKeydown;
-
-    if (callback && typeof callback === 'function') {
-      callback(event);
-    }
-  }
+  raiseOnKeydownCallback() {}
 
   handleBackspace(range, context) {
     // Check for astral symbols
@@ -667,10 +706,12 @@ function makeEmbedArrowHandler(key, shiftKey) {
 
 function makeFormatHandler(format) {
   return {
-    key: format[0],
+    code: `Key${format[0].toUpperCase()}`,
     shortKey: true,
     handler(range, context) {
+      console.log('quill makeFormatHandler');
       this.quill.format(format, !context.format[format], Quill.sources.USER);
+      return true;
     },
   };
 }
@@ -687,6 +728,7 @@ function normalize(binding) {
     binding[SHORTKEY] = binding.shortKey;
     delete binding.shortKey;
   }
+
   return binding;
 }
 
