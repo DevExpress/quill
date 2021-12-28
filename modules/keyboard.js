@@ -81,8 +81,7 @@ class Keyboard extends Module {
     }
     return (
       binding.key === Keyboard.normalizeKeyName(evt) ||
-      binding.key === evt.which ||
-      binding.key === evt.code
+      binding.key === evt.which
     );
   }
 
@@ -99,7 +98,6 @@ class Keyboard extends Module {
           KEY_CODES[normalizedKey] || String.fromCharCode(normalizedKey);
       }
     }
-    console.log(normalizedKey);
     return normalizedKey;
   }
 
@@ -169,8 +167,6 @@ class Keyboard extends Module {
   }
 
   addBinding(keyBinding, context = {}, handler = {}) {
-    console.log('addBinding: ');
-    console.log(keyBinding);
     const binding = normalize(keyBinding);
     if (binding == null) {
       debug.warn('Attempted to add invalid keyboard binding', binding);
@@ -183,13 +179,13 @@ class Keyboard extends Module {
       handler = { handler };
     }
 
-    const keyCode = binding.code;
+    const { which } = binding;
 
-    const primaryPropery = keyCode ? 'code' : 'key';
+    const keyPropery = which ? 'which' : 'key';
 
-    const keys = Array.isArray(binding[primaryPropery])
-      ? binding[primaryPropery]
-      : [binding[primaryPropery]];
+    const keys = Array.isArray(binding[keyPropery])
+      ? binding[keyPropery]
+      : [binding[keyPropery]];
 
     keys.forEach(key => {
       const singleBinding = {
@@ -206,7 +202,7 @@ class Keyboard extends Module {
   listen() {
     this.quill.root.addEventListener('keydown', evt => {
       if (evt.keyCode !== 17) {
-        console.log(evt.keyCode);
+        console.log(evt);
       }
 
       // 1
@@ -215,23 +211,13 @@ class Keyboard extends Module {
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
 
-      const keyCode = evt.code;
-      const bindings = (
-        this.bindings[keyName] ||
-        this.bindings[keyCode] ||
-        []
-      ).concat(this.bindings[evt.which] || []);
+      const bindings = (this.bindings[keyName] || []).concat(
+        this.bindings[evt.which] || [],
+      );
 
       // 2
 
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
-
-      console.log(matches);
-
-      // if (evt.keyCode === 66) {
-      //   console.log(matches.length);
-      //   evt.preventDefault();
-      // }
 
       if (matches.length === 0) {
         return;
@@ -414,9 +400,9 @@ class Keyboard extends Module {
 
 Keyboard.DEFAULTS = {
   bindings: {
-    bold: makeFormatHandler('bold'),
-    italic: makeFormatHandler('italic'),
-    underline: makeFormatHandler('underline'),
+    bold: makeFormatHandler('bold', 66),
+    italic: makeFormatHandler('italic', 73),
+    underline: makeFormatHandler('underline', 85),
     indent: {
       // highlight tab or tab at beginning of list, indent or blockquote
       key: 'tab',
@@ -704,9 +690,10 @@ function makeEmbedArrowHandler(key, shiftKey) {
   };
 }
 
-function makeFormatHandler(format) {
+function makeFormatHandler(format, which) {
   return {
-    code: `Key${format[0].toUpperCase()}`,
+    key: format[0],
+    which,
     shortKey: true,
     handler(range, context) {
       console.log('quill makeFormatHandler');
