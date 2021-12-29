@@ -97,6 +97,7 @@ class Keyboard extends Module {
           KEY_CODES[normalizedKey] || String.fromCharCode(normalizedKey);
       }
     }
+
     return normalizedKey;
   }
 
@@ -178,8 +179,7 @@ class Keyboard extends Module {
       handler = { handler };
     }
 
-    const { which } = binding;
-    const keyPropery = which ? 'which' : 'key';
+    const keyPropery = binding.which ? 'which' : 'key';
     const keys = Array.isArray(binding[keyPropery])
       ? binding[keyPropery]
       : [binding[keyPropery]];
@@ -201,14 +201,11 @@ class Keyboard extends Module {
       if (evt.defaultPrevented || evt.isComposing) return;
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
-
       const bindings = (this.bindings[keyName] || []).concat(
         this.bindings[evt.which] || [],
       );
-
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
       if (matches.length === 0) return;
-
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
       const [line, offset] = this.quill.getLine(range.index);
@@ -221,7 +218,6 @@ class Keyboard extends Module {
         leafStart instanceof TextBlot
           ? leafStart.value().slice(0, offsetStart)
           : '';
-
       const suffixText =
         leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
       const curContext = {
@@ -234,7 +230,6 @@ class Keyboard extends Module {
         suffix: suffixText,
         event: evt,
       };
-
       const prevented = matches.some(binding => {
         if (
           binding.collapsed != null &&
@@ -699,7 +694,6 @@ function normalize(binding) {
     binding[SHORTKEY] = binding.shortKey;
     delete binding.shortKey;
   }
-
   return binding;
 }
 
