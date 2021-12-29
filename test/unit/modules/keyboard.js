@@ -157,39 +157,6 @@ describe('Keyboard', function() {
         ),
       ).toBe(true);
     });
-
-    it('which modifier', function() {
-      const binding = normalize({
-        which: 66,
-        shortKey: true,
-      });
-      expect(
-        Keyboard.match(
-          {
-            key: 'a',
-            which: 66,
-            shiftKey: false,
-            metaKey: false,
-            ctrlKey: false,
-            altKey: false,
-          },
-          binding,
-        ),
-      ).toBe(false);
-      expect(
-        Keyboard.match(
-          {
-            key: 'a',
-            shiftKey: false,
-            metaKey: false,
-            ctrlKey: false,
-            altKey: false,
-            [SHORTKEY]: true,
-          },
-          binding,
-        ),
-      ).toBe(true);
-    });
   });
   describe('onKeydown', function() {
     ['a', 'delete', 'backspace'].forEach(key => {
@@ -220,6 +187,53 @@ describe('Keyboard', function() {
 
         expect(counter).toBe(1);
       });
+    });
+  });
+
+  describe('addBinding', function() {
+    it('which modifier', function() {
+      const quillMock = {
+        root: document.createElement('div'),
+        once: (eventName, handler) => {
+          handler();
+        },
+      };
+      let counter = 0;
+      console.log('which modifier');
+      // eslint-disable-next-line no-new
+      new Keyboard(quillMock, {
+        bindings: {
+          '66': {
+            which: 66,
+            ctrlKey: true,
+            handler() {
+              console.log('handler!!!');
+              counter += 1;
+            },
+          },
+        },
+      });
+
+      const keydownEvent = new KeyboardEvent('keydown', {
+        key: 66,
+        which: 66,
+        shiftKey: false,
+        metaKey: true,
+        ctrlKey: true,
+        altKey: false,
+      });
+
+      // quillMock.root.dispatchEvent(keydownEvent);
+
+      // quillMock.root.addEventListener('keydown', function(e) {
+      //   console.log('native addEventListener keydown');
+      //   console.log(e.key);
+      //   console.log(e.ctrlKey);
+      // });
+
+      quillMock.root.dispatchEvent(keydownEvent);
+
+      expect(counter).toBe(1);
     });
   });
 });

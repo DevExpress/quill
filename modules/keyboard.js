@@ -71,6 +71,7 @@ const SHORTKEY =
 
 class Keyboard extends Module {
   static match(evt, binding) {
+    console.log('match start');
     if (
       ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
         return !!binding[key] !== evt[key] && binding[key] !== null;
@@ -78,6 +79,15 @@ class Keyboard extends Module {
     ) {
       return false;
     }
+
+    console.log(
+      `binding.key: ${
+        binding.key
+      }; Keyboard.normalizeKeyName(evt): ${Keyboard.normalizeKeyName(
+        evt,
+      )}; evt.which: ${evt.which};`,
+    );
+
     return (
       binding.key === Keyboard.normalizeKeyName(evt) ||
       binding.key === evt.which
@@ -167,6 +177,8 @@ class Keyboard extends Module {
   }
 
   addBinding(keyBinding, context = {}, handler = {}) {
+    // console.log('add Binding');
+    // console.log(keyBinding);
     const binding = normalize(keyBinding);
     if (binding == null) {
       debug.warn('Attempted to add invalid keyboard binding', binding);
@@ -198,6 +210,8 @@ class Keyboard extends Module {
 
   listen() {
     this.quill.root.addEventListener('keydown', evt => {
+      // console.log('listen keydown');
+      // console.log(evt);
       if (evt.defaultPrevented || evt.isComposing) return;
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
@@ -205,6 +219,7 @@ class Keyboard extends Module {
         this.bindings[evt.which] || [],
       );
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
+      console.log(`matches length: ${matches.length}`);
       if (matches.length === 0) return;
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
