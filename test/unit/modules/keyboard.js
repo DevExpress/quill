@@ -157,6 +157,39 @@ describe('Keyboard', function() {
         ),
       ).toBe(true);
     });
+
+    it('which modifier', function() {
+      const binding = normalize({
+        which: 66,
+        shortKey: true,
+      });
+      expect(
+        Keyboard.match(
+          {
+            key: 'a',
+            which: 66,
+            shiftKey: false,
+            metaKey: false,
+            ctrlKey: false,
+            altKey: false,
+          },
+          binding,
+        ),
+      ).toBe(false);
+      expect(
+        Keyboard.match(
+          {
+            key: 'a',
+            shiftKey: false,
+            metaKey: false,
+            ctrlKey: false,
+            altKey: false,
+            [SHORTKEY]: true,
+          },
+          binding,
+        ),
+      ).toBe(true);
+    });
   });
   describe('onKeydown', function() {
     ['a', 'delete', 'backspace'].forEach(key => {

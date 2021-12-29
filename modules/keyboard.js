@@ -71,7 +71,6 @@ const SHORTKEY =
 
 class Keyboard extends Module {
   static match(evt, binding) {
-    console.log('match');
     if (
       ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
         return !!binding[key] !== evt[key] && binding[key] !== null;
@@ -180,9 +179,7 @@ class Keyboard extends Module {
     }
 
     const { which } = binding;
-
     const keyPropery = which ? 'which' : 'key';
-
     const keys = Array.isArray(binding[keyPropery])
       ? binding[keyPropery]
       : [binding[keyPropery]];
@@ -201,12 +198,6 @@ class Keyboard extends Module {
 
   listen() {
     this.quill.root.addEventListener('keydown', evt => {
-      if (evt.keyCode !== 17) {
-        console.log(evt);
-      }
-
-      // 1
-
       if (evt.defaultPrevented || evt.isComposing) return;
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
@@ -215,15 +206,8 @@ class Keyboard extends Module {
         this.bindings[evt.which] || [],
       );
 
-      // 2
-
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
-
-      if (matches.length === 0) {
-        return;
-      }
-
-      // 6 working
+      if (matches.length === 0) return;
 
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
@@ -238,8 +222,6 @@ class Keyboard extends Module {
           ? leafStart.value().slice(0, offsetStart)
           : '';
 
-      // 5 working
-
       const suffixText =
         leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
       const curContext = {
@@ -253,10 +235,7 @@ class Keyboard extends Module {
         event: evt,
       };
 
-      // 4 working
       const prevented = matches.some(binding => {
-        // 3 working
-
         if (
           binding.collapsed != null &&
           binding.collapsed !== curContext.collapsed
@@ -302,7 +281,13 @@ class Keyboard extends Module {
     });
   }
 
-  raiseOnKeydownCallback() {}
+  raiseOnKeydownCallback(event) {
+    const callback = this.options.onKeydown;
+
+    if (callback && typeof callback === 'function') {
+      callback(event);
+    }
+  }
 
   handleBackspace(range, context) {
     // Check for astral symbols
@@ -696,7 +681,6 @@ function makeFormatHandler(format, which) {
     which,
     shortKey: true,
     handler(range, context) {
-      console.log('quill makeFormatHandler');
       this.quill.format(format, !context.format[format], Quill.sources.USER);
       return true;
     },
