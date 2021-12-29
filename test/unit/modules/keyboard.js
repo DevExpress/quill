@@ -200,10 +200,34 @@ describe('Keyboard', function() {
       };
       let counter = 0;
       console.log('which modifier');
+
+      const nativeAddEventListener = quillMock.root.addEventListener;
+
+      quillMock.root.addEventListener = function(type, handler) {
+        const fakeEvent = {
+          key: 'n',
+          which: 66,
+          shiftKey: false,
+          metaKey: true,
+          ctrlKey: true,
+          altKey: false,
+        };
+        const modifiedHandler = event => {
+          if (event.key === 'n') {
+            event = fakeEvent;
+          }
+
+          handler(event);
+        };
+
+        nativeAddEventListener.call(this, type, modifiedHandler);
+      };
+
       // eslint-disable-next-line no-new
       new Keyboard(quillMock, {
         bindings: {
-          '66': {
+          66: {
+            key: 'n',
             which: 66,
             ctrlKey: true,
             handler() {
@@ -215,12 +239,7 @@ describe('Keyboard', function() {
       });
 
       const keydownEvent = new KeyboardEvent('keydown', {
-        key: 66,
-        which: 66,
-        shiftKey: false,
-        metaKey: true,
-        ctrlKey: true,
-        altKey: false,
+        key: 'n',
       });
 
       // quillMock.root.dispatchEvent(keydownEvent);
@@ -229,11 +248,14 @@ describe('Keyboard', function() {
       //   console.log('native addEventListener keydown');
       //   console.log(e.key);
       //   console.log(e.ctrlKey);
+      //   console.log(e.which);
       // });
 
       quillMock.root.dispatchEvent(keydownEvent);
 
       expect(counter).toBe(1);
+
+      window.addEventListener = nativeAddEventListener;
     });
   });
 });

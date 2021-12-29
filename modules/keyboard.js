@@ -71,22 +71,28 @@ const SHORTKEY =
 
 class Keyboard extends Module {
   static match(evt, binding) {
-    console.log('match start');
+    // console.log('match start');
     if (
       ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
-        return !!binding[key] !== evt[key] && binding[key] !== null;
+        const result = !!binding[key] !== evt[key] && binding[key] !== null;
+        // console.log(
+        //   `!!binding[key]: ${!!binding[key]}; evt[key]: ${
+        //     evt[key]
+        //   } binding[key]: ${binding[key]}`,
+        // );
+        return result;
       })
     ) {
       return false;
     }
 
-    console.log(
-      `binding.key: ${
-        binding.key
-      }; Keyboard.normalizeKeyName(evt): ${Keyboard.normalizeKeyName(
-        evt,
-      )}; evt.which: ${evt.which};`,
-    );
+    // // console.log(
+    //   `binding.key: ${
+    //     binding.key
+    //   }; Keyboard.normalizeKeyName(evt): ${Keyboard.normalizeKeyName(
+    //     evt,
+    //   )}; evt.which: ${evt.which};`,
+    // );
 
     return (
       binding.key === Keyboard.normalizeKeyName(evt) ||
@@ -177,8 +183,8 @@ class Keyboard extends Module {
   }
 
   addBinding(keyBinding, context = {}, handler = {}) {
-    // console.log('add Binding');
-    // console.log(keyBinding);
+    // // console.log('add Binding');
+    // // console.log(keyBinding);
     const binding = normalize(keyBinding);
     if (binding == null) {
       debug.warn('Attempted to add invalid keyboard binding', binding);
@@ -209,17 +215,24 @@ class Keyboard extends Module {
   }
 
   listen() {
+    // console.log('listen');
     this.quill.root.addEventListener('keydown', evt => {
       // console.log('listen keydown');
-      // console.log(evt);
+      // // console.log(evt);
       if (evt.defaultPrevented || evt.isComposing) return;
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
       const bindings = (this.bindings[keyName] || []).concat(
         this.bindings[evt.which] || [],
       );
+      console.log(this.bindings);
+      // console.log('this.bindings[evt.which]:');
+      console.log('evt.which');
+      console.log(evt.which);
+      console.log(this.bindings[evt.which]);
+
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
-      console.log(`matches length: ${matches.length}`);
+      // console.log(`matches length: ${matches.length}`);
       if (matches.length === 0) return;
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
