@@ -71,7 +71,10 @@ const SHORTKEY =
 
 class Keyboard extends Module {
   static match(evt, binding) {
-    // console.log('match start');
+    // console.log('evt:');
+    // console.log(evt);
+    // console.log('binding:');
+    // console.log(binding);
     if (
       ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
         const result = !!binding[key] !== evt[key] && binding[key] !== null;
@@ -80,13 +83,20 @@ class Keyboard extends Module {
         //     evt[key]
         //   } binding[key]: ${binding[key]}`,
         // );
+        // console.log(result);
+        // if (result) {
+        //   console.log(
+        //     `key: ${key}; binding[key]: ${binding[key]}; evt[key]: ${evt[key]}`,
+        //   );
+        // }
         return result;
       })
     ) {
+      // console.log('match return false;');
       return false;
     }
 
-    // // console.log(
+    // console.log(
     //   `binding.key: ${
     //     binding.key
     //   }; Keyboard.normalizeKeyName(evt): ${Keyboard.normalizeKeyName(
@@ -225,29 +235,37 @@ class Keyboard extends Module {
       const bindings = (this.bindings[keyName] || []).concat(
         this.bindings[evt.which] || [],
       );
-      console.log(this.bindings);
-      // console.log('this.bindings[evt.which]:');
-      console.log('evt.which');
-      console.log(evt.which);
-      console.log(this.bindings[evt.which]);
+      // console.log(this.bindings);
+      // // console.log('this.bindings[evt.which]:');
+      // console.log('evt.which');
+      // console.log(evt.which);
+      // console.log(this.bindings[evt.which]);
 
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
-      // console.log(`matches length: ${matches.length}`);
+      console.log(`matches length: ${matches.length}`);
       if (matches.length === 0) return;
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
+      console.log('has range and focus -3');
       const [line, offset] = this.quill.getLine(range.index);
+      console.log('-2');
       const [leafStart, offsetStart] = this.quill.getLeaf(range.index);
+      console.log('-1');
       const [leafEnd, offsetEnd] =
         range.length === 0
           ? [leafStart, offsetStart]
           : this.quill.getLeaf(range.index + range.length);
+      console.log('0');
       const prefixText =
         leafStart instanceof TextBlot
           ? leafStart.value().slice(0, offsetStart)
           : '';
+
+      console.log('1');
       const suffixText =
         leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
+
+      console.log('2');
       const curContext = {
         collapsed: range.length === 0,
         empty: range.length === 0 && line.length() <= 1,
@@ -258,7 +276,10 @@ class Keyboard extends Module {
         suffix: suffixText,
         event: evt,
       };
+      console.log('start process binding');
       const prevented = matches.some(binding => {
+        console.log('process binding');
+        console.log(binding);
         if (
           binding.collapsed != null &&
           binding.collapsed !== curContext.collapsed

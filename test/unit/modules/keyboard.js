@@ -197,6 +197,19 @@ describe('Keyboard', function() {
         once: (eventName, handler) => {
           handler();
         },
+        hasFocus: () => true,
+        getSelection: () => {
+          return { index: 0, length: 0 };
+        },
+        getFormat: () => {
+          return {};
+        },
+        getLine: () => {
+          return [{ length: () => 0 }, 0];
+        },
+        getLeaf: () => {
+          return [0, 0];
+        },
       };
       let counter = 0;
       console.log('which modifier');
@@ -205,10 +218,11 @@ describe('Keyboard', function() {
 
       quillMock.root.addEventListener = function(type, handler) {
         const fakeEvent = {
-          key: 'n',
+          key: 'b',
           which: 66,
+          code: 'KeyB',
           shiftKey: false,
-          metaKey: true,
+          metaKey: false,
           ctrlKey: true,
           altKey: false,
         };
@@ -227,7 +241,7 @@ describe('Keyboard', function() {
       new Keyboard(quillMock, {
         bindings: {
           66: {
-            key: 'n',
+            key: 'b',
             which: 66,
             ctrlKey: true,
             handler() {
