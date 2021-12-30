@@ -211,27 +211,22 @@ describe('Keyboard', function() {
           return [0, 0];
         },
       };
+      const fakeEvent = {
+        key: 'b',
+        which: 66,
+        code: 'KeyB',
+        shiftKey: false,
+        metaKey: false,
+        ctrlKey: true,
+        altKey: false,
+      };
       let counter = 0;
-      console.log('which modifier');
 
       const nativeAddEventListener = quillMock.root.addEventListener;
 
       quillMock.root.addEventListener = function(type, handler) {
-        const fakeEvent = {
-          key: 'b',
-          which: 66,
-          code: 'KeyB',
-          shiftKey: false,
-          metaKey: false,
-          ctrlKey: true,
-          altKey: false,
-        };
-        const modifiedHandler = event => {
-          if (event.key === 'n') {
-            event = fakeEvent;
-          }
-
-          handler(event);
+        const modifiedHandler = () => {
+          handler(fakeEvent);
         };
 
         nativeAddEventListener.call(this, type, modifiedHandler);
@@ -245,7 +240,6 @@ describe('Keyboard', function() {
             which: 66,
             ctrlKey: true,
             handler() {
-              console.log('handler!!!');
               counter += 1;
             },
           },
@@ -255,15 +249,6 @@ describe('Keyboard', function() {
       const keydownEvent = new KeyboardEvent('keydown', {
         key: 'n',
       });
-
-      // quillMock.root.dispatchEvent(keydownEvent);
-
-      // quillMock.root.addEventListener('keydown', function(e) {
-      //   console.log('native addEventListener keydown');
-      //   console.log(e.key);
-      //   console.log(e.ctrlKey);
-      //   console.log(e.which);
-      // });
 
       quillMock.root.dispatchEvent(keydownEvent);
 
