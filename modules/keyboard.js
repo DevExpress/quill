@@ -73,13 +73,11 @@ class Keyboard extends Module {
   static match(evt, binding) {
     if (
       ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
-        const result = !!binding[key] !== evt[key] && binding[key] !== null;
-        return result;
+        return !!binding[key] !== evt[key] && binding[key] !== null;
       })
     ) {
       return false;
     }
-
     return (
       binding.key === Keyboard.normalizeKeyName(evt) ||
       binding.key === evt.which
@@ -206,7 +204,6 @@ class Keyboard extends Module {
       const bindings = (this.bindings[keyName] || []).concat(
         this.bindings[evt.which] || [],
       );
-
       const matches = bindings.filter(binding => Keyboard.match(evt, binding));
       if (matches.length === 0) return;
       const range = this.quill.getSelection();
@@ -221,10 +218,8 @@ class Keyboard extends Module {
         leafStart instanceof TextBlot
           ? leafStart.value().slice(0, offsetStart)
           : '';
-
       const suffixText =
         leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
-
       const curContext = {
         collapsed: range.length === 0,
         empty: range.length === 0 && line.length() <= 1,
