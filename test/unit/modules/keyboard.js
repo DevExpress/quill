@@ -190,7 +190,7 @@ describe('Keyboard', function() {
     });
   });
 
-  describe('addBinding', function() {
+  describe('bindings', function() {
     it('which modifier', function() {
       const quillMock = {
         root: document.createElement('div'),
