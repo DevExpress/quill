@@ -64,5 +64,49 @@ describe('Uploader', function() {
         expect(uploads.length).toEqual(file.isNotImage ? 0 : 1);
       });
     });
+
+    it('should not prevent default when no files to drop', function() {
+      const quillMock = {
+        root: document.createElement('input'),
+      };
+
+      // eslint-disable-next-line no-new
+      new Uploader(quillMock);
+      const dataTransferInstance = new DataTransfer();
+      dataTransferInstance.setData('text/plain', 'just text');
+      const dropEvent = new DragEvent('drop', {
+        dataTransfer: dataTransferInstance,
+        cancelable: true,
+      });
+
+      quillMock.root.dispatchEvent(dropEvent);
+
+      expect(dropEvent.defaultPrevented).toBeFalse();
+    });
+
+    it('should prevent default on drop files', function() {
+      const quillMock = {
+        root: document.createElement('input'),
+      };
+
+      // eslint-disable-next-line no-new
+      new Uploader(quillMock);
+      const dataTransferInstance = new DataTransfer();
+      const fileContent = ['<u>test</u>'];
+
+      dataTransferInstance.setData('text/plain', 'just text');
+      dataTransferInstance.items.add(
+        new File([new Blob(fileContent, { type: 'text/html' })], 'test.html'),
+      );
+
+      const dropEvent = new DragEvent('drop', {
+        dataTransfer: dataTransferInstance,
+        cancelable: true,
+      });
+
+      quillMock.root.dispatchEvent(dropEvent);
+
+      expect(dropEvent.defaultPrevented).toBeTrue();
+    });
   });
 });
