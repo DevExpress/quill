@@ -230,23 +230,71 @@ class Keyboard extends Module {
         suffix: suffixText,
         event: evt,
       };
-      const prevented = matches.some(binding => {
+      // const prevented = matches.some(binding => {
+      //   if (
+      //     binding.collapsed != null &&
+      //     binding.collapsed !== curContext.collapsed
+      //   ) {
+      //     return false;
+      //   }
+      //   if (binding.empty != null && binding.empty !== curContext.empty) {
+      //     return false;
+      //   }
+      //   if (binding.offset != null && binding.offset !== curContext.offset) {
+      //     return false;
+      //   }
+      //   if (Array.isArray(binding.format)) {
+      //     // any format is present
+      //     if (binding.format.every(name => curContext.format[name] == null)) {
+      //       return false;
+      //     }
+      //   } else if (typeof binding.format === 'object') {
+      //     // all formats must match
+      //     if (
+      //       !Object.keys(binding.format).every(name => {
+      //         if (binding.format[name] === true)
+      //           return curContext.format[name] != null;
+      //         if (binding.format[name] === false)
+      //           return curContext.format[name] == null;
+      //         return isEqual(binding.format[name], curContext.format[name]);
+      //       })
+      //     ) {
+      //       return false;
+      //     }
+      //   }
+      //   if (binding.prefix != null && !binding.prefix.test(curContext.prefix)) {
+      //     return false;
+      //   }
+      //   if (binding.suffix != null && !binding.suffix.test(curContext.suffix)) {
+      //     return false;
+      //   }
+      //   return binding.handler.call(this, range, curContext, binding) !== true;
+      // });
+
+      let prevented = false;
+
+      for (let i = 0; i < matches.length; i += 1) {
+        const binding = matches[i];
         if (
           binding.collapsed != null &&
           binding.collapsed !== curContext.collapsed
         ) {
-          return false;
+          // eslint-disable-next-line no-continue
+          continue;
         }
         if (binding.empty != null && binding.empty !== curContext.empty) {
-          return false;
+          // eslint-disable-next-line no-continue
+          continue;
         }
         if (binding.offset != null && binding.offset !== curContext.offset) {
-          return false;
+          // eslint-disable-next-line no-continue
+          continue;
         }
         if (Array.isArray(binding.format)) {
           // any format is present
           if (binding.format.every(name => curContext.format[name] == null)) {
-            return false;
+            // eslint-disable-next-line no-continue
+            continue;
           }
         } else if (typeof binding.format === 'object') {
           // all formats must match
@@ -259,17 +307,34 @@ class Keyboard extends Module {
               return isEqual(binding.format[name], curContext.format[name]);
             })
           ) {
-            return false;
+            // eslint-disable-next-line no-continue
+            continue;
           }
         }
         if (binding.prefix != null && !binding.prefix.test(curContext.prefix)) {
-          return false;
+          // eslint-disable-next-line no-continue
+          continue;
         }
         if (binding.suffix != null && !binding.suffix.test(curContext.suffix)) {
-          return false;
+          // eslint-disable-next-line no-continue
+          continue;
         }
-        return binding.handler.call(this, range, curContext, binding) !== true;
-      });
+
+        const handlerResult = binding.handler.call(
+          this,
+          range,
+          curContext,
+          binding,
+        );
+        if (handlerResult === true) {
+          prevented = true;
+          break;
+        } /* else if (handlerResult?.preventAfterAllMatches) {
+          prevented = true;
+        } */
+        // return binding.handler.call(this, range, curContext, binding) !== true;
+      }
+
       if (prevented) {
         evt.preventDefault();
       }
@@ -677,7 +742,7 @@ function makeFormatHandler(format, which) {
     shortKey: true,
     handler(range, context) {
       this.quill.format(format, !context.format[format], Quill.sources.USER);
-      return true;
+      return { preventAfterAllMatches: true };
     },
   };
 }
