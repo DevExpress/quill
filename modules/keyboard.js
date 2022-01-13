@@ -278,14 +278,11 @@ class Keyboard extends Module {
           curContext,
           binding,
         );
+        const preventAfterAllMatches = handlerResult?.preventAfterAllMatches;
 
-        if (handlerResult !== true || handlerResult?.preventAfterAllMatches) {
-          prevented = true;
+        prevented = handlerResult !== true || preventAfterAllMatches;
 
-          return !handlerResult?.preventAfterAllMatches;
-        }
-
-        return false;
+        return prevented && !preventAfterAllMatches;
       });
 
       if (prevented) {
