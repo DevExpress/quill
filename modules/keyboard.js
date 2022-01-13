@@ -326,12 +326,12 @@ class Keyboard extends Module {
           curContext,
           binding,
         );
-        if (handlerResult === true) {
+        if (handlerResult !== true && typeof handlerResult !== 'object') {
           prevented = true;
           break;
-        } /* else if (handlerResult?.preventAfterAllMatches) {
+        } else if (handlerResult?.preventAfterAllMatches) {
           prevented = true;
-        } */
+        }
         // return binding.handler.call(this, range, curContext, binding) !== true;
       }
 
