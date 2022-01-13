@@ -230,71 +230,26 @@ class Keyboard extends Module {
         suffix: suffixText,
         event: evt,
       };
-      // const prevented = matches.some(binding => {
-      //   if (
-      //     binding.collapsed != null &&
-      //     binding.collapsed !== curContext.collapsed
-      //   ) {
-      //     return false;
-      //   }
-      //   if (binding.empty != null && binding.empty !== curContext.empty) {
-      //     return false;
-      //   }
-      //   if (binding.offset != null && binding.offset !== curContext.offset) {
-      //     return false;
-      //   }
-      //   if (Array.isArray(binding.format)) {
-      //     // any format is present
-      //     if (binding.format.every(name => curContext.format[name] == null)) {
-      //       return false;
-      //     }
-      //   } else if (typeof binding.format === 'object') {
-      //     // all formats must match
-      //     if (
-      //       !Object.keys(binding.format).every(name => {
-      //         if (binding.format[name] === true)
-      //           return curContext.format[name] != null;
-      //         if (binding.format[name] === false)
-      //           return curContext.format[name] == null;
-      //         return isEqual(binding.format[name], curContext.format[name]);
-      //       })
-      //     ) {
-      //       return false;
-      //     }
-      //   }
-      //   if (binding.prefix != null && !binding.prefix.test(curContext.prefix)) {
-      //     return false;
-      //   }
-      //   if (binding.suffix != null && !binding.suffix.test(curContext.suffix)) {
-      //     return false;
-      //   }
-      //   return binding.handler.call(this, range, curContext, binding) !== true;
-      // });
 
       let prevented = false;
 
-      for (let i = 0; i < matches.length; i += 1) {
-        const binding = matches[i];
+      matches.some(binding => {
         if (
           binding.collapsed != null &&
           binding.collapsed !== curContext.collapsed
         ) {
-          // eslint-disable-next-line no-continue
-          continue;
+          return false;
         }
         if (binding.empty != null && binding.empty !== curContext.empty) {
-          // eslint-disable-next-line no-continue
-          continue;
+          return false;
         }
         if (binding.offset != null && binding.offset !== curContext.offset) {
-          // eslint-disable-next-line no-continue
-          continue;
+          return false;
         }
         if (Array.isArray(binding.format)) {
           // any format is present
           if (binding.format.every(name => curContext.format[name] == null)) {
-            // eslint-disable-next-line no-continue
-            continue;
+            return false;
           }
         } else if (typeof binding.format === 'object') {
           // all formats must match
@@ -307,17 +262,14 @@ class Keyboard extends Module {
               return isEqual(binding.format[name], curContext.format[name]);
             })
           ) {
-            // eslint-disable-next-line no-continue
-            continue;
+            return false;
           }
         }
         if (binding.prefix != null && !binding.prefix.test(curContext.prefix)) {
-          // eslint-disable-next-line no-continue
-          continue;
+          return false;
         }
         if (binding.suffix != null && !binding.suffix.test(curContext.suffix)) {
-          // eslint-disable-next-line no-continue
-          continue;
+          return false;
         }
 
         const handlerResult = binding.handler.call(
@@ -326,14 +278,15 @@ class Keyboard extends Module {
           curContext,
           binding,
         );
-        if (handlerResult !== true && typeof handlerResult !== 'object') {
+
+        if (handlerResult !== true || handlerResult?.preventAfterAllMatches) {
           prevented = true;
-          break;
-        } else if (handlerResult?.preventAfterAllMatches) {
-          prevented = true;
+
+          return !handlerResult?.preventAfterAllMatches;
         }
-        // return binding.handler.call(this, range, curContext, binding) !== true;
-      }
+
+        return false;
+      });
 
       if (prevented) {
         evt.preventDefault();
