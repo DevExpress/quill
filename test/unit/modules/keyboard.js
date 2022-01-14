@@ -254,7 +254,7 @@ describe('Keyboard', function() {
 
       expect(counter).toBe(1);
 
-      window.addEventListener = nativeAddEventListener;
+      quillMock.root.addEventListener = nativeAddEventListener;
     });
   });
 });
