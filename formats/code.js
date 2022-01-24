@@ -15,7 +15,7 @@ class CodeBlockContainer extends Container {
 
   code(index, length) {
     const text = this.children
-      .map(child => (child.length() <= 1 ? '' : child.domNode.innerText))
+      .map(child => (child.length() <= 1 ? '' : child.domNode.textContent))
       .join('\n')
       .slice(index, index + length);
     return escapeText(text);
