@@ -856,5 +856,25 @@ describe('Quill', function() {
 
       expect(instance.getSemanticHTML()).toEqual(expected);
     });
+
+    it('should correctly convert hidden code blocks', function() {
+      const instance = this.initialize(
+        Quill,
+        `<p>123</p>
+        <pre>ab</pre>
+        <p>45</p>`,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+      const expected = '<p>123</p><pre>\nab\n</pre><p>45</p>';
+      this.container.style.visibility = 'hidden';
+
+      expect(instance.getSemanticHTML()).toEqual(expected);
+      this.container.style.visibility = '';
+    });
   });
 });
