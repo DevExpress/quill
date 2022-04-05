@@ -545,8 +545,10 @@ function matchStyles(node, delta) {
   const style = node.style || {};
 
   ['height', 'width'].forEach(dimension => {
-    if (['TD', 'TH'].indexOf(node.tagName) !== -1 && style[dimension]) {
-      const name = `cell${capitalize(dimension)}`;
+    const isCell = ['TD', 'TH'].indexOf(node.tagName) !== -1;
+    const isTable = node.tagName === 'TABLE';
+    if ((isCell || isTable) && style[dimension]) {
+      const name = `${isTable ? 'table' : 'cell'}${capitalize(dimension)}`;
       formats[name] = style[dimension];
     }
   });
