@@ -7,6 +7,7 @@ class Uploader extends Module {
   constructor(quill, options) {
     super(quill, options);
 
+    this.preventImageUploading(false);
     this.addDragOverHandler();
     this.addDropHandler();
   }
@@ -28,38 +29,56 @@ class Uploader extends Module {
   }
 
   addDropHandler() {
-    this.quill.root.addEventListener('drop', e => {
-      const noFiles = e.dataTransfer.files.length === 0;
-      const { onDrop } = this.options;
-
-      if (onDrop && typeof onDrop === 'function') {
-        onDrop(e);
-      }
-
-      if (noFiles) {
-        return;
-      }
-
-      e.preventDefault();
-      let native;
-
-      if (document.caretRangeFromPoint) {
-        native = document.caretRangeFromPoint(e.clientX, e.clientY);
-      } else if (document.caretPositionFromPoint) {
-        const position = document.caretPositionFromPoint(e.clientX, e.clientY);
-        native = document.createRange();
-        native.setStart(position.offsetNode, position.offset);
-        native.setEnd(position.offsetNode, position.offset);
-      } else {
-        return;
-      }
-      const normalized = this.quill.selection.normalizeNative(native);
-      const range = this.quill.selection.normalizedToRange(normalized);
-      this.upload(range, e.dataTransfer.files);
-    });
+    this.bindedDropHandler = this.dropHandler.bind(this);
+    this.quill.root.addEventListener('drop', this.bindedDropHandler);
   }
 
-  upload(range, files) {
+  dropHandler(e) {
+    const noFiles = e.dataTransfer.files.length === 0;
+    const { onDrop } = this.options;
+
+    if (onDrop && typeof onDrop === 'function') {
+      onDrop(e);
+    }
+
+    if (noFiles || this.preventImageUpload) {
+      return;
+    }
+
+    e.preventDefault();
+    let native;
+
+    if (document.caretRangeFromPoint) {
+      native = document.caretRangeFromPoint(e.clientX, e.clientY);
+    } else if (document.caretPositionFromPoint) {
+      const position = document.caretPositionFromPoint(e.clientX, e.clientY);
+      native = document.createRange();
+      native.setStart(position.offsetNode, position.offset);
+      native.setEnd(position.offsetNode, position.offset);
+    } else {
+      return;
+    }
+    const normalized = this.quill.selection.normalizeNative(native);
+    const range = this.quill.selection.normalizedToRange(normalized);
+    this.upload(range, e.dataTransfer.files);
+  }
+
+  removeDropHandler() {
+    this.quill.root.removeEventListener('drop', this.bindedDropHandler);
+  }
+
+  preventImageUploading(value) {
+    if (typeof value !== 'undefined') {
+      this.preventImageUpload = value;
+    }
+    return this.preventImageUpload;
+  }
+
+  upload(range, files, force) {
+    if (this.preventImageUpload && !force) {
+      return;
+    }
+
     const uploads = [];
     Array.from(files).forEach(file => {
       if (file && this.options.mimetypes.indexOf(file.type) !== -1) {
