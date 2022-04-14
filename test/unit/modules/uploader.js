@@ -109,14 +109,26 @@ describe('Uploader', function() {
       expect(dropEvent.defaultPrevented).toBeTrue();
     });
 
-    [true, false].forEach(preventValue => {
-      it(`check preventImageUploading ${preventValue}`, function() {
+    [
+      {
+        preventValue: true,
+      },
+      {
+        preventValue: false,
+      },
+      {
+        preventValue: false,
+        forceUpload: true,
+      },
+    ].forEach(data => {
+      it(`check preventImageUploading ${data.preventValue}`, function() {
         const testRange = new Range(0);
         const file = {
           name: 'test.png',
           type: 'image/png',
         };
-        const expectedUploadsCount = preventValue ? 0 : 1;
+        const expectedUploadsCount =
+          data.preventValue && !data.forceUpload ? 0 : 1;
         let uploads = [];
 
         const quillMock = {
@@ -132,12 +144,14 @@ describe('Uploader', function() {
           },
         });
 
-        uploaderInstance.preventImageUploading(!preventValue);
-        uploaderInstance.preventImageUploading(preventValue);
+        uploaderInstance.preventImageUploading(!data.preventValue);
+        uploaderInstance.preventImageUploading(data.preventValue);
 
-        uploaderInstance.upload(testRange, [file]);
+        uploaderInstance.upload(testRange, [file], data.forceUpload);
 
-        expect(uploaderInstance.preventImageUploading()).toEqual(preventValue);
+        expect(uploaderInstance.preventImageUploading()).toEqual(
+          data.preventValue,
+        );
         expect(uploads.length).toEqual(expectedUploadsCount);
       });
     });
