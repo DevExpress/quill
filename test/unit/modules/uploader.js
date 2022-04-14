@@ -108,5 +108,64 @@ describe('Uploader', function() {
 
       expect(dropEvent.defaultPrevented).toBeTrue();
     });
+
+    it('check preventImageUploading on', function() {
+      const testRange = new Range(0);
+      const file = {
+        name: 'test.png',
+        type: 'image/png',
+      };
+      let uploads = [];
+
+      const quillMock = {
+        root: {
+          addEventListener: () => {},
+        },
+      };
+
+      const uploaderInstance = new Uploader(quillMock, {
+        mimetypes: Uploader.DEFAULTS.mimetypes,
+        handler: (range, files) => {
+          uploads = files;
+        },
+      });
+
+      uploaderInstance.preventImageUploading(true);
+
+      uploaderInstance.upload(testRange, [file]);
+
+      expect(uploaderInstance.preventImageUploading()).toBeTrue();
+      expect(uploads.length).toEqual(0);
+    });
+
+    it('check preventImageUploading off', function() {
+      const testRange = new Range(0);
+      const file = {
+        name: 'test.png',
+        type: 'image/png',
+      };
+      let uploads = [];
+
+      const quillMock = {
+        root: {
+          addEventListener: () => {},
+        },
+      };
+
+      const uploaderInstance = new Uploader(quillMock, {
+        mimetypes: Uploader.DEFAULTS.mimetypes,
+        handler: (range, files) => {
+          uploads = files;
+        },
+      });
+
+      uploaderInstance.preventImageUploading(true);
+      uploaderInstance.preventImageUploading(false);
+
+      uploaderInstance.upload(testRange, [file]);
+
+      expect(uploaderInstance.preventImageUploading()).toBeFalse();
+      expect(uploads.length).toEqual(1);
+    });
   });
 });
