@@ -526,6 +526,29 @@ describe('Clipboard', function() {
     it('table with dimensions', function() {
       const delta = this.quill.clipboard.convert({
         html:
+          '<table height="400px" width="500px">' +
+          '<thead><tr><td>A1</td><td>A2</td><td>A3</td></tr></thead>' +
+          '<tbody><tr><td>B1</td><td></td><td>B3</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\nA2\nA3\n', {
+            tableHeaderCell: 1,
+            tableWidth: '500px',
+            tableHeight: '400px',
+          })
+          .insert('B1\n\nB3\n', {
+            table: 2,
+            tableWidth: '500px',
+            tableHeight: '400px',
+          }),
+      );
+    });
+
+    it('table cells with dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
           '<table>' +
           '<thead><tr><td width="20px" height="10px">A1</td><td width="50px">A2</td><td>A3</td></tr></thead>' +
           '<tbody><tr><td>B1</td><td></td><td height="100px">B3</td></tr></tbody>' +
@@ -545,17 +568,88 @@ describe('Clipboard', function() {
       );
     });
 
+    it('table and cells with dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
+          '<table width="500px" height="200px">' +
+          '<tbody><tr><td width="100px" height="200px">A1</td><td>A2</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\n', {
+            table: 1,
+            tableWidth: '500px',
+            tableHeight: '200px',
+            cellWidth: '100px',
+            cellHeight: '200px',
+          })
+          .insert('A2\n', {
+            table: 1,
+            tableWidth: '500px',
+            tableHeight: '200px',
+          }),
+      );
+    });
+
     it('table with style dimensions', function() {
       const delta = this.quill.clipboard.convert({
         html:
+          '<table style="height:400px; width: 500px;">' +
+          '<thead><tr><td>A1</td><td>A2</td><td>A3</td></tr></thead>' +
+          '<tbody><tr><td>B1</td><td></td><td>B3</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\nA2\nA3\n', {
+            tableHeaderCell: 1,
+            tableWidth: '500px',
+            tableHeight: '400px',
+          })
+          .insert('B1\n\nB3\n', {
+            table: 2,
+            tableWidth: '500px',
+            tableHeight: '400px',
+          }),
+      );
+    });
+
+    it('table cells with style dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
           '<table>' +
-          '<tbody><tr><td style="width: 100px; height: 200px">A1</td><td>A2</td></tr></tbody>' +
+          '<tbody><tr><td style="width: 100px; height: 200px;">A1</td><td>A2</td></tr></tbody>' +
           '</table>',
       });
       expect(delta).toEqual(
         new Delta()
           .insert('A1\n', { table: 1, cellWidth: '100px', cellHeight: '200px' })
           .insert('A2\n', { table: 1 }),
+      );
+    });
+
+    it('table and cells with style dimensions', function() {
+      const delta = this.quill.clipboard.convert({
+        html:
+          '<table style="width: 500px; height: 200px;">' +
+          '<tbody><tr><td style="width: 100px; height: 200px;">A1</td><td>A2</td></tr></tbody>' +
+          '</table>',
+      });
+      expect(delta).toEqual(
+        new Delta()
+          .insert('A1\n', {
+            table: 1,
+            tableWidth: '500px',
+            tableHeight: '200px',
+            cellWidth: '100px',
+            cellHeight: '200px',
+          })
+          .insert('A2\n', {
+            table: 1,
+            tableWidth: '500px',
+            tableHeight: '200px',
+          }),
       );
     });
 

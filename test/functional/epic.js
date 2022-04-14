@@ -229,6 +229,15 @@ describe('quill', function() {
     html = await page.$eval('.ql-editor', e => e.innerHTML);
     expect(html).toEqual(`<p>12 </p><p>${EMBED} 34</p>`);
 
+    const windowScrollY = await page.$eval('html', e => e.scrollTop);
+    await page.click('#content');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Enter');
+    const actualWindowScrollY = await page.$eval('html', e => e.scrollTop);
+
+    expect(actualWindowScrollY).toBeGreaterThan(windowScrollY);
+
     await browser.close();
   });
 });

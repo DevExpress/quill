@@ -382,6 +382,7 @@ class Keyboard extends Module {
     this.quill.updateContents(delta, Quill.sources.USER);
     this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
     this.quill.focus();
+    context.line.domNode.scrollIntoView(false);
 
     Object.keys(context.format).forEach(name => {
       if (lineFormats[name] != null) return;

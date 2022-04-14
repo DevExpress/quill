@@ -318,9 +318,9 @@ function convertHTML(blot, index, length, isRoot = false) {
       return parts.join('');
     }
 
-    handleTableBlots(blot);
+    const domNode = extractNodeFromBlot(blot);
 
-    const { outerHTML, innerHTML } = blot.domNode;
+    const { outerHTML, innerHTML } = domNode;
     const [start, end] = outerHTML.split(`>${innerHTML}<`);
     if (start.indexOf('<table') === 0) {
       return `${start.replace(/(\sdata-.+?=["'].*?["'])/g, '')}>${parts
@@ -338,16 +338,25 @@ function handleBreakLine(linkedList, parts) {
   }
 }
 
-function handleTableBlots(blot) {
+function extractNodeFromBlot(blot) {
+  const domNode = blot.domNode.cloneNode(true);
+
+  return removeTableServiceClasses(blot, domNode);
+}
+
+function removeTableServiceClasses(blot, domNode) {
   const BLOTS_WITH_SERVICE_CLASS = [
     'tableCellLine',
     'tableHeaderCellLine',
     'tableCell',
     'tableHeaderCell',
   ];
-  if (BLOTS_WITH_SERVICE_CLASS.indexOf(blot.statics.blotName) > -1) {
-    removeClass(blot.domNode, blot.statics.className);
+
+  if (BLOTS_WITH_SERVICE_CLASS.includes(blot.statics.blotName)) {
+    removeClass(domNode, blot.statics.className);
   }
+
+  return domNode;
 }
 
 function combineFormats(formats, combined) {

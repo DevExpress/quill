@@ -797,6 +797,33 @@ describe('Table Module', function() {
         true,
       );
     });
+
+    it('insertText inside after getSemanticHtml', function() {
+      this.quill.getSemanticHTML(0, this.quill.getLength() + 1);
+      this.quill.insertText(8, '\n');
+      expect(this.quill.root).toEqualHTML(
+        `
+          <table>
+            <tbody>
+              <tr>
+                <td><p>a1</p></td>
+                <td><p>a2</p></td>
+                <td>
+                  <p>a3</p>
+                  <p><br></p>
+                </td>
+              </tr>
+              <tr>
+                <td><p>b1</p></td>
+                <td><p>b2</p></td>
+                <td><p>b3</p></td>
+              </tr>
+            </tbody>
+          </table>
+        `,
+        true,
+      );
+    });
   });
 
   describe('customize table', function() {
