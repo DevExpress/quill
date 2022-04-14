@@ -29,42 +29,35 @@ class Uploader extends Module {
   }
 
   addDropHandler() {
-    this.bindedDropHandler = this.dropHandler.bind(this);
-    this.quill.root.addEventListener('drop', this.bindedDropHandler);
-  }
+    this.quill.root.addEventListener('drop', e => {
+      const noFiles = e.dataTransfer.files.length === 0;
+      const { onDrop } = this.options;
 
-  dropHandler(e) {
-    const noFiles = e.dataTransfer.files.length === 0;
-    const { onDrop } = this.options;
+      if (onDrop && typeof onDrop === 'function') {
+        onDrop(e);
+      }
 
-    if (onDrop && typeof onDrop === 'function') {
-      onDrop(e);
-    }
+      if (noFiles || this.preventImageUpload) {
+        return;
+      }
 
-    if (noFiles || this.preventImageUpload) {
-      return;
-    }
+      e.preventDefault();
+      let native;
 
-    e.preventDefault();
-    let native;
-
-    if (document.caretRangeFromPoint) {
-      native = document.caretRangeFromPoint(e.clientX, e.clientY);
-    } else if (document.caretPositionFromPoint) {
-      const position = document.caretPositionFromPoint(e.clientX, e.clientY);
-      native = document.createRange();
-      native.setStart(position.offsetNode, position.offset);
-      native.setEnd(position.offsetNode, position.offset);
-    } else {
-      return;
-    }
-    const normalized = this.quill.selection.normalizeNative(native);
-    const range = this.quill.selection.normalizedToRange(normalized);
-    this.upload(range, e.dataTransfer.files);
-  }
-
-  removeDropHandler() {
-    this.quill.root.removeEventListener('drop', this.bindedDropHandler);
+      if (document.caretRangeFromPoint) {
+        native = document.caretRangeFromPoint(e.clientX, e.clientY);
+      } else if (document.caretPositionFromPoint) {
+        const position = document.caretPositionFromPoint(e.clientX, e.clientY);
+        native = document.createRange();
+        native.setStart(position.offsetNode, position.offset);
+        native.setEnd(position.offsetNode, position.offset);
+      } else {
+        return;
+      }
+      const normalized = this.quill.selection.normalizeNative(native);
+      const range = this.quill.selection.normalizedToRange(normalized);
+      this.upload(range, e.dataTransfer.files);
+    });
   }
 
   preventImageUploading(value) {
