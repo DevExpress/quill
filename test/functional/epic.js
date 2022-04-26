@@ -238,6 +238,12 @@ describe('quill', function() {
 
     expect(actualWindowScrollY).toBeGreaterThan(windowScrollY);
 
+    await page.click('#updatSelection');
+    await page.keyboard.press('Enter');
+    const updatedWindowScrollY = await page.$eval('html', e => e.scrollTop);
+
+    expect(updatedWindowScrollY).toBeLessThan(actualWindowScrollY);
+
     await browser.close();
   });
 });

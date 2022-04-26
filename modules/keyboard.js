@@ -6,6 +6,7 @@ import Quill from '../core/quill';
 import logger from '../core/logger';
 import Module from '../core/module';
 import hasWindow from '../utils/has_window';
+import getScrollConfig from '../utils/get_scroll_into_view_config';
 
 const debug = logger('quill:keyboard');
 
@@ -382,7 +383,13 @@ class Keyboard extends Module {
     this.quill.updateContents(delta, Quill.sources.USER);
     this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
     this.quill.focus();
-    context.line.domNode.scrollIntoView(false);
+
+    const [line] = this.quill.getLine(range.index + 1);
+    const scrollConfig = getScrollConfig(line.domNode);
+
+    if (scrollConfig !== null) {
+      line.domNode.scrollIntoView(scrollConfig);
+    }
 
     Object.keys(context.format).forEach(name => {
       if (lineFormats[name] != null) return;
