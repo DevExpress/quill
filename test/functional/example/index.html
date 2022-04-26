@@ -16,6 +16,7 @@
         <button id="header">Header</button>
         <button id="embed">Insert embed</button>
         <button id="content">Insert much more content</button>
+        <button id="updatSelection">Update selection</button>
 
         <div id="editor"></div>
     </div>
@@ -75,6 +76,13 @@
 
                 editor.focus();
                 editor.setSelection(editor.getLength() - 1, 0);
+            });
+
+        document
+            .getElementById('updatSelection')
+            .addEventListener('click', () => {
+                editor.focus();
+                editor.setSelection(0, 0);
             });
 </script>
 </html>
