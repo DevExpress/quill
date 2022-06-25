@@ -4,6 +4,7 @@
   ],
   "prConcurrentLimit": 2,
   "semanticCommits": "enabled",
+  "rangeStrategy": "bump",
   "baseBranches": [
       "master"
   ],
