@@ -53,6 +53,11 @@ class CellLine extends Block {
   }
 
   format(name, value) {
+    const isCellLine = name === 'tableCellLine';
+    if (isCellLine && value === null) {
+      value = this.formats().tableCellLine;
+    }
+
     const isCell = CELL_IDENTITY_KEYS.indexOf(name) > -1;
     if (isCell || TABLE_FORMATS[name] || CELL_FORMATS[name]) {
       const attrName = `data-${isCell ? 'table-' : ''}${name.toLowerCase()}`;

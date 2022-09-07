@@ -751,9 +751,26 @@ describe('Table Module', function() {
     });
 
     it('insertText before', function() {
-      this.quill.updateContents(new Delta().insert('\n'));
+      const tableHTML = `
+        <br>
+        <table>
+          <tbody>
+            <tr><td>a1</td><td>a2</td><td>a3</td></tr>
+            <tr><td>b1</td><td>b2</td><td>b3</td></tr>
+          </tbody>
+        </table>
+      `;
+      this.quill = this.initialize(Quill, tableHTML, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+
+      this.quill.updateContents(new Delta().insert('\nBefore Line\n'));
       expect(this.quill.root).toEqualHTML(
         `
+          <p><br></p>
+          <p>Before Line</p>
           <p><br></p>
           <table>
             <tbody>
@@ -761,6 +778,35 @@ describe('Table Module', function() {
                 <td><p>a1</p></td>
                 <td><p>a2</p></td>
                 <td><p>a3</p></td>
+              </tr>
+              <tr>
+                <td><p>b1</p></td>
+                <td><p>b2</p></td>
+                <td><p>b3</p></td>
+              </tr>
+            </tbody>
+          </table>
+        `,
+        true,
+      );
+    });
+
+    it('insert multiline text to cell (T1086552)', function() {
+      this.quill.updateContents(
+        new Delta().retain(8).insert('\nLine 1\nLine 2'),
+      );
+      expect(this.quill.root).toEqualHTML(
+        `
+          <table>
+            <tbody>
+              <tr>
+                <td><p>a1</p></td>
+                <td><p>a2</p></td>
+                <td>
+                  <p>a3</p>
+                  <p>Line 1</p>
+                  <p>Line 2</p>
+                </td>
               </tr>
               <tr>
                 <td><p>b1</p></td>
