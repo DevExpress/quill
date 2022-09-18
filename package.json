@@ -19,7 +19,8 @@
     "dist/dx-quill.core.css",
     "core.js",
     "polyfills.js",
-    "quill.js"
+    "quill.js",
+    "index.d.ts"
   ],
   "config": {
     "ports": {
