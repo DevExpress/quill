@@ -4,6 +4,7 @@ import Theme from '../../../core/theme';
 import Emitter from '../../../core/emitter';
 import { Range } from '../../../core/selection';
 import TableMain from '../../../modules/table';
+import Embed from '../../../blots/embed';
 
 describe('Quill', function() {
   it('imports', function() {
@@ -855,6 +856,43 @@ describe('Quill', function() {
       instance.format('tableBorderWidth', '2px');
 
       expect(instance.getSemanticHTML()).toEqual(expected);
+    });
+
+    it('should not skip data attributes of cell content (T1109375)', function() {
+      class Mention extends Embed {
+        static create(data) {
+          const node = super.create();
+          node.dataset.marker = data.marker;
+          return node;
+        }
+
+        static value(node) {
+          return {
+            marker: node.dataset.marker,
+          };
+        }
+      }
+      Mention.blotName = 'mention';
+      Mention.tagName = 'span';
+      Mention.className = 'mention-class';
+
+      Quill.register({ 'formats/mention': Mention });
+      Quill.register({ 'modules/table': TableMain }, true);
+      const instance = this.initialize(
+        Quill,
+        `<p>123</p>
+        <table>
+          <tr><td><p><span class="mention-class" data-marker="a"></span></p></td></tr>
+        </table>`,
+        this.container,
+        {
+          modules: {
+            table: true,
+          },
+        },
+      );
+      const expected = `<span class="mention-class" data-marker="a">`;
+      expect(instance.getSemanticHTML()).toContain(expected);
     });
 
     it('should correctly convert hidden code blocks', function() {

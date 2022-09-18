@@ -325,7 +325,7 @@ function convertHTML(blot, index, length, isRoot = false) {
     if (start.indexOf('<table') === 0) {
       return `${start.replace(/(\sdata-.+?=["'].*?["'])/g, '')}>${parts
         .join('')
-        .replace(/(\sdata-.+?=["'].*?["'])/g, '')}<${end}`;
+        .replace(/(\sdata-table.+?=["'].*?["'])/g, '')}<${end}`;
     }
     return `${start}>${parts.join('')}<${end}`;
   }
