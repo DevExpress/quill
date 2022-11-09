@@ -1,0 +1,35 @@
+root: true
+extends:
+  - 'devextreme/javascript'
+env:
+  browser: true
+  commonjs: true
+  es6: true
+parserOptions:
+  ecmaVersion: 2020
+plugins:
+  - '@babel'
+settings:
+  import/resolver:
+    webpack:
+      config: '_develop/webpack.config.js'
+rules:
+  prefer-arrow-callback: 'warn'
+  arrow-body-style: 'off'
+  class-methods-use-this: 'off'
+  import/no-extraneous-dependencies:
+    - 'error'
+    - devDependencies:
+        - '_develop/*.js'
+        - 'test/**/*.js'
+  no-param-reassign: 'off'
+  no-use-before-define:
+    - 'error'
+    - functions: false
+  import/named: 'error'
+  max-classes-per-file: 'off'
+ignorePatterns:
+  - 'dist/**'
+  - 'docs/**'
+  - 'node_modules/**'
+  - 'test/functional/example/**'

@@ -90,7 +90,7 @@
     "build:webpack": "webpack --config _develop/webpack.config.js && rimraf dist/dx-quill.core dist/dx-quill.bubble dist/dx-quill.snow",
     "build:webpack-prod": "webpack --config _develop/webpack.config.js --env.production && rimraf dist/dx-quill.core dist/dx-quill.bubble dist/dx-quill.snow",
     "develop": "npm run start",
-    "lint": "eslint blots/** core/** formats/** modules/** test/** utils/**",
+    "lint": "eslint ./blots ./core ./formats ./modules ./test ./utils",
     "start": "npm run build && npm run copy-dist && http-server ./test/functional/example",
     "test": "npm run test:unit",
     "test:functional": "jasmine test/functional/epic.js",
