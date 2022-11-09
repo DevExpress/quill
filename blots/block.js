@@ -189,13 +189,16 @@ function bubbleFormats(blot, formats = {}, filter = true) {
     }
   }
   if (
-    blot.parent == null ||
-    blot.parent.statics.blotName === 'scroll' ||
-    blot.parent.statics.scope !== blot.statics.scope
+    blot.parent == null
+    || blot.parent.statics.blotName === 'scroll'
+    || blot.parent.statics.scope !== blot.statics.scope
   ) {
     return formats;
   }
   return bubbleFormats(blot.parent, formats, filter);
 }
 
-export { blockDelta, bubbleFormats, BlockEmbed, Block as default };
+export {
+  // eslint-disable-next-line no-restricted-exports
+  blockDelta, bubbleFormats, BlockEmbed, Block as default,
+};

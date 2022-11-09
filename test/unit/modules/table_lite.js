@@ -7,13 +7,13 @@ import {
   TABLE_STYLE_TESTS_PRESET,
 } from '../../helpers/table_format_presets';
 
-describe('Table Module', function() {
-  beforeAll(function() {
+describe('Table Module', function () {
+  beforeAll(function () {
     Quill.register({ 'modules/table': TableLite }, true);
   });
 
-  describe('clipboard integration', function() {
-    it('formatted table', function() {
+  describe('clipboard integration', function () {
+    it('formatted table', function () {
       const quill = this.initialize(Quill, '<p><br></p>', this.container, {
         modules: {
           table: true,
@@ -55,8 +55,8 @@ describe('Table Module', function() {
     });
   });
 
-  describe('insert table', function() {
-    it('empty', function() {
+  describe('insert table', function () {
+    it('empty', function () {
       const quill = this.initialize(Quill, '<p><br></p>', this.container, {
         modules: {
           table: true,
@@ -76,7 +76,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('initial markup with formatting', function() {
+    it('initial markup with formatting', function () {
       const markup = `
       <table style="background-color: azure;">
         <tbody>
@@ -95,7 +95,7 @@ describe('Table Module', function() {
       expect(quill.root).toEqualHTML(markup);
     });
 
-    it('head', function() {
+    it('head', function () {
       const quill = this.initialize(
         Quill,
         `
@@ -138,7 +138,7 @@ describe('Table Module', function() {
       </table>`);
     });
 
-    it('initial markup with thead and formatting', function() {
+    it('initial markup with thead and formatting', function () {
       const markup = `
       <table style="background-color: azure;">
         <thead>
@@ -165,7 +165,7 @@ describe('Table Module', function() {
       expect(quill.root).toEqualHTML(markup);
     });
 
-    it('split', function() {
+    it('split', function () {
       const quill = this.initialize(Quill, '<p>0123</p>', this.container, {
         modules: {
           table: true,
@@ -185,7 +185,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('initial balancing', function() {
+    it('initial balancing', function () {
       const quill = this.initialize(
         Quill,
         `
@@ -218,7 +218,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('old table module markup', function() {
+    it('old table module markup', function () {
       const quill = this.initialize(
         Quill,
         `<table>
@@ -251,8 +251,8 @@ describe('Table Module', function() {
     });
   });
 
-  describe('modify table', function() {
-    beforeEach(function() {
+  describe('modify table', function () {
+    beforeEach(function () {
       const tableHTML = `
         <table>
           <tbody>
@@ -269,7 +269,7 @@ describe('Table Module', function() {
       this.table = this.quill.getModule('table');
     });
 
-    it('insertHeaderRow', function() {
+    it('insertHeaderRow', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
 
@@ -286,7 +286,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertRowAbove', function() {
+    it('insertRowAbove', function () {
       this.quill.setSelection(0);
       this.table.insertRowAbove();
       expect(this.quill.root).toEqualHTML(`
@@ -300,7 +300,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertRowAbove, selection at header', function() {
+    it('insertRowAbove, selection at header', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
       this.quill.setSelection(0);
@@ -319,7 +319,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertRowBelow', function() {
+    it('insertRowBelow', function () {
       this.quill.setSelection(0);
       this.table.insertRowBelow();
       expect(this.quill.root).toEqualHTML(`
@@ -333,7 +333,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertRowBelow, selection at header', function() {
+    it('insertRowBelow, selection at header', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
       this.quill.setSelection(0);
@@ -352,7 +352,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertColumnLeft', function() {
+    it('insertColumnLeft', function () {
       this.quill.setSelection(0);
       this.table.insertColumnLeft();
       expect(this.quill.root).toEqualHTML(`
@@ -365,7 +365,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertColumnLeft, selection at header', function() {
+    it('insertColumnLeft, selection at header', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
       this.quill.setSelection(0);
@@ -383,7 +383,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertColumnRight', function() {
+    it('insertColumnRight', function () {
       this.quill.setSelection(0);
       this.table.insertColumnRight();
       expect(this.quill.root).toEqualHTML(`
@@ -396,7 +396,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertColumnRight, selection at header', function() {
+    it('insertColumnRight, selection at header', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
       this.quill.setSelection(0);
@@ -414,7 +414,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('deleteRow', function() {
+    it('deleteRow', function () {
       this.quill.setSelection(0);
       this.table.deleteRow();
       expect(this.quill.root).toEqualHTML(`
@@ -426,7 +426,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('delete header row', function() {
+    it('delete header row', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
       this.quill.setSelection(0);
@@ -441,7 +441,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('deleteColumn', function() {
+    it('deleteColumn', function () {
       this.quill.setSelection(0);
       this.table.deleteColumn();
       expect(this.quill.root).toEqualHTML(`
@@ -454,7 +454,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('deleteColumn with header', function() {
+    it('deleteColumn with header', function () {
       this.quill.setSelection(0);
       this.table.insertHeaderRow();
       this.quill.setSelection(0);
@@ -472,7 +472,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertText before', function() {
+    it('insertText before', function () {
       this.quill.updateContents(new Delta().insert('\n'));
       expect(this.quill.root).toEqualHTML(`
         <p><br></p>
@@ -485,7 +485,7 @@ describe('Table Module', function() {
       `);
     });
 
-    it('insertText after', function() {
+    it('insertText after', function () {
       this.quill.updateContents(new Delta().retain(18).insert('\n'));
       expect(this.quill.root).toEqualHTML(`
         <table>
@@ -499,8 +499,8 @@ describe('Table Module', function() {
     });
   });
 
-  describe('customize table', function() {
-    beforeEach(function() {
+  describe('customize table', function () {
+    beforeEach(function () {
       const tableHTML = `
         <table>
           <tbody>
@@ -516,7 +516,7 @@ describe('Table Module', function() {
     });
 
     TABLE_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
-      it(`${formatName} table style`, function() {
+      it(`${formatName} table style`, function () {
         this.quill.setSelection(1, 0);
         this.quill.format(`table${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
@@ -536,7 +536,7 @@ describe('Table Module', function() {
     });
 
     CELL_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
-      it(`${formatName} cell style`, function() {
+      it(`${formatName} cell style`, function () {
         this.quill.setSelection(1, 0);
         this.quill.format(`cell${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
@@ -555,7 +555,7 @@ describe('Table Module', function() {
       });
     });
 
-    it(`get table formats after formatting`, function() {
+    it('get table formats after formatting', function () {
       this.quill.setSelection(4, 0);
       const formats = this.quill.getFormat();
 
@@ -566,8 +566,8 @@ describe('Table Module', function() {
     });
   });
 
-  describe('customize table with headers', function() {
-    beforeEach(function() {
+  describe('customize table with headers', function () {
+    beforeEach(function () {
       const tableHTML = `
         <table>
           <thead>
@@ -586,7 +586,7 @@ describe('Table Module', function() {
     });
 
     TABLE_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
-      it(`${formatName} table style`, function() {
+      it(`${formatName} table style`, function () {
         this.quill.setSelection(1, 0);
         this.quill.format(`table${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
@@ -609,7 +609,7 @@ describe('Table Module', function() {
     });
 
     CELL_STYLE_TESTS_PRESET.forEach(({ formatName, styleName, value }) => {
-      it(`${formatName} cell style`, function() {
+      it(`${formatName} cell style`, function () {
         this.quill.setSelection(1, 0);
         this.quill.format(`cell${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(

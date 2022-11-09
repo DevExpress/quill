@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import hljs from 'highlight.js';
 import Delta from 'quill-delta';
 import Quill from '../../../core/quill';
@@ -7,8 +8,8 @@ import Syntax, { CodeBlock as SyntaxCodeBlock } from '../../../modules/syntax';
 
 const HIGHLIGHT_INTERVAL = 10;
 
-describe('Syntax', function() {
-  beforeAll(function() {
+describe('Syntax', function () {
+  beforeAll(function () {
     Syntax.register();
     Syntax.DEFAULTS.languages = [
       { key: 'javascript', label: 'Javascript' },
@@ -16,7 +17,7 @@ describe('Syntax', function() {
     ];
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     const container = this.initialize(
       HTMLElement,
       `<pre data-language="javascript">var test = 1;<br>var bugz = 0;<br></pre>
@@ -32,13 +33,13 @@ describe('Syntax', function() {
     });
   });
 
-  afterAll(function() {
+  afterAll(function () {
     Quill.register(CodeBlock, true);
     Quill.register(CodeBlockContainer, true);
   });
 
-  describe('highlighting', function() {
-    it('initialize', function() {
+  describe('highlighting', function () {
+    it('initialize', function () {
       expect(this.quill.root).toEqualHTML(
         `<div class="ql-code-block-container" spellcheck="false">
           <div class="ql-code-block" data-language="javascript">var test = 1;</div>
@@ -56,7 +57,7 @@ describe('Syntax', function() {
       );
     });
 
-    it('adds token', function(done) {
+    it('adds token', function (done) {
       setTimeout(() => {
         expect(this.quill.root).toEqualHTML(
           `<div class="ql-code-block-container" spellcheck="false">
@@ -77,7 +78,7 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    it('tokens do not escape', function(done) {
+    it('tokens do not escape', function (done) {
       this.quill.deleteText(22, 6);
       setTimeout(() => {
         expect(this.quill.root).toEqualHTML(`
@@ -95,7 +96,7 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    it('change language', function(done) {
+    it('change language', function (done) {
       this.quill.formatLine(0, 20, 'code-block', 'ruby');
       setTimeout(() => {
         expect(this.quill.root).toEqualHTML(`
@@ -116,7 +117,7 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    it('invalid language', function(done) {
+    it('invalid language', function (done) {
       this.quill.formatLine(0, 20, 'code-block', 'invalid');
       setTimeout(() => {
         expect(this.quill.root).toEqualHTML(`
@@ -137,7 +138,7 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    it('unformat first line', function(done) {
+    it('unformat first line', function (done) {
       this.quill.formatLine(0, 1, 'code-block', false);
       setTimeout(() => {
         expect(this.quill.root).toEqualHTML(`
@@ -156,7 +157,7 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    it('split container', function(done) {
+    it('split container', function (done) {
       this.quill.updateContents(new Delta().retain(14).insert('\n'));
       setTimeout(() => {
         expect(this.quill.root).toEqualHTML(
@@ -192,7 +193,7 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    it('merge containers', function(done) {
+    it('merge containers', function (done) {
       this.quill.updateContents(new Delta().retain(14).insert('\n'));
       setTimeout(() => {
         this.quill.deleteText(14, 1);
@@ -224,16 +225,16 @@ describe('Syntax', function() {
       }, HIGHLIGHT_INTERVAL + 1);
     });
 
-    describe('allowedChildren', function() {
-      beforeAll(function() {
+    describe('allowedChildren', function () {
+      beforeAll(function () {
         SyntaxCodeBlock.allowedChildren.push(BoldBlot);
       });
 
-      afterAll(function() {
+      afterAll(function () {
         SyntaxCodeBlock.allowedChildren.pop();
       });
 
-      it('modification', function(done) {
+      it('modification', function (done) {
         this.quill.formatText(2, 3, 'bold', true);
         setTimeout(() => {
           expect(this.quill.root).toEqualHTML(`
@@ -256,12 +257,12 @@ describe('Syntax', function() {
         }, HIGHLIGHT_INTERVAL + 1);
       });
 
-      it('removal', function(done) {
+      it('removal', function (done) {
         this.quill.formatText(2, 3, 'bold', true);
         setTimeout(() => {
           this.quill.formatLine(0, 15, 'code-block', false);
           expect(this.quill.root).toEqualHTML(
-            `<p>va<strong>r t</strong>est = 1;</p><p>var bugz = 0;</p><p><br></p>`,
+            '<p>va<strong>r t</strong>est = 1;</p><p>var bugz = 0;</p><p><br></p>',
           );
           expect(this.quill.getContents()).toEqual(
             new Delta()
@@ -273,7 +274,7 @@ describe('Syntax', function() {
         }, HIGHLIGHT_INTERVAL + 1);
       });
 
-      it('addition', function(done) {
+      it('addition', function (done) {
         this.quill.setText('var test = 1;\n');
         this.quill.formatText(2, 3, 'bold', true);
         this.quill.formatLine(0, 1, 'code-block', 'javascript');
@@ -295,8 +296,8 @@ describe('Syntax', function() {
     });
   });
 
-  describe('html', function() {
-    it('code language', function() {
+  describe('html', function () {
+    it('code language', function () {
       expect(this.quill.getSemanticHTML()).toContain(
         'data-language="javascript"',
       );

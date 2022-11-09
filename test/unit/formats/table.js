@@ -43,24 +43,24 @@ const tableHTML = `
     </tbody>
   </table>`;
 
-describe('Table', function() {
-  beforeAll(function() {
+describe('Table', function () {
+  beforeAll(function () {
     TableLite.register();
   });
 
-  it('initialize', function() {
+  it('initialize', function () {
     const editor = this.initialize(Editor, tableHTML);
     expect(editor.getDelta()).toEqual(tableDelta);
     expect(this.container).toEqualHTML(tableHTML);
   });
 
-  it('add', function() {
+  it('add', function () {
     const editor = this.initialize(Editor, '');
     editor.applyDelta(new Delta([...tableDelta.ops]).delete(1));
     expect(this.container).toEqualHTML(tableHTML);
   });
 
-  it('add format plaintext', function() {
+  it('add format plaintext', function () {
     const editor = this.initialize(Editor, '<p>Test</p>');
     editor.formatLine(0, 5, { table: 'a' });
     expect(this.container).toEqualHTML(
@@ -68,7 +68,7 @@ describe('Table', function() {
     );
   });
 
-  it('add format replace', function() {
+  it('add format replace', function () {
     const editor = this.initialize(Editor, '<h1>Test</h1>');
     editor.formatLine(0, 5, { table: 'a' });
     expect(this.container).toEqualHTML(
@@ -76,7 +76,7 @@ describe('Table', function() {
     );
   });
 
-  it('remove format plaintext', function() {
+  it('remove format plaintext', function () {
     const editor = this.initialize(
       Editor,
       '<table><tr><td data-tablelite-row="a">Test</td></tr></table>',
@@ -85,7 +85,7 @@ describe('Table', function() {
     expect(this.container).toEqualHTML('<p>Test</p>');
   });
 
-  it('remove format replace', function() {
+  it('remove format replace', function () {
     const editor = this.initialize(
       Editor,
       '<table><tr><td data-tablelite-row="a">Test</td></tr></table>',
@@ -94,7 +94,7 @@ describe('Table', function() {
     expect(this.container).toEqualHTML('<h1>Test</h1>');
   });
 
-  it('group rows', function() {
+  it('group rows', function () {
     const editor = this.initialize(
       Editor,
       `
@@ -116,7 +116,7 @@ describe('Table', function() {
     `);
   });
 
-  it('split rows', function() {
+  it('split rows', function () {
     const editor = this.initialize(
       Editor,
       `
@@ -138,7 +138,7 @@ describe('Table', function() {
     `);
   });
 
-  it('group and split rows', function() {
+  it('group and split rows', function () {
     const editor = this.initialize(
       Editor,
       `
@@ -161,7 +161,7 @@ describe('Table', function() {
     `);
   });
 
-  xit('group and split multiple rows', function() {
+  xit('group and split multiple rows', function () {
     const editor = this.initialize(
       Editor,
       `
@@ -189,7 +189,7 @@ describe('Table', function() {
     `);
   });
 
-  it('balance cells', function() {
+  it('balance cells', function () {
     const editor = this.initialize(
       Editor,
       `<table>
@@ -233,7 +233,7 @@ describe('Table', function() {
     );
   });
 
-  it('format', function() {
+  it('format', function () {
     const editor = this.initialize(Editor, '<p>a</p><p>b</p><p>1</p><p>2</p>');
     editor.formatLine(0, 4, { table: 'a' });
     editor.formatLine(4, 4, { table: 'b' });
@@ -253,7 +253,7 @@ describe('Table', function() {
     );
   });
 
-  it('applyDelta', function() {
+  it('applyDelta', function () {
     const editor = this.initialize(Editor, '<p><br></p>');
     editor.applyDelta(
       new Delta().insert('\n\n', { table: 'a' }).insert('\n\n', { table: 'b' }),
@@ -275,7 +275,7 @@ describe('Table', function() {
     );
   });
 
-  it('unbalanced table applyDelta', function() {
+  it('unbalanced table applyDelta', function () {
     const editor = this.initialize(Editor, '<p><br></p>');
     editor.applyDelta(
       new Delta()
@@ -306,7 +306,7 @@ describe('Table', function() {
     );
   });
 
-  it('existing table applyDelta', function() {
+  it('existing table applyDelta', function () {
     const editor = this.initialize(
       Editor,
       `
@@ -344,7 +344,7 @@ describe('Table', function() {
     );
   });
 
-  it('render header cells as data cells', function() {
+  it('render header cells as data cells', function () {
     const tableWithHeader = `
     <table>
       <thead>

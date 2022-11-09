@@ -61,8 +61,8 @@ class Cursor extends EmbedBlot {
     const range = this.selection.getNativeRange();
     // Link format will insert text outside of anchor tag
     while (
-      this.domNode.lastChild != null &&
-      this.domNode.lastChild !== this.textNode
+      this.domNode.lastChild != null
+      && this.domNode.lastChild !== this.textNode
     ) {
       this.domNode.parentNode.insertBefore(
         this.domNode.lastChild,
@@ -133,7 +133,7 @@ class Cursor extends EmbedBlot {
 
   update(mutations, context) {
     if (
-      mutations.some(mutation => {
+      mutations.some((mutation) => {
         return (
           mutation.type === 'characterData' && mutation.target === this.textNode
         );

@@ -16,7 +16,7 @@ class Scroll extends ScrollBlot {
     this.batch = false;
     this.optimize();
     this.enable();
-    this.domNode.addEventListener('dragstart', e => this.handleDragStart(e));
+    this.domNode.addEventListener('dragstart', (e) => this.handleDragStart(e));
   }
 
   batchStart() {
@@ -48,8 +48,7 @@ class Scroll extends ScrollBlot {
         this.optimize();
         return;
       }
-      const ref =
-        last.children.head instanceof Break ? null : last.children.head;
+      const ref = last.children.head instanceof Break ? null : last.children.head;
       first.moveChildren(last, ref);
       first.remove();
     }

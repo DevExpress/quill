@@ -6,7 +6,7 @@ class Theme {
   }
 
   init() {
-    Object.keys(this.options.modules).forEach(name => {
+    Object.keys(this.options.modules).forEach((name) => {
       if (this.modules[name] == null) {
         this.addModule(name);
       }

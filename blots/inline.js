@@ -20,8 +20,8 @@ class Inline extends InlineBlot {
 
   formatAt(index, length, name, value) {
     if (
-      Inline.compare(this.statics.blotName, name) < 0 &&
-      this.scroll.query(name, Scope.BLOT)
+      Inline.compare(this.statics.blotName, name) < 0
+      && this.scroll.query(name, Scope.BLOT)
     ) {
       const blot = this.isolate(index, length);
       if (value) {
@@ -35,8 +35,8 @@ class Inline extends InlineBlot {
   optimize(context) {
     super.optimize(context);
     if (
-      this.parent instanceof Inline &&
-      Inline.compare(this.statics.blotName, this.parent.statics.blotName) > 0
+      this.parent instanceof Inline
+      && Inline.compare(this.statics.blotName, this.parent.statics.blotName) > 0
     ) {
       const parent = this.parent.isolate(this.offset(), this.length());
       this.moveChildren(parent);

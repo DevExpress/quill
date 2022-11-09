@@ -15,7 +15,7 @@ class CodeBlockContainer extends Container {
 
   code(index, length) {
     const text = this.children
-      .map(child => (child.length() <= 1 ? '' : child.domNode.textContent))
+      .map((child) => (child.length() <= 1 ? '' : child.domNode.textContent))
       .join('\n')
       .slice(index, index + length);
     return escapeText(text);
@@ -51,4 +51,5 @@ CodeBlock.allowedChildren = [TextBlot, Break, Cursor];
 CodeBlock.requiredContainer = CodeBlockContainer;
 CodeBlock.TAB = '  ';
 
+// eslint-disable-next-line no-restricted-exports
 export { Code, CodeBlockContainer, CodeBlock as default };

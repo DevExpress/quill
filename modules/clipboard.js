@@ -68,8 +68,8 @@ const STYLE_ATTRIBUTORS = [
 class Clipboard extends Module {
   constructor(quill, options) {
     super(quill, options);
-    this.quill.root.addEventListener('copy', e => this.onCaptureCopy(e, false));
-    this.quill.root.addEventListener('cut', e => this.onCaptureCopy(e, true));
+    this.quill.root.addEventListener('copy', (e) => this.onCaptureCopy(e, false));
+    this.quill.root.addEventListener('cut', (e) => this.onCaptureCopy(e, true));
     this.quill.root.addEventListener('paste', this.onCapturePaste.bind(this));
     this.matchers = [];
     this.tableBlots = options.tableBlots ?? [];
@@ -132,11 +132,9 @@ class Clipboard extends Module {
     );
     // Remove trailing newline
     if (
-      deltaEndsWith(delta, '\n') &&
-      (delta.ops[delta.ops.length - 1].attributes == null ||
-        Object.values(formats).some(blotName =>
-          this.tableBlots.includes(blotName),
-        ))
+      deltaEndsWith(delta, '\n')
+      && (delta.ops[delta.ops.length - 1].attributes == null
+        || Object.values(formats).some((blotName) => this.tableBlots.includes(blotName)))
     ) {
       return delta.compose(new Delta().retain(delta.length() - 1).delete(1));
     }
@@ -204,9 +202,8 @@ class Clipboard extends Module {
 
     if (html && files.length > 0) {
       const { body } = new DOMParser().parseFromString(html, 'text/html');
-      const documentContainsImage =
-        body.childElementCount === 1 &&
-        body.firstElementChild.tagName === 'IMG';
+      const documentContainsImage = body.childElementCount === 1
+        && body.firstElementChild.tagName === 'IMG';
 
       if (documentContainsImage) {
         this.quill.uploader.upload(range, files);
@@ -252,7 +249,7 @@ class Clipboard extends Module {
   prepareMatching(container, nodeMatches) {
     const elementMatchers = [];
     const textMatchers = [];
-    this.matchers.forEach(pair => {
+    this.matchers.forEach((pair) => {
       const [selector, matcher] = pair;
       switch (selector) {
         case TEXT_NODE:
@@ -262,7 +259,7 @@ class Clipboard extends Module {
           elementMatchers.push(matcher);
           break;
         default:
-          Array.from(container.querySelectorAll(selector)).forEach(node => {
+          Array.from(container.querySelectorAll(selector)).forEach((node) => {
             if (nodeMatches.has(node)) {
               const matches = nodeMatches.get(node);
               matches.push(matcher);
@@ -279,11 +276,11 @@ class Clipboard extends Module {
   prepareTextMatching() {
     const textMatchers = [matchPlainText];
 
-    this.matchers.forEach(pair => {
+    this.matchers.forEach((pair) => {
       const [selector, matcher] = pair;
       if (
-        HTML_TEXT_MATCHERS.indexOf(matcher) === -1 &&
-        selector === TEXT_NODE
+        HTML_TEXT_MATCHERS.indexOf(matcher) === -1
+        && selector === TEXT_NODE
       ) {
         textMatchers.push(matcher);
       }
@@ -426,7 +423,7 @@ function matchAttributor(node, delta, scroll) {
     attributes
       .concat(classes)
       .concat(styles)
-      .forEach(name => {
+      .forEach((name) => {
         let attr = scroll.query(name, Scope.ATTRIBUTE);
         if (attr != null) {
           formats[attr.attrName] = attr.value(node);
@@ -490,9 +487,9 @@ function matchIgnore() {
 function matchIndent(node, delta, scroll) {
   const match = scroll.query(node);
   if (
-    match == null ||
-    match.blotName !== 'list' ||
-    !deltaEndsWith(delta, '\n')
+    match == null
+    || match.blotName !== 'list'
+    || !deltaEndsWith(delta, '\n')
   ) {
     return delta;
   }
@@ -544,7 +541,7 @@ function matchStyles(node, delta) {
   const formats = {};
   const style = node.style || {};
 
-  ['height', 'width'].forEach(dimension => {
+  ['height', 'width'].forEach((dimension) => {
     const isCell = ['TD', 'TH'].indexOf(node.tagName) !== -1;
     const isTable = node.tagName === 'TABLE';
     if ((isCell || isTable) && style[dimension]) {
@@ -562,8 +559,8 @@ function matchStyles(node, delta) {
     formats.strike = true;
   }
   if (
-    style.fontWeight.indexOf('bold') === 0 ||
-    parseInt(style.fontWeight, 10) >= 700
+    style.fontWeight.indexOf('bold') === 0
+    || parseInt(style.fontWeight, 10) >= 700
   ) {
     formats.bold = true;
   }
@@ -600,14 +597,14 @@ function matchText(node, delta) {
     text = text.replace(/\r\n/g, ' ').replace(/\n/g, ' ');
     text = text.replace(/\s\s+/g, replacer.bind(replacer, true)); // collapse whitespace
     if (
-      (node.previousSibling == null && isLine(node.parentNode)) ||
-      (node.previousSibling != null && isLine(node.previousSibling))
+      (node.previousSibling == null && isLine(node.parentNode))
+      || (node.previousSibling != null && isLine(node.previousSibling))
     ) {
       text = text.replace(/^\s+/, replacer.bind(replacer, false));
     }
     if (
-      (node.nextSibling == null && isLine(node.parentNode)) ||
-      (node.nextSibling != null && isLine(node.nextSibling))
+      (node.nextSibling == null && isLine(node.parentNode))
+      || (node.nextSibling != null && isLine(node.nextSibling))
     ) {
       text = text.replace(/\s+$/, replacer.bind(replacer, false));
     }
@@ -616,6 +613,7 @@ function matchText(node, delta) {
 }
 
 export {
+  // eslint-disable-next-line no-restricted-exports
   Clipboard as default,
   matchAttributor,
   matchBlot,

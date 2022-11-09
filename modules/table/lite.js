@@ -33,8 +33,8 @@ class TableLite extends Module {
     Quill.register(TableHeader, true);
     Quill.register(TableContainer, true);
 
-    [TABLE_FORMATS, CELL_FORMATS].forEach(formats => {
-      Object.keys(formats).forEach(name => {
+    [TABLE_FORMATS, CELL_FORMATS].forEach((formats) => {
+      Object.keys(formats).forEach((name) => {
         Quill.register({ [`formats/${name}`]: formats[name] }, true);
       });
     });
@@ -45,7 +45,7 @@ class TableLite extends Module {
 
     this.tableBlots = [TableCell.blotName, TableHeaderCell.blotName];
 
-    this.tableBlots.forEach(blotName => {
+    this.tableBlots.forEach((blotName) => {
       this.quill.editor.addImmediateFormat(blotName);
     });
     this.integrateClipboard();
@@ -55,9 +55,7 @@ class TableLite extends Module {
   }
 
   integrateClipboard() {
-    this.tableBlots.forEach(blotName =>
-      this.quill.clipboard.addTableBlot(blotName),
-    );
+    this.tableBlots.forEach((blotName) => this.quill.clipboard.addTableBlot(blotName));
 
     this.quill.clipboard.addMatcher('tr', matchTable);
     this.quill.clipboard.addMatcher('table', prepareAttributeMatcher('table'));
@@ -66,7 +64,7 @@ class TableLite extends Module {
 
   addKeyboardHandlers() {
     const bindings = TableLite.keyboardBindings;
-    Object.keys(bindings).forEach(name => {
+    Object.keys(bindings).forEach((name) => {
       if (bindings[name]) {
         this.quill.keyboard.addBinding(bindings[name]);
       }
@@ -74,7 +72,7 @@ class TableLite extends Module {
   }
 
   balanceTables() {
-    this.quill.scroll.descendants(TableContainer).forEach(table => {
+    this.quill.scroll.descendants(TableContainer).forEach((table) => {
       table.balanceCells();
     });
   }
@@ -118,8 +116,8 @@ class TableLite extends Module {
 
     const [cell, offset] = this.quill.getLine(range.index);
     if (
-      !isDefined(cell) ||
-      this.tableBlots.indexOf(cell.statics.blotName) === -1
+      !isDefined(cell)
+      || this.tableBlots.indexOf(cell.statics.blotName) === -1
     ) {
       return EMPTY_RESULT;
     }
@@ -204,7 +202,7 @@ class TableLite extends Module {
       return;
     }
 
-    const delta = new Array(rows).fill(0).reduce(memo => {
+    const delta = new Array(rows).fill(0).reduce((memo) => {
       const text = new Array(columns).fill('\n').join('');
       return memo.insert(text, { table: tableId() });
     }, new Delta().retain(range.index));
@@ -218,8 +216,8 @@ class TableLite extends Module {
   }
 
   listenBalanceCells() {
-    this.quill.on(Quill.events.SCROLL_OPTIMIZE, mutations => {
-      mutations.some(mutation => {
+    this.quill.on(Quill.events.SCROLL_OPTIMIZE, (mutations) => {
+      mutations.some((mutation) => {
         if (
           ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'].indexOf(
             mutation.target.tagName,
@@ -327,10 +325,9 @@ TableLite.keyboardBindings = {
 };
 
 function matchTable(node, delta) {
-  const table =
-    node.parentNode.tagName === 'TABLE'
-      ? node.parentNode
-      : node.parentNode.parentNode;
+  const table = node.parentNode.tagName === 'TABLE'
+    ? node.parentNode
+    : node.parentNode.parentNode;
   const isHeaderRow = node.parentNode.tagName === 'THEAD' ? true : null;
   const rows = Array.from(table.querySelectorAll('tr'));
   const row = rows.indexOf(node) + 1;

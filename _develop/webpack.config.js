@@ -30,7 +30,7 @@ const source = [
   'test',
   'themes',
   'utils',
-].map(file => {
+].map((file) => {
   return path.resolve(__dirname, '..', file);
 });
 
@@ -106,15 +106,15 @@ const baseConfig = {
     globalObject: 'this',
     path: path.resolve(__dirname, '../dist/'),
   },
-  resolve: {
-    alias: {
-      parchment: path.resolve(
-        __dirname,
-        '../node_modules/parchment/src/parchment',
-      ),
-    },
-    extensions: ['.js', '.styl', '.ts'],
-  },
+  // resolve: {
+  //   alias: {
+  //     parchment: path.resolve(
+  //       __dirname,
+  //       '../node_modules/parchment/src/parchment',
+  //     ),
+  //   },
+  //   extensions: ['.js', '.styl', '.ts'],
+  // },
   module: {
     rules: [jsRules, stylRules, tsRules, sourceMapRules],
     noParse: [
@@ -132,7 +132,7 @@ const baseConfig = {
   ],
 };
 
-module.exports = env => {
+module.exports = (env) => {
   if (env && env.production) {
     const { entry, ...prodConfig } = baseConfig;
     return {

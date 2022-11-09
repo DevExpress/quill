@@ -8,14 +8,13 @@ export default function makeTableArrowHandler(up, formats) {
     handler(range, context) {
       const key = up ? 'prev' : 'next';
       const { line } = context;
-      const cell =
-        line.statics.blotName.indexOf('Line') > -1 ? line.parent : line;
+      const cell = line.statics.blotName.indexOf('Line') > -1 ? line.parent : line;
       const targetTablePart = cell.parent.parent[key];
       const targetRow = cell.parent[key] || targetTablePart?.children.head;
       if (targetRow != null) {
         if (
-          targetRow.statics.blotName === 'tableRow' ||
-          targetRow.statics.blotName === 'tableHeaderRow'
+          targetRow.statics.blotName === 'tableRow'
+          || targetRow.statics.blotName === 'tableHeaderRow'
         ) {
           let targetCell = targetRow.children.head;
           let cur = cell;
@@ -23,9 +22,8 @@ export default function makeTableArrowHandler(up, formats) {
             cur = cur.prev;
             targetCell = targetCell.next;
           }
-          const index =
-            targetCell.offset(this.quill.scroll) +
-            Math.min(context.offset, targetCell.length() - 1);
+          const index = targetCell.offset(this.quill.scroll)
+            + Math.min(context.offset, targetCell.length() - 1);
           this.quill.setSelection(index, 0, Quill.sources.USER);
         }
       } else {

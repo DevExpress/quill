@@ -37,4 +37,5 @@ function sanitize(url, protocols) {
   return protocols.indexOf(protocol) > -1;
 }
 
+// eslint-disable-next-line no-restricted-exports
 export { Link as default, sanitize };

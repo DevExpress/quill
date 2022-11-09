@@ -16,7 +16,7 @@ export default function prepareAttributeMatcher(type) {
     const attributes = ElementAttributor.keys(node);
     const styles = ElementStyleAttributor.keys(node);
     const formats = {};
-    attributes.concat(styles).forEach(name => {
+    attributes.concat(styles).forEach((name) => {
       let attr = scroll.query(name, Scope.ATTRIBUTE);
       if (attr != null) {
         formats[attr.attrName] = attr.value(node);

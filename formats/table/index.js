@@ -14,7 +14,7 @@ const DATA_PREFIX = 'data-table-';
 class CellLine extends Block {
   static create(value) {
     const node = super.create(value);
-    CELL_IDENTITY_KEYS.forEach(key => {
+    CELL_IDENTITY_KEYS.forEach((key) => {
       const identityMarker = key === 'row' ? tableId : cellId;
       node.setAttribute(`${DATA_PREFIX}${key}`, value[key] ?? identityMarker());
     });
@@ -35,12 +35,12 @@ class CellLine extends Block {
   optimize(...args) {
     const rowId = this.domNode.getAttribute(`${DATA_PREFIX}row`);
     if (
-      this.statics.requiredContainer &&
-      !(this.parent instanceof this.statics.requiredContainer)
+      this.statics.requiredContainer
+      && !(this.parent instanceof this.statics.requiredContainer)
     ) {
       const { domNode } = this;
       const formats = { row: rowId };
-      Object.keys(CELL_FORMATS).forEach(format => {
+      Object.keys(CELL_FORMATS).forEach((format) => {
         const value = domNode.dataset[format.toLowerCase()];
         if (value) {
           formats[format] = value;
@@ -68,9 +68,7 @@ class CellLine extends Block {
       }
 
       if (TABLE_FORMATS[name]) {
-        this.cell()
-          ?.table()
-          ?.format(name, value);
+        this.cell()?.table()?.format(name, value);
       }
     } else {
       super.format(name, value);
@@ -94,7 +92,7 @@ class BaseCell extends Container {
     const node = super.create(value);
 
     if (value) {
-      Object.keys(value).forEach(format => {
+      Object.keys(value).forEach((format) => {
         CELL_FORMATS[format]?.add(node, value[format]);
       });
     }
@@ -108,12 +106,8 @@ class BaseCell extends Container {
 
   checkMerge() {
     if (super.checkMerge() && this.next.children.head != null) {
-      const thisHead = this.children.head.formats()[
-        this.children.head.statics.blotName
-      ];
-      const thisTail = this.children.tail.formats()[
-        this.children.tail.statics.blotName
-      ];
+      const thisHead = this.children.head.formats()[this.children.head.statics.blotName];
+      const thisTail = this.children.tail.formats()[this.children.tail.statics.blotName];
       const nextHead = this.next.children.head.formats()[
         this.next.children.head.statics.blotName
       ];
@@ -122,9 +116,9 @@ class BaseCell extends Container {
       ];
 
       return (
-        thisHead.cell === thisTail.cell &&
-        thisHead.cell === nextHead.cell &&
-        thisHead.cell === nextTail.cell
+        thisHead.cell === thisTail.cell
+        && thisHead.cell === nextHead.cell
+        && thisHead.cell === nextTail.cell
       );
     }
     return false;
@@ -138,15 +132,14 @@ class BaseCell extends Container {
     const formats = {};
 
     if (
-      domNode.hasAttribute(`${DATA_PREFIX}row`) ||
-      domNode.hasAttribute(`${DATA_PREFIX}header-row`)
+      domNode.hasAttribute(`${DATA_PREFIX}row`)
+      || domNode.hasAttribute(`${DATA_PREFIX}header-row`)
     ) {
-      formats.row =
-        domNode.getAttribute(`${DATA_PREFIX}row`) ??
-        domNode.getAttribute(`${DATA_PREFIX}header-row`);
+      formats.row = domNode.getAttribute(`${DATA_PREFIX}row`)
+        ?? domNode.getAttribute(`${DATA_PREFIX}header-row`);
     }
 
-    Object.keys(CELL_FORMATS).forEach(format => {
+    Object.keys(CELL_FORMATS).forEach((format) => {
       const value = domNode.firstElementChild?.dataset[format.toLowerCase()];
       if (value) {
         formats[format] = value;
@@ -179,13 +172,12 @@ class BaseCell extends Container {
   }
 
   optimize(...args) {
-    const rowId =
-      this.domNode.getAttribute(`${DATA_PREFIX}row`) ??
-      this.domNode.getAttribute(`${DATA_PREFIX}header-row`);
+    const rowId = this.domNode.getAttribute(`${DATA_PREFIX}row`)
+      ?? this.domNode.getAttribute(`${DATA_PREFIX}header-row`);
 
     if (
-      this.statics.requiredContainer &&
-      !(this.parent instanceof this.statics.requiredContainer)
+      this.statics.requiredContainer
+      && !(this.parent instanceof this.statics.requiredContainer)
     ) {
       this.wrap(this.statics.requiredContainer.blotName, { row: rowId });
     }
@@ -207,7 +199,7 @@ class TableCell extends BaseCell {
   format(name, value) {
     if (name === 'row') {
       this.domNode.setAttribute(`${DATA_PREFIX}${name}`, value);
-      this.children.forEach(child => {
+      this.children.forEach((child) => {
         child.format(name, value);
       });
     } else {
@@ -232,7 +224,7 @@ class TableHeaderCell extends BaseCell {
   format(name, value) {
     if (name === 'row') {
       this.domNode.setAttribute(`${DATA_PREFIX}${name}`, value);
-      this.children.forEach(child => {
+      this.children.forEach((child) => {
         child.format(name, value);
       });
     } else {
@@ -256,9 +248,9 @@ class BaseRow extends Container {
       const nextTail = this.next.children.tail.formats();
 
       return (
-        thisHead[formatName] === thisTail[formatName] &&
-        thisHead[formatName] === nextHead[formatName] &&
-        thisHead[formatName] === nextTail[formatName]
+        thisHead[formatName] === thisTail[formatName]
+        && thisHead[formatName] === nextHead[formatName]
+        && thisHead[formatName] === nextTail[formatName]
       );
     }
     return false;
@@ -267,7 +259,7 @@ class BaseRow extends Container {
   optimize(...args) {
     super.optimize(...args);
     const formatName = this.childFormatName;
-    this.children.forEach(child => {
+    this.children.forEach((child) => {
       if (!isDefined(child.next)) {
         return;
       }
@@ -339,12 +331,12 @@ TableHeaderRow.blotName = 'tableHeaderRow';
 class RowContainer extends Container {
   optimize(...args) {
     if (
-      this.statics.requiredContainer &&
-      !(this.parent instanceof this.statics.requiredContainer)
+      this.statics.requiredContainer
+      && !(this.parent instanceof this.statics.requiredContainer)
     ) {
       const { domNode } = this.children.head.children.head.children.head;
       const formats = {};
-      Object.keys(TABLE_FORMATS).forEach(format => {
+      Object.keys(TABLE_FORMATS).forEach((format) => {
         const value = domNode.dataset[format.toLowerCase()];
         if (value) {
           formats[format] = value;
@@ -369,7 +361,7 @@ class TableContainer extends Container {
     const node = super.create(value);
 
     if (value) {
-      Object.keys(value).forEach(format => {
+      Object.keys(value).forEach((format) => {
         TABLE_FORMATS[format]?.add(node, value[format]);
       });
     }
@@ -393,11 +385,11 @@ class TableContainer extends Container {
   }
 
   getMaxRowColCount(rows) {
-    return Math.max(...rows.map(row => row.children.length));
+    return Math.max(...rows.map((row) => row.children.length));
   }
 
   balanceRows(maxColCount, rows, CellClass) {
-    rows.forEach(row => {
+    rows.forEach((row) => {
       new Array(maxColCount - row.children.length).fill(0).forEach(() => {
         let value;
         if (isDefined(row.children.head)) {
@@ -416,16 +408,16 @@ class TableContainer extends Container {
   }
 
   cells(column) {
-    return this.rows().map(row => row.children.at(column));
+    return this.rows().map((row) => row.children.at(column));
   }
 
   deleteColumn(index) {
-    [TableHeader, TableBody].forEach(blot => {
+    [TableHeader, TableBody].forEach((blot) => {
       const [tablePart] = this.descendants(blot);
       if (!isDefined(tablePart) || !isDefined(tablePart.children.head)) {
         return;
       }
-      tablePart.children.forEach(row => {
+      tablePart.children.forEach((row) => {
         const cell = row.children.at(index);
         if (isDefined(cell)) {
           cell.remove();
@@ -435,7 +427,7 @@ class TableContainer extends Container {
   }
 
   insertColumn(index) {
-    [TableHeader, TableBody].forEach(blot => {
+    [TableHeader, TableBody].forEach((blot) => {
       const [tablePart] = this.descendants(blot);
       if (!isDefined(tablePart) || !isDefined(tablePart.children.head)) {
         return;
@@ -444,7 +436,7 @@ class TableContainer extends Container {
       const CellBlot = blot === TableHeader ? TableHeaderCell : TableCell;
       const CellLineBlot = blot === TableHeader ? HeaderCellLine : CellLine;
 
-      tablePart.children.forEach(row => {
+      tablePart.children.forEach((row) => {
         const ref = row.children.at(index);
         const value = CellLineBlot.formats(
           row.children.head.children.head.domNode,
@@ -488,9 +480,9 @@ class TableContainer extends Container {
     const [body] = this.descendants(TableBody);
 
     if (
-      isDefined(header) ||
-      !isDefined(body) ||
-      !isDefined(body.children.head)
+      isDefined(header)
+      || !isDefined(body)
+      || !isDefined(body.children.head)
     ) {
       return;
     }
@@ -515,13 +507,13 @@ class TableContainer extends Container {
 
   rows() {
     const body = this.children.head;
-    return isDefined(body) ? body.children.map(row => row) : [];
+    return isDefined(body) ? body.children.map((row) => row) : [];
   }
 
   formats() {
     const formats = {};
     const childElem = this.cells()[0].domNode.firstElementChild;
-    Object.keys(TABLE_FORMATS).forEach(format => {
+    Object.keys(TABLE_FORMATS).forEach((format) => {
       const value = childElem.dataset[format.toLowerCase()];
       if (value) {
         formats[format] = value;
@@ -534,7 +526,7 @@ class TableContainer extends Container {
     const tableFormat = TABLE_FORMATS[name];
     if (tableFormat) {
       const attrName = `data-${name.toLowerCase()}`;
-      this.cells().forEach(cell => {
+      this.cells().forEach((cell) => {
         toggleAttribute(cell.children.head.domNode, attrName, value);
       });
 

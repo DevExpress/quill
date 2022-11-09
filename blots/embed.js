@@ -8,7 +8,7 @@ class Embed extends EmbedBlot {
     super(scroll, node);
     this.contentNode = document.createElement('span');
     this.contentNode.setAttribute('contenteditable', false);
-    Array.from(this.domNode.childNodes).forEach(childNode => {
+    Array.from(this.domNode.childNodes).forEach((childNode) => {
       this.contentNode.appendChild(childNode);
     });
     this.leftGuard = document.createTextNode(GUARD_TEXT);
@@ -65,11 +65,11 @@ class Embed extends EmbedBlot {
   }
 
   update(mutations, context) {
-    mutations.forEach(mutation => {
+    mutations.forEach((mutation) => {
       if (
-        mutation.type === 'characterData' &&
-        (mutation.target === this.leftGuard ||
-          mutation.target === this.rightGuard)
+        mutation.type === 'characterData'
+        && (mutation.target === this.leftGuard
+          || mutation.target === this.rightGuard)
       ) {
         const range = this.restore(mutation.target);
         if (range) context.range = range;
