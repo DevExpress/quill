@@ -1,0 +1,62 @@
+name: HtmlEditor Testcafe tests
+description: HtmlEditor Testcafe tests step
+inputs:
+  branch:
+    description: DevExtreme branch to checkout
+    required: true
+  working-directory:
+    description: DevExtreme checkout directory
+    required: true
+    default: devextreme-repo
+  component-directory:
+    description: The component directory with Testcafe tests
+    required: true
+  quarantine-mode:
+    description: The quarantine mode flag
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Prepare HtmlEditor
+      uses: ./quill-repo/.github/actions/html-editor/common/prepare
+      with:
+        branch: ${{ inputs.branch }}
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Download artifact
+      uses: ./quill-repo/.github/actions/html-editor/common/get-artifact
+      with:
+        branch: ${{ inputs.branch }}
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Pin browsers
+      uses: ./devextreme-repo/.github/actions/pin-browsers
+
+    - name: Prepare localization
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npx gulp localization
+
+    - name: Run TestCafe tests
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        all_args="--concurrency 2 --browsers=chrome:devextreme-shr2 --componentFolder ${{ inputs.component-directory }} --quarantineMode ${{ env.TEST_SUITE.quarantineMode}}"
+        echo "$all_args"
+        npm run test-testcafe -- $all_args
+
+    - name: Copy compared screenshot artifacts
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: compared-screenshots
+        path: ${{ inputs.working-directory }}/testing/testcafe/artifacts/compared-screenshots/**/*
+        if-no-files-found: ignore
+
+    - name: Copy failed test artifacts
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v3
+      with:
+        name: failed-tests
+        path: ${{ inputs.working-directory }}/testing/testcafe/artifacts/failedtests/**/*
+        if-no-files-found: ignore

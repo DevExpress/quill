@@ -1,0 +1,14 @@
+name: Quill unit tests step
+description: Unit tests step in the Quill checks workflow
+runs:
+  using: composite
+  steps:
+    - name: Prepare Quill environment
+      uses: ./.github/actions/quill/common/prepare
+
+    - name: Get artifact
+      uses: ./.github/actions/quill/common/get-artifact
+
+    - name: Unit tests
+      shell: bash
+      run: xvfb-run -a --server-args="-screen 0 1280x800x24 -ac -nolisten tcp -dpi 96 +extension RANDR" npm run test:unit

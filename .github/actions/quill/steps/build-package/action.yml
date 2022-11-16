@@ -1,0 +1,27 @@
+name: Quill build package step
+description: Build package step in the Quill checks workflow
+runs:
+  using: composite
+  steps:
+    - name: Prepare Quill environment
+      uses: ./.github/actions/quill/common/prepare
+
+    - name: Build
+      shell: bash
+      run: npm run build:prod
+
+    - name: Set CI package version
+      shell: bash
+      run: npm version 0.0.0-ci --no-git-tag-version
+
+    - name: Pack package
+      shell: bash
+      run: npm pack
+
+    - name: Upload package artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: quill-package
+        path: devextreme-quill-0.0.0-ci.tgz
+        retention-days: 1
+

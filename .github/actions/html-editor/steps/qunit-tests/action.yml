@@ -1,0 +1,49 @@
+name: HtmlEditor QUnit tests
+description: HtmlEditor QUnit tests step
+inputs:
+  branch:
+    description: DevExtreme branch to checkout
+    required: true
+  working-directory:
+    description: DevExtreme checkout directory
+    required: true
+    default: devextreme-repo
+  test-suite:
+    description: QUnit test suite to run
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Prepare HtmlEditor
+      uses: ./quill-repo/.github/actions/html-editor/common/prepare
+      with:
+        branch: ${{ inputs.branch }}
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Install httping
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: sudo apt-get install httping
+
+    - name: Download artifact
+      uses: ./quill-repo/.github/actions/html-editor/common/get-artifact
+      with:
+        branch: ${{ inputs.branch }}
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Build dotnet
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: dotnet build build/build-dotnet.sln
+
+    - name: QUnit tests
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        CONSTEL: ${{ inputs.test-suite }}
+        NORENOVATION: 'false'
+        GITHUBACTION: 'true'
+        TARGET: 'test'
+      run: |
+        chmod +x ./docker-ci.sh
+        ./docker-ci.sh

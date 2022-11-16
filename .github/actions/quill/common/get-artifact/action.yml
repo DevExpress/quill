@@ -1,0 +1,13 @@
+name: Quill get artifact
+description: Downloads Quill's build artifact and unarchive it
+runs:
+  using: composite
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: quill-artifact
+
+    - name: Unpack artifact
+      shell: bash
+      run: 7z x quill-artifact.zip

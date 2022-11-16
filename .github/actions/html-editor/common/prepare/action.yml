@@ -1,0 +1,57 @@
+name: HtmlEditor prepare
+description: Making ready HtmlEditor source code for the next job steps
+inputs:
+  branch:
+    description: DevExtreme branch to checkout
+    required: true
+  working-directory:
+    description: DevExtreme checkout directory
+    required: true
+    default: devextreme-repo
+  node-version:
+    description: Node.js version
+    required: true
+    default: '15'
+runs:
+  using: composite
+  steps:
+    - name: Checkout DevExtreme branch
+      uses: actions/checkout@v3
+      with:
+        repository: devexpress/devextreme
+        ref: ${{ inputs.branch }}
+        path: ${{ inputs.working-directory }}
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Restore npm cache
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-node-modules
+
+    - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm install --no-audit --no-fund
+
+    - name: Download quill ci package
+      uses: actions/download-artifact@v3
+      with:
+        name: quill-package
+        path: ${{ inputs.working-directory }}
+
+    - name: Install quill ci package
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm install devextreme-quill-0.0.0-ci.tgz
+
+    - name: Install cross-env globally
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm install --global cross-env
+

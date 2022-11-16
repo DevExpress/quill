@@ -1,0 +1,40 @@
+name: HtmlEditor build
+description: Builds the HtmlEditor's source code
+inputs:
+  branch:
+    description: DevExtreme branch to checkout
+    required: true
+  working-directory:
+    description: DevExtreme checkout directory
+    required: true
+    default: devextreme-repo
+runs:
+  using: composite
+  steps:
+    - name: Prepare HtmlEditor
+      uses: ./quill-repo/.github/actions/html-editor/common/prepare
+      with:
+        branch: ${{ inputs.branch }}
+        working-directory: ${{ inputs.working-directory }}
+
+    - name: Build
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        DEVEXTREME_TEST_CI: 'true'
+        DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+      run: npm run build:dev
+
+    - name: Zip artifacts
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        7z a -tzip -mx3 -mmt2 devextreme-artifact.zip artifacts scss/bundles
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: devextreme-artifact-${{ inputs.branch }}
+        path: ${{ inputs.working-directory }}/devextreme-artifact.zip
+        retention-days: 1

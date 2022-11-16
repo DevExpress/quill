@@ -1,0 +1,23 @@
+name: Quill functional tests step
+description: Functional tests step in the Quill checks workflow
+runs:
+  using: composite
+  steps:
+    - name: Prepare Quill environment
+      uses: ./.github/actions/quill/common/prepare
+
+    - name: Get artifact
+      uses: ./.github/actions/quill/common/get-artifact
+
+    - name: Copy dist
+      shell: bash
+      run: npm run copy-dist
+
+    - name: Run http server
+      uses: Eun/http-server-action@v1.0.3
+      with:
+        directory: ./test/functional/example
+
+    - name: Run functional tests
+      shell: bash
+      run: xvfb-run --auto-servernum npm run test:functional

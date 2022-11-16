@@ -1,0 +1,11 @@
+name: Quill lint step
+description: Lint step in the Quill checks workflow
+runs:
+  using: composite
+  steps:
+    - name: Prepare Quill environment
+      uses: ./.github/actions/quill/common/prepare
+
+    - name: Lint
+      shell: bash
+      run: npm run lint

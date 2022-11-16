@@ -1,0 +1,23 @@
+name: HtmlEditor get artifact
+description: Downloads HtmlEditor's build artifact and unarchive it
+inputs:
+  branch:
+    description: DevExtreme artifact branch
+    required: true
+  working-directory:
+    description: DevExtreme checkout directory
+    required: true
+    default: devextreme-repo
+runs:
+  using: composite
+  steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: devextreme-artifact-${{ inputs.branch }}
+        path: ${{ inputs.working-directory }}
+
+    - name: Unpack artifact
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: 7z x devextreme-artifact.zip

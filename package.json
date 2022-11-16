@@ -155,18 +155,19 @@
     "trailingComma": "all"
   },
   "scripts": {
+    "install:legacy": "npm install --legacy-peer-deps",
     "clean": "rimraf dist/* && rimraf test/functional/example/src",
     "copy-dist": "ncp dist test/functional/example/src",
-    "build": "npm run lint && npm run clean && npm run build:webpack",
-    "build-dist": "npm run lint && npm run clean && npm run build:webpack-prod",
+    "build": "npm run clean && npm run build:webpack",
+    "build:prod": "npm run clean && npm run build:webpack-prod",
     "build:webpack": "webpack --config _develop/webpack.config.js && rimraf dist/dx-quill.core dist/dx-quill.bubble dist/dx-quill.snow",
     "build:webpack-prod": "webpack --config _develop/webpack.config.js --env.production && rimraf dist/dx-quill.core dist/dx-quill.bubble dist/dx-quill.snow",
-    "develop": "npm run start",
     "lint": "eslint blots core formats modules test utils",
     "start": "npm run build && npm run copy-dist && http-server ./test/functional/example",
-    "test": "npm run test:unit",
+    "dev:test:unit": "npm run build && npm run test:unit",
+    "dev:test:functional": "npm run build && npm run copy-dist && npm run test:functional",
     "test:functional": "jasmine test/functional/epic.js",
-    "test:unit": "npm run build && karma start _develop/karma.config.js",
+    "test:unit": "karma start _develop/karma.config.js",
     "test:coverage": "webpack --env.coverage --config _develop/webpack.config.js && karma start _develop/karma.config.js --reporters coverage"
   },
   "keywords": [

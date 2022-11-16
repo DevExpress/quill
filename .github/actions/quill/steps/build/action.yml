@@ -1,0 +1,22 @@
+name: Quill build step
+description: Build step in the Quill checks workflow
+runs:
+  using: composite
+  steps:
+    - name: Prepare Quill environment
+      uses: ./.github/actions/quill/common/prepare
+
+    - name: Build
+      shell: bash
+      run: npm run build:prod
+
+    - name: Zip artifacts
+      shell: bash
+      run: |
+        7z a -tzip -mx3 -mmt2 quill-artifact.zip dist
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: quill-artifact
+        path: quill-artifact.zip
+        retention-days: 1

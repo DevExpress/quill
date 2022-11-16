@@ -1,0 +1,50 @@
+name: Quill
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+
+      - name: Lint
+        uses: ./.github/actions/quill/steps/lint
+
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+
+      - name: Build
+        uses: ./.github/actions/quill/steps/build
+
+  unit-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+
+      - name: Unit tests
+        uses: ./.github/actions/quill/steps/unit-tests
+
+  functional-tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+
+      - name: Functional tests
+        uses: ./.github/actions/quill/steps/functional-tests
+

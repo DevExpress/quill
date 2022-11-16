@@ -1,0 +1,27 @@
+name: Quill prepare
+description: Making ready Quill source code for the next job steps
+inputs:
+  node-version:
+    description: Node.js version
+    required: true
+    # Will be changed to 18 after dependency upgrade
+    default: '15'
+runs:
+  using: composite
+  steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Restore npm cache
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: ${{ runner.os }}-node-modules
+
+    # Will be changed to npm install after dependency upgrade
+    - name: Install dependencies
+      run: npm run install:legacy
+      shell: bash
