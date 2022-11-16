@@ -13,14 +13,15 @@ jobs:
     name: devextreme branches setup
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.branches }}
+      branches: ${{ steps.set-matrix.outputs.branches }}
     steps:
       - name: Checkout Quill repository
         uses: actions/checkout@v3
       - id: set-matrix
         run: |
-          BRANCHES=$(echo $(cat .github/workflows/devextreme-branches.json) | sed 's/ //g' )
-          echo "::set-output name=branches::BRANCHES"
+          BRANCHES=$(echo $(cat .github/workflows/devextreme-branches.json) | sed 's/ //g')
+          echo $BRANCHES
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
 
   build-quill:
     runs-on: ubuntu-latest
