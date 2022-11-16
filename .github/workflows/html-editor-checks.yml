@@ -9,6 +9,19 @@ on:
       - master
 
 jobs:
+  set-up-branches:
+    name: devextreme branches setup
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.branches }}
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+      - id: set-matrix
+        run: |
+          BRANCHES=$(echo $(cat .github/workflows/devextreme-branches.json) | sed 's/ //g' )
+          echo "::set-output name=branches::BRANCHES"
+
   build-quill:
     runs-on: ubuntu-latest
     steps:
@@ -18,15 +31,15 @@ jobs:
       - name: Build package
         uses: ./.github/actions/quill/steps/build-package
 
-  build:
-    needs: build-quill
+  build-devextreme:
+    needs: [build-quill, set-up-branches]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     name: build ${{ matrix.branch }}
     strategy:
       fail-fast: false
       matrix:
-        branch: [22_2, 22_1]
+        branch: ${{ fromJson(needs.set-up-branches.outputs.branches) }}
     steps:
       - name: Checkout Quill repository
         uses: actions/checkout@v3
@@ -39,14 +52,14 @@ jobs:
           branch: ${{ matrix.branch }}
 
   qunit:
-    needs: build
+    needs: [build-devextreme, set-up-branches]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     name: qunit ${{ matrix.branch }}
     strategy:
       fail-fast: false
       matrix:
-        branch: [22_2, 22_1]
+        branch: ${{ fromJson(needs.set-up-branches.outputs.branches) }}
         test-suite: [ui.htmlEditor]
     steps:
       - name: Checkout Quill repository
@@ -61,14 +74,14 @@ jobs:
           test-suite: ${{ matrix.test-suite }}
 
   testcafe:
-    needs: build
+    needs: [build-devextreme, set-up-branches]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     name: testcafe ${{ matrix.branch }}
     strategy:
       fail-fast: false
       matrix:
-        branch: [22_2, 22_1]
+        branch: ${{ fromJson(needs.set-up-branches.outputs.branches) }}
         test-suite: [
           { componentFolder: 'htmlEditor', quarantineMode: false },
         ]
