@@ -3,10 +3,10 @@ name: Html Editor
 on:
   push:
     branches:
-      - master
+      - 1_5
   pull_request:
     branches:
-      - master
+      - 1_5
 
 env:
   DEVEXTREME_BRANCHES: '["22_2", "22_1"]'
