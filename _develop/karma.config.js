@@ -1,6 +1,6 @@
 const browsers = require('./browsers');
 
-module.exports = config => {
+module.exports = (config) => {
   config.set({
     basePath: '../',
     urlRoot: '/karma/',
@@ -14,7 +14,9 @@ module.exports = config => {
       },
       { pattern: 'dist/dx-quill.snow.css', nocache: true },
       { pattern: 'dist/dx-unit.js', nocache: true },
-      { pattern: 'dist/*.map', included: false, served: true, nocache: true },
+      {
+        pattern: 'dist/*.map', included: false, served: true, nocache: true,
+      },
       { pattern: 'assets/favicon.png', included: false, served: true },
     ],
     proxies: {

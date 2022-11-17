@@ -30,7 +30,7 @@ const source = [
   'test',
   'themes',
   'utils',
-].map(file => {
+].map((file) => {
   return path.resolve(__dirname, '..', file);
 });
 
@@ -70,7 +70,6 @@ const tsRules = {
       loader: 'ts-loader',
       options: {
         compilerOptions: {
-          declaration: false,
           module: 'es6',
           target: 'es5',
           sourceMap: true,
@@ -132,7 +131,7 @@ const baseConfig = {
   ],
 };
 
-module.exports = env => {
+module.exports = (env) => {
   if (env && env.production) {
     const { entry, ...prodConfig } = baseConfig;
     return {
@@ -150,7 +149,7 @@ module.exports = env => {
           }),
         ],
       },
-      devtool: '',
+      devtool: false,
     };
   }
 

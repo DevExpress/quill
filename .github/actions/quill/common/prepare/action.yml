@@ -4,8 +4,7 @@ inputs:
   node-version:
     description: Node.js version
     required: true
-    # Will be changed to 18 after dependency upgrade
-    default: '15'
+    default: '18'
 runs:
   using: composite
   steps:
@@ -21,7 +20,6 @@ runs:
         key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
         restore-keys: ${{ runner.os }}-node-modules
 
-    # Will be changed to npm install after dependency upgrade
     - name: Install dependencies
-      run: npm run install:legacy
       shell: bash
+      run: npm install
