@@ -24,7 +24,7 @@ class ListItem extends Block {
   constructor(scroll, domNode) {
     super(scroll, domNode);
     const ui = domNode.ownerDocument.createElement('span');
-    const listEventHandler = e => {
+    const listEventHandler = (e) => {
       if (!scroll.isEnabled()) return;
       const format = this.statics.formats(domNode, scroll);
       if (format === 'checked') {
@@ -54,4 +54,5 @@ ListItem.tagName = 'LI';
 ListContainer.allowedChildren = [ListItem];
 ListItem.requiredContainer = ListContainer;
 
+// eslint-disable-next-line no-restricted-exports
 export { ListContainer, ListItem as default };

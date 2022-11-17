@@ -35,7 +35,7 @@ class History extends Module {
       );
     }
 
-    this.quill.root.addEventListener('beforeinput', event => {
+    this.quill.root.addEventListener('beforeinput', (event) => {
       if (event.inputType === 'historyUndo') {
         this.undo();
         event.preventDefault();
@@ -74,8 +74,8 @@ class History extends Module {
     let undoDelta = changeDelta.invert(oldDelta);
     const timestamp = Date.now();
     if (
-      this.lastRecorded + this.options.delay > timestamp &&
-      this.stack.undo.length > 0
+      this.lastRecorded + this.options.delay > timestamp
+      && this.stack.undo.length > 0
     ) {
       const delta = this.stack.undo.pop();
       undoDelta = undoDelta.compose(delta);
@@ -127,7 +127,7 @@ function endsWithNewlineChange(scroll, delta) {
     return typeof lastOp.insert === 'string' && lastOp.insert.endsWith('\n');
   }
   if (lastOp.attributes != null) {
-    return Object.keys(lastOp.attributes).some(attr => {
+    return Object.keys(lastOp.attributes).some((attr) => {
       return scroll.query(attr, Scope.BLOCK) != null;
     });
   }
@@ -145,4 +145,5 @@ function getLastChangeIndex(scroll, delta) {
   return changeIndex;
 }
 
+// eslint-disable-next-line no-restricted-exports
 export { History as default, getLastChangeIndex };

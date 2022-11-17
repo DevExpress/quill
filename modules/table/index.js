@@ -35,8 +35,8 @@ class Table extends Module {
     Quill.register(TableHeader, true);
     Quill.register(TableContainer, true);
 
-    [TABLE_FORMATS, CELL_FORMATS].forEach(formats => {
-      Object.keys(formats).forEach(name => {
+    [TABLE_FORMATS, CELL_FORMATS].forEach((formats) => {
+      Object.keys(formats).forEach((name) => {
         Quill.register({ [`formats/${name}`]: formats[name] }, true);
       });
     });
@@ -47,7 +47,7 @@ class Table extends Module {
 
     this.tableBlots = [CellLine.blotName, HeaderCellLine.blotName];
 
-    this.tableBlots.forEach(blotName => {
+    this.tableBlots.forEach((blotName) => {
       this.quill.editor.addImmediateFormat(blotName);
     });
     this.integrateClipboard();
@@ -57,7 +57,7 @@ class Table extends Module {
   }
 
   integrateClipboard() {
-    this.tableBlots.forEach(blotName => {
+    this.tableBlots.forEach((blotName) => {
       this.quill.clipboard.addTableBlot(blotName);
     });
 
@@ -68,7 +68,7 @@ class Table extends Module {
 
   addKeyboardHandlers() {
     const bindings = Table.keyboardBindings;
-    Object.keys(bindings).forEach(name => {
+    Object.keys(bindings).forEach((name) => {
       if (bindings[name]) {
         this.quill.keyboard.addBinding(bindings[name]);
       }
@@ -76,7 +76,7 @@ class Table extends Module {
   }
 
   balanceTables() {
-    this.quill.scroll.descendants(TableContainer).forEach(table => {
+    this.quill.scroll.descendants(TableContainer).forEach((table) => {
       table.balanceCells();
     });
   }
@@ -120,8 +120,8 @@ class Table extends Module {
 
     const [cellLine, offset] = this.quill.getLine(range.index);
     if (
-      !isDefined(cellLine) ||
-      this.tableBlots.indexOf(cellLine.statics.blotName) === -1
+      !isDefined(cellLine)
+      || this.tableBlots.indexOf(cellLine.statics.blotName) === -1
     ) {
       return EMPTY_RESULT;
     }
@@ -207,9 +207,9 @@ class Table extends Module {
       return;
     }
 
-    const delta = new Array(rows).fill(0).reduce(memo => {
+    const delta = new Array(rows).fill(0).reduce((memo) => {
       const rowId = tableId();
-      new Array(columns).fill('\n').forEach(text => {
+      new Array(columns).fill('\n').forEach((text) => {
         memo.insert(text, {
           tableCellLine: { row: rowId, cell: tableId() },
         });
@@ -226,8 +226,8 @@ class Table extends Module {
   }
 
   listenBalanceCells() {
-    this.quill.on(Quill.events.SCROLL_OPTIMIZE, mutations => {
-      mutations.some(mutation => {
+    this.quill.on(Quill.events.SCROLL_OPTIMIZE, (mutations) => {
+      mutations.some((mutation) => {
         if (
           ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'].indexOf(
             mutation.target.tagName,
@@ -260,8 +260,8 @@ Table.keyboardBindings = {
     handler(range) {
       const [line] = this.quill.getLine(range.index);
       if (
-        !line.prev ||
-        ['tableCellLine', 'tableHeaderCellLine'].indexOf(
+        !line.prev
+        || ['tableCellLine', 'tableHeaderCellLine'].indexOf(
           line.prev.statics.blotName,
         ) === -1
       ) {
@@ -289,8 +289,8 @@ Table.keyboardBindings = {
       const lineFormats = Object.keys(context.format).reduce(
         (formats, format) => {
           if (
-            this.quill.scroll.query(format, Scope.BLOCK) &&
-            !Array.isArray(context.format[format])
+            this.quill.scroll.query(format, Scope.BLOCK)
+            && !Array.isArray(context.format[format])
           ) {
             formats[format] = context.format[format];
           }
@@ -306,7 +306,7 @@ Table.keyboardBindings = {
       );
       this.quill.setSelection(range.index + 1, Quill.sources.SILENT);
       this.quill.focus();
-      Object.keys(context.format).forEach(name => {
+      Object.keys(context.format).forEach((name) => {
         if (lineFormats[name] != null) return;
         if (Array.isArray(context.format[name])) return;
         if (name === 'link') return;
@@ -340,10 +340,9 @@ Table.keyboardBindings = {
 
 function matchCell(node, delta) {
   const row = node.parentNode;
-  const table =
-    row.parentNode.tagName === 'TABLE'
-      ? row.parentNode
-      : row.parentNode.parentNode;
+  const table = row.parentNode.tagName === 'TABLE'
+    ? row.parentNode
+    : row.parentNode.parentNode;
   const isHeaderRow = row.parentNode.tagName === 'THEAD' ? true : null;
   const rows = Array.from(table.querySelectorAll('tr'));
   const cells = Array.from(row.querySelectorAll('th,td'));

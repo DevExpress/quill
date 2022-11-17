@@ -1,8 +1,8 @@
 import Uploader from '../../../modules/uploader';
 import { Range } from '../../../core/selection';
 
-describe('Uploader', function() {
-  describe('image uploading', function() {
+describe('Uploader', function () {
+  describe('image uploading', function () {
     [
       {
         name: 'test.png',
@@ -41,8 +41,8 @@ describe('Uploader', function() {
         type: 'text/html',
         isNotImage: true,
       },
-    ].forEach(file => {
-      it(`upload ${file.name}`, function() {
+    ].forEach((file) => {
+      it(`upload ${file.name}`, function () {
         const testRange = new Range(0);
         let uploads = [];
 
@@ -65,7 +65,7 @@ describe('Uploader', function() {
       });
     });
 
-    it('should not prevent default when no files to drop', function() {
+    it('should not prevent default when no files to drop', function () {
       const quillMock = {
         root: document.createElement('input'),
       };
@@ -84,7 +84,7 @@ describe('Uploader', function() {
       expect(dropEvent.defaultPrevented).toBeFalse();
     });
 
-    it('should prevent default on drop files', function() {
+    it('should prevent default on drop files', function () {
       const quillMock = {
         root: document.createElement('input'),
       };
@@ -120,15 +120,14 @@ describe('Uploader', function() {
         preventValue: false,
         forceUpload: true,
       },
-    ].forEach(data => {
-      it(`check preventImageUploading ${data.preventValue}`, function() {
+    ].forEach((data) => {
+      it(`check preventImageUploading ${data.preventValue}`, function () {
         const testRange = new Range(0);
         const file = {
           name: 'test.png',
           type: 'image/png',
         };
-        const expectedUploadsCount =
-          data.preventValue && !data.forceUpload ? 0 : 1;
+        const expectedUploadsCount = data.preventValue && !data.forceUpload ? 0 : 1;
         let uploads = [];
 
         const quillMock = {

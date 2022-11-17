@@ -9,11 +9,11 @@ const div = document.createElement('div');
 div.id = 'test-container';
 document.body.appendChild(div);
 
-window.onerror = function(msg) {
+window.onerror = function (msg) {
   return msg === 'Script error.';
 };
 
-beforeEach(function() {
+beforeEach(function () {
   jasmine.addMatchers({
     toEqualHTML() {
       return { compare: compareHTML };
@@ -37,7 +37,7 @@ function compareApproximately(actual, expected, tolerance) {
 }
 
 function compareHTML(actual, expected, ignoreClassId, ignoreUI = true) {
-  const [div1, div2] = [actual, expected].map(function(html) {
+  const [div1, div2] = [actual, expected].map(function (html) {
     if (html instanceof HTMLElement) {
       html = html.innerHTML;
     }
@@ -45,14 +45,14 @@ function compareHTML(actual, expected, ignoreClassId, ignoreUI = true) {
     container.innerHTML = html.replace(/\n\s*/g, '');
     // Heuristic for if DOM 'fixed' our input HTML
     if (
-      container.innerHTML.replace(/\s/g, '').length !==
-      html.replace(/\s/g, '').length
+      container.innerHTML.replace(/\s/g, '').length
+      !== html.replace(/\s/g, '').length
     ) {
       console.error('Invalid markup', html); // eslint-disable-line no-console
       throw new Error('Invalid markup passed to compareHTML');
     }
     if (ignoreUI) {
-      Array.from(container.querySelectorAll('.ql-ui')).forEach(node => {
+      Array.from(container.querySelectorAll('.ql-ui')).forEach((node) => {
         node.remove();
       });
     }
@@ -112,11 +112,10 @@ function compareNodes(node1, node2, ignoredAttributes = []) {
     if (node1.tagName !== node2.tagName) {
       return `Expected tagName '${node1.tagName}' to equal '${node2.tagName}'`;
     }
-    const [attr1, attr2] = [node1, node2].map(function(node) {
-      return Array.from(node.attributes || []).reduce(function(attr, elem) {
+    const [attr1, attr2] = [node1, node2].map(function (node) {
+      return Array.from(node.attributes || []).reduce(function (attr, elem) {
         if (ignoredAttributes.indexOf(elem.name) < 0) {
-          attr[elem.name] =
-            elem.name === 'style' ? elem.value.trim() : elem.value;
+          attr[elem.name] = elem.name === 'style' ? elem.value.trim() : elem.value;
         }
         return attr;
       }, {});
@@ -132,7 +131,7 @@ function compareNodes(node1, node2, ignoredAttributes = []) {
     if (node1.childNodes.length === 0) return null;
     let message = '';
     if (
-      Array.from(node1.childNodes).some(function(child1, i) {
+      Array.from(node1.childNodes).some(function (child1, i) {
         message = compareNodes(child1, node2.childNodes[i], ignoredAttributes);
         return message;
       })
@@ -145,7 +144,6 @@ function compareNodes(node1, node2, ignoredAttributes = []) {
   return null;
 }
 
-/* eslint-disable-next-line react/no-this-in-sfc */
 function initialize(klass, html, container = this.container, options = {}) {
   if (typeof html === 'object') {
     container.innerHTML = html.html;

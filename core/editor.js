@@ -37,10 +37,9 @@ class Editor {
         deleteDelta.retain(length);
         if (typeof op.insert === 'string') {
           const text = op.insert;
-          addedNewline =
-            !text.endsWith('\n') &&
-            (scrollLength <= index ||
-              this.scroll.descendant(BlockEmbed, index)[0]);
+          addedNewline = !text.endsWith('\n')
+            && (scrollLength <= index
+              || this.scroll.descendant(BlockEmbed, index)[0]);
           this.scroll.insertAt(index, text);
           const [line, offset] = this.scroll.line(index);
           let formats = merge({}, bubbleFormats(line));
@@ -52,10 +51,9 @@ class Editor {
         } else if (typeof op.insert === 'object') {
           const key = Object.keys(op.insert)[0]; // There should only be one key
           if (key == null) return index;
-          addedNewline =
-            this.scroll.query(key, Scope.INLINE) != null &&
-            (scrollLength <= index ||
-              this.scroll.descendant(BlockEmbed, index)[0]);
+          addedNewline = this.scroll.query(key, Scope.INLINE) != null
+            && (scrollLength <= index
+              || this.scroll.descendant(BlockEmbed, index)[0]);
           this.scroll.insertAt(index, key, op.insert[key]);
         }
         scrollLength += length;
@@ -63,13 +61,13 @@ class Editor {
         deleteDelta.push(op);
       }
       const keys = Object.keys(attributes);
-      this.immediateFormats.forEach(format => {
+      this.immediateFormats.forEach((format) => {
         if (keys.indexOf(format) > -1) {
           this.scroll.formatAt(index, length, format, attributes[format]);
           delete attributes[format];
         }
       });
-      Object.keys(attributes).forEach(name => {
+      Object.keys(attributes).forEach((name) => {
         this.scroll.formatAt(index, length, name, attributes[name]);
       });
       const addedLength = addedNewline ? 1 : 0;
@@ -96,8 +94,8 @@ class Editor {
 
   formatLine(index, length, formats = {}) {
     this.scroll.update();
-    Object.keys(formats).forEach(format => {
-      this.scroll.lines(index, Math.max(length, 1)).forEach(line => {
+    Object.keys(formats).forEach((format) => {
+      this.scroll.lines(index, Math.max(length, 1)).forEach((line) => {
         line.format(format, formats[format]);
       });
     });
@@ -107,7 +105,7 @@ class Editor {
   }
 
   formatText(index, length, formats = {}) {
-    Object.keys(formats).forEach(format => {
+    Object.keys(formats).forEach((format) => {
       this.scroll.formatAt(index, length, format, formats[format]);
     });
     const delta = new Delta().retain(index).retain(length, cloneDeep(formats));
@@ -128,7 +126,7 @@ class Editor {
     let lines = [];
     let leaves = [];
     if (length === 0) {
-      this.scroll.path(index).forEach(path => {
+      this.scroll.path(index).forEach((path) => {
         const [blot] = path;
         if (blot instanceof Block) {
           lines.push(blot);
@@ -140,7 +138,7 @@ class Editor {
       lines = this.scroll.lines(index, length);
       leaves = this.scroll.descendants(LeafBlot, index, length);
     }
-    [lines, leaves] = [lines, leaves].map(blots => {
+    [lines, leaves] = [lines, leaves].map((blots) => {
       if (blots.length === 0) return {};
       let formats = bubbleFormats(blots.shift());
       while (Object.keys(formats).length > 0) {
@@ -163,8 +161,8 @@ class Editor {
 
   getText(index, length) {
     return this.getContents(index, length)
-      .filter(op => typeof op.insert === 'string')
-      .map(op => op.insert)
+      .filter((op) => typeof op.insert === 'string')
+      .map((op) => op.insert)
       .join('');
   }
 
@@ -176,7 +174,7 @@ class Editor {
   insertText(index, text, formats = {}) {
     text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     this.scroll.insertAt(index, text);
-    Object.keys(formats).forEach(format => {
+    Object.keys(formats).forEach((format) => {
       this.scroll.formatAt(index, text.length, format, formats[format]);
     });
     return this.update(
@@ -215,10 +213,10 @@ class Editor {
   update(change, mutations = [], selectionInfo = undefined) {
     const oldDelta = this.delta;
     if (
-      mutations.length === 1 &&
-      mutations[0].type === 'characterData' &&
-      mutations[0].target.data.match(ASCII) &&
-      this.scroll.find(mutations[0].target)
+      mutations.length === 1
+      && mutations[0].type === 'characterData'
+      && mutations[0].target.data.match(ASCII)
+      && this.scroll.find(mutations[0].target)
     ) {
       // Optimization for character changes
       const textBlot = this.scroll.find(mutations[0].target);
@@ -259,7 +257,9 @@ function convertListHTML(items, lastIndent, types) {
     }
     return `</li></${endTag}>${convertListHTML([], lastIndent - 1, types)}`;
   }
-  const [{ child, offset, length, indent, type }, ...rest] = items;
+  const [{
+    child, offset, length, indent, type,
+  }, ...rest] = items;
   const [tag, attribute] = getListType(type, child);
   if (indent > lastIndent) {
     types.push(type);

@@ -15,13 +15,12 @@ class Uploader extends Module {
   addDragOverHandler() {
     if (hasWindow()) {
       const ua = window.navigator.userAgent.toLowerCase();
-      const isMsIe =
-        ua.indexOf('msie ') !== -1 ||
-        ua.indexOf('trident/') !== -1 ||
-        ua.indexOf('edge/') !== -1;
+      const isMsIe = ua.indexOf('msie ') !== -1
+        || ua.indexOf('trident/') !== -1
+        || ua.indexOf('edge/') !== -1;
 
       if (isMsIe) {
-        this.quill.root.addEventListener('dragover', e => {
+        this.quill.root.addEventListener('dragover', (e) => {
           e.preventDefault();
         });
       }
@@ -29,7 +28,7 @@ class Uploader extends Module {
   }
 
   addDropHandler() {
-    this.quill.root.addEventListener('drop', e => {
+    this.quill.root.addEventListener('drop', (e) => {
       const noFiles = e.dataTransfer.files.length === 0;
       const { onDrop } = this.options;
 
@@ -73,7 +72,7 @@ class Uploader extends Module {
     }
 
     const uploads = [];
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
       if (file && this.options.mimetypes.indexOf(file.type) !== -1) {
         uploads.push(file);
       }
@@ -97,16 +96,16 @@ Uploader.DEFAULTS = {
   ],
   imageBlot: 'image',
   handler(range, files, blotName) {
-    const promises = files.map(file => {
-      return new Promise(resolve => {
+    const promises = files.map((file) => {
+      return new Promise((resolve) => {
         const reader = new FileReader();
-        reader.onload = e => {
+        reader.onload = (e) => {
           resolve(e.target.result);
         };
         reader.readAsDataURL(file);
       });
     });
-    Promise.all(promises).then(images => {
+    Promise.all(promises).then((images) => {
       const update = images.reduce((delta, image) => {
         return delta.insert({ [blotName]: image });
       }, new Delta().retain(range.index).delete(range.length));

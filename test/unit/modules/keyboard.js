@@ -1,8 +1,8 @@
 import Keyboard, { SHORTKEY, normalize } from '../../../modules/keyboard';
 
-describe('Keyboard', function() {
-  describe('match', function() {
-    it('no modifiers', function() {
+describe('Keyboard', function () {
+  describe('match', function () {
+    it('no modifiers', function () {
       const binding = normalize({
         key: 'a',
       });
@@ -32,7 +32,7 @@ describe('Keyboard', function() {
       ).toBe(false);
     });
 
-    it('simple modifier', function() {
+    it('simple modifier', function () {
       const binding = normalize({
         key: 'a',
         altKey: true,
@@ -63,7 +63,7 @@ describe('Keyboard', function() {
       ).toBe(true);
     });
 
-    it('optional modifier', function() {
+    it('optional modifier', function () {
       const binding = normalize({
         key: 'a',
         altKey: null,
@@ -94,7 +94,7 @@ describe('Keyboard', function() {
       ).toBe(true);
     });
 
-    it('shortkey modifier', function() {
+    it('shortkey modifier', function () {
       const binding = normalize({
         key: 'a',
         shortKey: true,
@@ -126,7 +126,7 @@ describe('Keyboard', function() {
       ).toBe(true);
     });
 
-    it('native shortkey modifier', function() {
+    it('native shortkey modifier', function () {
       const binding = normalize({
         key: 'a',
         [SHORTKEY]: true,
@@ -158,9 +158,9 @@ describe('Keyboard', function() {
       ).toBe(true);
     });
   });
-  describe('onKeydown', function() {
-    ['a', 'delete', 'backspace'].forEach(key => {
-      it(`handle ${key} keydown event`, function() {
+  describe('onKeydown', function () {
+    ['a', 'delete', 'backspace'].forEach((key) => {
+      it(`handle ${key} keydown event`, function () {
         const quillMock = {
           root: document.createElement('div'),
           once: (eventName, handler) => {
@@ -190,8 +190,8 @@ describe('Keyboard', function() {
     });
   });
 
-  describe('bindings', function() {
-    it('which modifier', function() {
+  describe('bindings', function () {
+    it('which modifier', function () {
       const quillMock = {
         root: document.createElement('div'),
         once: (eventName, handler) => {
@@ -224,7 +224,7 @@ describe('Keyboard', function() {
 
       const nativeAddEventListener = quillMock.root.addEventListener;
 
-      quillMock.root.addEventListener = function(type, handler) {
+      quillMock.root.addEventListener = function (type, handler) {
         const modifiedHandler = () => {
           handler(fakeEvent);
         };

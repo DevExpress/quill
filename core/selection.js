@@ -40,8 +40,8 @@ class Selection {
       this.emitter.once(Emitter.events.SCROLL_UPDATE, () => {
         try {
           if (
-            this.root.contains(native.start.node) &&
-            this.root.contains(native.end.node)
+            this.root.contains(native.start.node)
+            && this.root.contains(native.end.node)
           ) {
             this.setNativeRange(
               native.start.node,
@@ -58,7 +58,9 @@ class Selection {
     });
     this.emitter.on(Emitter.events.SCROLL_OPTIMIZE, (mutations, context) => {
       if (context.range) {
-        const { startNode, startOffset, endNode, endOffset } = context.range;
+        const {
+          startNode, startOffset, endNode, endOffset,
+        } = context.range;
         this.setNativeRange(startNode, startOffset, endNode, endOffset);
         this.update(Emitter.sources.SILENT);
       }
@@ -109,11 +111,10 @@ class Selection {
     this.scroll.update();
     const nativeRange = this.getNativeRange();
     if (
-      nativeRange == null ||
-      !nativeRange.native.collapsed ||
-      this.scroll.query(format, Scope.BLOCK)
-    )
-      return;
+      nativeRange == null
+      || !nativeRange.native.collapsed
+      || this.scroll.query(format, Scope.BLOCK)
+    ) return;
     if (nativeRange.start.node !== this.cursor.textNode) {
       const blot = this.scroll.find(nativeRange.start.node, false);
       if (blot == null) return;
@@ -194,8 +195,8 @@ class Selection {
 
   hasFocus() {
     return (
-      document.activeElement === this.root ||
-      contains(this.root, document.activeElement)
+      document.activeElement === this.root
+      || contains(this.root, document.activeElement)
     );
   }
 
@@ -204,7 +205,7 @@ class Selection {
     if (!range.native.collapsed) {
       positions.push([range.end.node, range.end.offset]);
     }
-    const indexes = positions.map(position => {
+    const indexes = positions.map((position) => {
       const [node, offset] = position;
       const blot = this.scroll.find(node, true);
       const index = blot.offset(this.scroll);
@@ -223,8 +224,8 @@ class Selection {
 
   normalizeNative(nativeRange) {
     if (
-      !contains(this.root, nativeRange.startContainer) ||
-      (!nativeRange.collapsed && !contains(this.root, nativeRange.endContainer))
+      !contains(this.root, nativeRange.startContainer)
+      || (!nativeRange.collapsed && !contains(this.root, nativeRange.endContainer))
     ) {
       return null;
     }
@@ -236,7 +237,7 @@ class Selection {
       end: { node: nativeRange.endContainer, offset: nativeRange.endOffset },
       native: nativeRange,
     };
-    [range.start, range.end].forEach(position => {
+    [range.start, range.end].forEach((position) => {
       let { node, offset } = position;
       while (!(node instanceof Text) && node.childNodes.length > 0) {
         if (node.childNodes.length > offset) {
@@ -310,10 +311,10 @@ class Selection {
   ) {
     debug.info('setNativeRange', startNode, startOffset, endNode, endOffset);
     if (
-      startNode != null &&
-      (this.root.parentNode == null ||
-        startNode.parentNode == null ||
-        endNode.parentNode == null)
+      startNode != null
+      && (this.root.parentNode == null
+        || startNode.parentNode == null
+        || endNode.parentNode == null)
     ) {
       return;
     }
@@ -323,12 +324,12 @@ class Selection {
       if (!this.hasFocus()) this.root.focus();
       const { native } = this.getNativeRange() || {};
       if (
-        native == null ||
-        force ||
-        startNode !== native.startContainer ||
-        startOffset !== native.startOffset ||
-        endNode !== native.endContainer ||
-        endOffset !== native.endOffset
+        native == null
+        || force
+        || startNode !== native.startContainer
+        || startOffset !== native.startOffset
+        || endNode !== native.endContainer
+        || endOffset !== native.endOffset
       ) {
         if (startNode.tagName === 'BR') {
           startOffset = Array.from(startNode.parentNode.childNodes).indexOf(
@@ -380,10 +381,10 @@ class Selection {
     }
     if (!isEqual(oldRange, this.lastRange)) {
       if (
-        !this.composing &&
-        nativeRange != null &&
-        nativeRange.native.collapsed &&
-        nativeRange.start.node !== this.cursor.textNode
+        !this.composing
+        && nativeRange != null
+        && nativeRange.native.collapsed
+        && nativeRange.start.node !== this.cursor.textNode
       ) {
         const range = this.cursor.restore();
         if (range) {
@@ -426,4 +427,5 @@ function contains(parent, descendant) {
   return parent.contains(descendant);
 }
 
+// eslint-disable-next-line no-restricted-exports
 export { Range, Selection as default };

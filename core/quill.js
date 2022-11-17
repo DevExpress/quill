@@ -41,7 +41,7 @@ class Quill {
         // register(Blot | Attributor, overwrite)
         this.register(`formats/${name}`, path, target);
       } else {
-        Object.keys(path).forEach(key => {
+        Object.keys(path).forEach((key) => {
           this.register(key, path[key], target);
         });
       }
@@ -51,8 +51,8 @@ class Quill {
       }
       this.imports[path] = target;
       if (
-        (path.indexOf('blots/') === 0 || path.indexOf('formats/') === 0) &&
-        target.blotName !== 'abstract'
+        (path.indexOf('blots/') === 0 || path.indexOf('formats/') === 0)
+        && target.blotName !== 'abstract'
       ) {
         globalRegistry.register(target);
       }
@@ -66,6 +66,7 @@ class Quill {
     this.options = expandConfig(container, options);
     this.container = this.options.container;
     if (this.container == null) {
+      // eslint-disable-next-line no-constructor-return
       return debug.error('Invalid Quill container', container);
     }
     if (this.options.debug) {
@@ -94,7 +95,7 @@ class Quill {
     this.history = this.theme.addModule('history');
     this.uploader = this.theme.addModule('uploader');
     this.theme.init();
-    this.emitter.on(Emitter.events.EDITOR_CHANGE, type => {
+    this.emitter.on(Emitter.events.EDITOR_CHANGE, (type) => {
       if (type === Emitter.events.TEXT_CHANGE) {
         this.toggleBlankClass();
       }
@@ -102,8 +103,7 @@ class Quill {
     this.emitter.on(Emitter.events.SCROLL_UPDATE, (source, mutations) => {
       const oldRange = this.selection.lastRange;
       const [newRange] = this.selection.getRange();
-      const selectionInfo =
-        oldRange && newRange ? { oldRange, newRange } : undefined;
+      const selectionInfo = oldRange && newRange ? { oldRange, newRange } : undefined;
       modify.call(
         this,
         () => this.editor.update(null, mutations, selectionInfo),
@@ -423,7 +423,8 @@ class Quill {
   }
 
   update(source = Emitter.sources.USER) {
-    const change = this.scroll.update(source); // Will update selection before selection.update() does if text changes
+    // Will update selection before selection.update() does if text changes
+    const change = this.scroll.update(source);
     this.selection.update(source);
     // TODO this is usually undefined
     return change;
@@ -486,9 +487,9 @@ function expandConfig(container, userConfig) {
     }
   }
   const themeConfig = cloneDeep(userConfig.theme.DEFAULTS);
-  [themeConfig, userConfig].forEach(config => {
+  [themeConfig, userConfig].forEach((config) => {
     config.modules = config.modules || {};
-    Object.keys(config.modules).forEach(module => {
+    Object.keys(config.modules).forEach((module) => {
       if (config.modules[module] === true) {
         config.modules[module] = {};
       }
@@ -510,9 +511,9 @@ function expandConfig(container, userConfig) {
   }, {});
   // Special case toolbar shorthand
   if (
-    userConfig.modules != null &&
-    userConfig.modules.toolbar &&
-    userConfig.modules.toolbar.constructor !== Object
+    userConfig.modules != null
+    && userConfig.modules.toolbar
+    && userConfig.modules.toolbar.constructor !== Object
   ) {
     userConfig.modules.toolbar = {
       container: userConfig.modules.toolbar,
@@ -525,7 +526,7 @@ function expandConfig(container, userConfig) {
     themeConfig,
     userConfig,
   );
-  ['bounds', 'container', 'scrollingContainer'].forEach(key => {
+  ['bounds', 'container', 'scrollingContainer'].forEach((key) => {
     if (typeof userConfig[key] === 'string') {
       userConfig[key] = document.querySelector(userConfig[key]);
     }
@@ -546,9 +547,9 @@ function expandConfig(container, userConfig) {
 // common to modification APIs
 function modify(modifier, source, index, shift) {
   if (
-    !this.isEnabled() &&
-    source === Emitter.sources.USER &&
-    !this.allowReadOnlyEdits
+    !this.isEnabled()
+    && source === Emitter.sources.USER
+    && !this.allowReadOnlyEdits
   ) {
     return new Delta();
   }
@@ -617,13 +618,11 @@ function shiftRange(range, index, length, source) {
   let start;
   let end;
   if (index instanceof Delta) {
-    [start, end] = [range.index, range.index + range.length].map(pos =>
-      index.transformPosition(pos, source !== Emitter.sources.USER),
-    );
+    [start, end] = [range.index, range.index + range.length]
+      .map((pos) => index.transformPosition(pos, source !== Emitter.sources.USER));
   } else {
-    [start, end] = [range.index, range.index + range.length].map(pos => {
-      if (pos < index || (pos === index && source === Emitter.sources.USER))
-        return pos;
+    [start, end] = [range.index, range.index + range.length].map((pos) => {
+      if (pos < index || (pos === index && source === Emitter.sources.USER)) return pos;
       if (length >= 0) {
         return pos + length;
       }
@@ -633,4 +632,7 @@ function shiftRange(range, index, length, source) {
   return new Range(start, end - start);
 }
 
-export { globalRegistry, expandConfig, overload, Quill as default };
+export {
+  // eslint-disable-next-line no-restricted-exports
+  globalRegistry, expandConfig, overload, Quill as default,
+};

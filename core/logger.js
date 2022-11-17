@@ -14,7 +14,7 @@ function namespace(ns) {
   }, {});
 }
 
-namespace.level = newLevel => {
+namespace.level = (newLevel) => {
   level = newLevel;
 };
 debug.level = namespace.level;

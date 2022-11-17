@@ -44,44 +44,43 @@ const KEY_NAMES = {
 
 const KEY_CODES = {
   // iOS 10.2 and lower didn't supports KeyboardEvent.key
-  '8': 'backspace',
-  '9': 'tab',
-  '13': 'enter',
-  '27': 'escape',
-  '33': 'pageUp',
-  '34': 'pageDown',
-  '35': 'end',
-  '36': 'home',
-  '37': 'leftArrow',
-  '38': 'upArrow',
-  '39': 'rightArrow',
-  '40': 'downArrow',
-  '46': 'del',
-  '32': 'space',
-  '106': 'asterisk',
-  '109': 'minus',
-  '189': 'minus',
-  '173': 'minus',
-  '16': 'shift',
-  '17': 'control',
-  '18': 'alt',
+  8: 'backspace',
+  9: 'tab',
+  13: 'enter',
+  27: 'escape',
+  33: 'pageUp',
+  34: 'pageDown',
+  35: 'end',
+  36: 'home',
+  37: 'leftArrow',
+  38: 'upArrow',
+  39: 'rightArrow',
+  40: 'downArrow',
+  46: 'del',
+  32: 'space',
+  106: 'asterisk',
+  109: 'minus',
+  189: 'minus',
+  173: 'minus',
+  16: 'shift',
+  17: 'control',
+  18: 'alt',
 };
 
-const SHORTKEY =
-  hasWindow() && /Mac/i.test(navigator.platform) ? 'metaKey' : 'ctrlKey';
+const SHORTKEY = hasWindow() && /Mac/i.test(navigator.platform) ? 'metaKey' : 'ctrlKey';
 
 class Keyboard extends Module {
   static match(evt, binding) {
     if (
-      ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some(key => {
+      ['altKey', 'ctrlKey', 'metaKey', 'shiftKey'].some((key) => {
         return !!binding[key] !== evt[key] && binding[key] !== null;
       })
     ) {
       return false;
     }
     return (
-      binding.key === Keyboard.normalizeKeyName(evt) ||
-      binding.key === evt.which
+      binding.key === Keyboard.normalizeKeyName(evt)
+      || binding.key === evt.which
     );
   }
 
@@ -94,8 +93,7 @@ class Keyboard extends Module {
       if (isKeySupported) {
         normalizedKey = KEY_NAMES[normalizedKey.toLowerCase()] || normalizedKey;
       } else {
-        normalizedKey =
-          KEY_CODES[normalizedKey] || String.fromCharCode(normalizedKey);
+        normalizedKey = KEY_CODES[normalizedKey] || String.fromCharCode(normalizedKey);
       }
     }
 
@@ -105,7 +103,7 @@ class Keyboard extends Module {
   constructor(quill, options) {
     super(quill, options);
     this.bindings = {};
-    Object.keys(this.options.bindings).forEach(name => {
+    Object.keys(this.options.bindings).forEach((name) => {
       if (this.options.bindings[name]) {
         this.addBinding(this.options.bindings[name]);
       }
@@ -120,7 +118,9 @@ class Keyboard extends Module {
     this.quill.once(Quill.events.CONTENT_SETTED, () => {
       this.addBinding({ key: 'enter', shiftKey: null }, this.handleEnter);
       this.addBinding(
-        { key: 'enter', metaKey: null, ctrlKey: null, altKey: null },
+        {
+          key: 'enter', metaKey: null, ctrlKey: null, altKey: null,
+        },
         () => {},
       );
       if (hasWindow() && /Firefox/i.test(navigator.userAgent)) {
@@ -185,7 +185,7 @@ class Keyboard extends Module {
       ? binding[keyPropery]
       : [binding[keyPropery]];
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const singleBinding = {
         ...binding,
         key,
@@ -198,29 +198,26 @@ class Keyboard extends Module {
   }
 
   listen() {
-    this.quill.root.addEventListener('keydown', evt => {
+    this.quill.root.addEventListener('keydown', (evt) => {
       if (evt.defaultPrevented || evt.isComposing) return;
       this.raiseOnKeydownCallback(evt);
       const keyName = Keyboard.normalizeKeyName(evt);
       const bindings = (this.bindings[keyName] || []).concat(
         this.bindings[evt.which] || [],
       );
-      const matches = bindings.filter(binding => Keyboard.match(evt, binding));
+      const matches = bindings.filter((binding) => Keyboard.match(evt, binding));
       if (matches.length === 0) return;
       const range = this.quill.getSelection();
       if (range == null || !this.quill.hasFocus()) return;
       const [line, offset] = this.quill.getLine(range.index);
       const [leafStart, offsetStart] = this.quill.getLeaf(range.index);
-      const [leafEnd, offsetEnd] =
-        range.length === 0
-          ? [leafStart, offsetStart]
-          : this.quill.getLeaf(range.index + range.length);
-      const prefixText =
-        leafStart instanceof TextBlot
-          ? leafStart.value().slice(0, offsetStart)
-          : '';
-      const suffixText =
-        leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
+      const [leafEnd, offsetEnd] = range.length === 0
+        ? [leafStart, offsetStart]
+        : this.quill.getLeaf(range.index + range.length);
+      const prefixText = leafStart instanceof TextBlot
+        ? leafStart.value().slice(0, offsetStart)
+        : '';
+      const suffixText = leafEnd instanceof TextBlot ? leafEnd.value().slice(offsetEnd) : '';
       const curContext = {
         collapsed: range.length === 0,
         empty: range.length === 0 && line.length() <= 1,
@@ -234,10 +231,10 @@ class Keyboard extends Module {
 
       let prevented = false;
 
-      matches.some(binding => {
+      matches.some((binding) => {
         if (
-          binding.collapsed != null &&
-          binding.collapsed !== curContext.collapsed
+          binding.collapsed != null
+          && binding.collapsed !== curContext.collapsed
         ) {
           return false;
         }
@@ -249,17 +246,15 @@ class Keyboard extends Module {
         }
         if (Array.isArray(binding.format)) {
           // any format is present
-          if (binding.format.every(name => curContext.format[name] == null)) {
+          if (binding.format.every((name) => curContext.format[name] == null)) {
             return false;
           }
         } else if (typeof binding.format === 'object') {
           // all formats must match
           if (
-            !Object.keys(binding.format).every(name => {
-              if (binding.format[name] === true)
-                return curContext.format[name] != null;
-              if (binding.format[name] === false)
-                return curContext.format[name] == null;
+            !Object.keys(binding.format).every((name) => {
+              if (binding.format[name] === true) return curContext.format[name] != null;
+              if (binding.format[name] === false) return curContext.format[name] == null;
               return isEqual(binding.format[name], curContext.format[name]);
             })
           ) {
@@ -313,8 +308,7 @@ class Keyboard extends Module {
       // Always deleting newline here, length always 1
       const [prev] = this.quill.getLine(range.index - 1);
       if (prev) {
-        const isPrevLineEmpty =
-          prev.statics.blotName === 'block' && prev.length() <= 1;
+        const isPrevLineEmpty = prev.statics.blotName === 'block' && prev.length() <= 1;
         if (!isPrevLineEmpty) {
           const curFormats = line.formats();
           const prevFormats = this.quill.getFormat(range.index - 1, 1);
@@ -367,8 +361,8 @@ class Keyboard extends Module {
     const lineFormats = Object.keys(context.format).reduce(
       (formats, format) => {
         if (
-          this.quill.scroll.query(format, Scope.BLOCK) &&
-          !Array.isArray(context.format[format])
+          this.quill.scroll.query(format, Scope.BLOCK)
+          && !Array.isArray(context.format[format])
         ) {
           formats[format] = context.format[format];
         }
@@ -391,7 +385,7 @@ class Keyboard extends Module {
       line.domNode.scrollIntoView(scrollConfig);
     }
 
-    Object.keys(context.format).forEach(name => {
+    Object.keys(context.format).forEach((name) => {
       if (lineFormats[name] != null) return;
       if (Array.isArray(context.format[name])) return;
       if (name === 'code' || name === 'link') return;
@@ -590,9 +584,9 @@ Keyboard.DEFAULTS = {
         let numLines = 2;
         let cur = line;
         while (
-          cur != null &&
-          cur.length() <= 1 &&
-          cur.formats()['code-block']
+          cur != null
+          && cur.length() <= 1
+          && cur.formats()['code-block']
         ) {
           cur = cur.prev;
           numLines -= 1;
@@ -624,10 +618,9 @@ function makeCodeBlockHandler(indent) {
     format: { 'code-block': true },
     handler(range) {
       const CodeBlock = this.quill.scroll.query('code-block');
-      const lines =
-        range.length === 0
-          ? this.quill.getLines(range.index, 1)
-          : this.quill.getLines(range);
+      const lines = range.length === 0
+        ? this.quill.getLines(range.index, 1)
+        : this.quill.getLines(range);
       let { index, length } = range;
       lines.forEach((line, i) => {
         if (indent) {
@@ -735,4 +728,7 @@ function deleteRange({ quill, range }) {
   quill.setSelection(range.index, Quill.sources.SILENT);
 }
 
-export { Keyboard as default, SHORTKEY, normalize, deleteRange };
+export {
+  // eslint-disable-next-line no-restricted-exports
+  Keyboard as default, SHORTKEY, normalize, deleteRange,
+};
