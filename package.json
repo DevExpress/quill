@@ -67,7 +67,7 @@
     "mini-css-extract-plugin": "~0.9.0",
     "ncp": "^2.0.0",
     "prettier": "^1.17.0",
-    "puppeteer": "^2.1.1",
+    "puppeteer": "^19.2.2",
     "rimraf": "^3.0.2",
     "source-map-loader": "^1.1.2",
     "style-loader": "~1.1.3",
@@ -76,6 +76,7 @@
     "terser-webpack-plugin": "^1.3.0",
     "ts-loader": "^6.2.2",
     "typescript": "^3.8.3",
+    "wait-on": "^6.0.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   },
@@ -165,8 +166,8 @@
     "lint": "eslint blots core formats modules test utils",
     "start": "npm run build && npm run copy-dist && http-server ./test/functional/example",
     "dev:test:unit": "npm run build && npm run test:unit",
-    "dev:test:functional": "npm run build && npm run copy-dist && npm run test:functional",
-    "test:functional": "jasmine test/functional/epic.js",
+    "ci:test:functional": "http-server ./test/functional/example > .http-log & HTTP_PID=$! && npm run test:functional && kill $HTTP_PID && cat .http-log",
+    "test:functional": "wait-on http://127.0.0.1:8080/index.html -i 1000 -t 10000 && jasmine test/functional/epic.js",
     "test:unit": "karma start _develop/karma.config.js",
     "test:coverage": "webpack --env.coverage --config _develop/webpack.config.js && karma start _develop/karma.config.js --reporters coverage"
   },
