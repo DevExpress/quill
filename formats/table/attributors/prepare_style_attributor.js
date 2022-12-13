@@ -6,7 +6,7 @@ export default function prepareStyleAttributor(
   propName,
   subPropName = '',
 ) {
-  const fullName = `${propName}${subPropName ? `-${subPropName}` : ''}`;
+  const fullName = `${name}_${propName}${subPropName ? `-${subPropName}` : ''}`;
   return new ElementStyleAttributor(
     `${name}${capitalize(formatName ?? propName)}${capitalize(subPropName)}`,
     fullName,

@@ -1,10 +1,6 @@
 import prepareAttributor from './prepare_attributor';
 import prepareStyleAttributor from './prepare_style_attributor';
-
-const cellConfig = {
-  name: 'cell',
-  allowedTags: ['TH', 'TD'],
-};
+import { cellConfig } from './configs';
 
 const CellHeightAttribute = prepareAttributor(cellConfig, 'height');
 const CellWidthAttribute = prepareAttributor(cellConfig, 'width');

@@ -9,6 +9,9 @@ import {
 import Break from './break';
 import Inline from './inline';
 import TextBlot from './text';
+import { overrideParchment } from '../parchment/override';
+
+overrideParchment();
 
 const NEWLINE_LENGTH = 1;
 
@@ -57,7 +60,7 @@ class Block extends BlockBlot {
     const lines = value.split('\n');
     const text = lines.shift();
     if (text.length > 0) {
-      if (index < this.length() || this.children.tail == null) {
+      if (index < this.length() - 1 || this.children.tail == null) {
         super.insertAt(Math.min(index, this.length() - 1), text);
       } else {
         this.children.tail.insertAt(this.children.tail.length(), text);

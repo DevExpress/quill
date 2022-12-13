@@ -1,10 +1,6 @@
 import prepareAttributor from './prepare_attributor';
 import prepareStyleAttributor from './prepare_style_attributor';
-
-const tableConfig = {
-  name: 'table',
-  allowedTags: ['TABLE'],
-};
+import { tableConfig } from './configs';
 
 const TableHeightAttribute = prepareAttributor(tableConfig, 'height');
 const TableWidthAttribute = prepareAttributor(tableConfig, 'width');
