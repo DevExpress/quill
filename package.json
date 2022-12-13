@@ -1,6 +1,6 @@
 {
   "name": "devextreme-quill",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "description": "Core of the DevExtreme HtmlEditor",
   "author": "Developer Express Inc.",
   "main": "dist/dx-quill.js",
@@ -101,7 +101,8 @@
     "ci:test:functional": "http-server ./test/functional/example > .http-log & HTTP_PID=$! && npm run test:functional && kill $HTTP_PID && cat .http-log",
     "test:functional": "wait-on http://127.0.0.1:8080/index.html -i 1000 -t 10000 && jasmine test/functional/epic.js",
     "test:unit": "karma start _develop/karma.config.js",
-    "test:coverage": "webpack --env coverage --config _develop/webpack.config.js && karma start _develop/karma.config.js --reporters coverage"
+    "test:coverage": "webpack --env coverage --config _develop/webpack.config.js && karma start _develop/karma.config.js --reporters coverage",
+    "version": "npm version --no-git-tag-version"
   },
   "keywords": [
     "editor",
