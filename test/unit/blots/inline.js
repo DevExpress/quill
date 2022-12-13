@@ -29,37 +29,39 @@ describe('Inline', function() {
   });
 
   describe('Strikethrough', function() {
-    it('renders attributes when strikethrough tag the first', function() {
+    const cleanHtmlRegExp = /(\n|>\s+|\s+<)/g;
+
+    it('renders attributes when the strikethrough tag is first', function() {
       const testHtml = `
       <p>
         <s style="background-color: #00ff00">BBB</s>
         <span style="background-color: #00ff00">CCC</span>
-      </p>`.replace(/(\n|>\s+|\s+<)/g, match => match.trim());
+      </p>`.replace(cleanHtmlRegExp, match => match.trim());
 
       const editor = this.initialize(Editor, testHtml);
 
       expect(editor.scroll.domNode.innerHTML).toEqual(testHtml);
     });
 
-    it('renders attributes when strikethrough tag the last', function() {
+    it('renders attributes when the strikethrough tag is last', function() {
       const testHtml = `
       <p>
         <span style="background-color: #00ff00">AAA</span>
         <s style="background-color: #00ff00">BBB</s>
-      </p>`.replace(/(\n|>\s+|\s+<)/g, match => match.trim());
+      </p>`.replace(cleanHtmlRegExp, match => match.trim());
 
       const editor = this.initialize(Editor, testHtml);
 
       expect(editor.scroll.domNode.innerHTML).toEqual(testHtml);
     });
 
-    it('renders attributes when strikethrough tag the middle', function() {
+    it('renders attributes when the strikethrough tag is middle', function() {
       const testHtml = `
       <p>
         <span style="background-color: #00ff00">AAA</span>
         <s style="background-color: #00ff00">BBB</s>
         <span style="background-color: #00ff00">CCC</span>
-      </p>`.replace(/(\n|>\s+|\s+<)/g, match => match.trim());
+      </p>`.replace(cleanHtmlRegExp, match => match.trim());
 
       const editor = this.initialize(Editor, testHtml);
 
@@ -71,7 +73,7 @@ describe('Inline', function() {
       <p>
         <s style="background-color: #00ff00">AAA</s>
         <s style="background-color: #ff0000">BBB</s>
-      </p>`.replace(/(\n|>\s+|\s+<)/g, match => match.trim());
+      </p>`.replace(cleanHtmlRegExp, match => match.trim());
 
       const editor = this.initialize(Editor, testHtml);
 
@@ -84,7 +86,7 @@ describe('Inline', function() {
         <s style="background-color: #00ff00">AAA</s>
         <span>BBB</span>
         <s style="background-color: #00ff00">CCC</s>
-      </p>`.replace(/(\n|>\s+|\s+<)/g, match => match.trim());
+      </p>`.replace(cleanHtmlRegExp, match => match.trim());
 
       const editor = this.initialize(Editor, testHtml);
 
