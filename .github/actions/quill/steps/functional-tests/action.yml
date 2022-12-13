@@ -6,6 +6,10 @@ runs:
     - name: Prepare Quill environment
       uses: ./.github/actions/quill/common/prepare
 
+    - name: Init puppeteer
+      shell: bash
+      run: npm install --prefix ./node_modules/puppeteer
+
     - name: Get artifact
       uses: ./.github/actions/quill/common/get-artifact
 
@@ -13,11 +17,6 @@ runs:
       shell: bash
       run: npm run copy-dist
 
-    - name: Run http server
-      uses: Eun/http-server-action@v1.0.3
-      with:
-        directory: ./test/functional/example
-
     - name: Run functional tests
       shell: bash
-      run: xvfb-run --auto-servernum npm run test:functional
+      run: xvfb-run --auto-servernum npm run ci:test:functional
