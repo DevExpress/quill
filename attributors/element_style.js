@@ -1,6 +1,6 @@
 import { StyleAttributor } from 'parchment';
 import { decorateCanAdd, decorateMethodWithKeyName } from './custom_attributor_decorators';
-import { getTablePrefix } from '../formats/table/attributors/key_name_map';
+import { getKeyNameWithCustomPrefix } from '../formats/table/attributors/custom_attributor_prefix';
 
 export default class ElementStyleAttributor extends StyleAttributor {
   constructor(attrName, keyName, options = { allowedTags: [] }) {
@@ -10,8 +10,11 @@ export default class ElementStyleAttributor extends StyleAttributor {
   }
 
   static keys(node) {
-    const prefix = getTablePrefix(node.tagName);
-    return super.keys.call(this, node).map((keyName) => `${prefix}${keyName}`);
+    return super.keys.call(this, node)
+      .map((keyName) => {
+        const result = getKeyNameWithCustomPrefix(node.tagName, keyName);
+        return result;
+      });
   }
 
   add(node, value) {

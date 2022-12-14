@@ -35,44 +35,22 @@ import Syntax from './modules/syntax';
 import Table from './modules/table';
 import Multiline from './modules/multiline';
 import TableLite from './modules/table/lite';
-import {
-  CellBackgroundColorStyle,
-  CellBorderColorStyle,
-  CellBorderStyle,
-  CellBorderStyleStyle,
-  CellBorderWidthStyle,
-  CellHeightAttribute,
-  CellHeightStyle,
-  CellPaddingBottomStyle,
-  CellPaddingLeftStyle,
-  CellPaddingRightStyle,
-  CellPaddingStyle,
-  CellPaddingTopStyle,
-  CellTextAlignStyle,
-  CellVerticalAlignStyle,
-  CellWidthAttribute,
-  CellWidthStyle,
-} from './formats/table/attributors/cell';
-import {
-  TableTextAlignStyle,
-  TableBackgroundColorStyle,
-  TableBorderColorStyle,
-  TableBorderStyle,
-  TableBorderStyleStyle,
-  TableBorderWidthStyle,
-  TableHeightAttribute,
-  TableHeightStyle,
-  TableWidthAttribute,
-  TableWidthStyle,
-} from './formats/table/attributors/table';
+import { TABLE_CELL_ATTR_ATTRIBUTORS, TABLE_CELL_STYLE_ATTRIBUTORS } from './formats/table/attributors/cell';
+import { TABLE_STYLE_ATTRIBUTORS, TABLE_ATTR_ATTRIBUTORS } from './formats/table/attributors/table';
+
+function registerAttributorArray(path, attributorArray) {
+  return attributorArray.reduce((result, attributor) => {
+    const key = `${path}${attributor.attrName}`;
+    result[key] = attributor;
+    return result;
+  }, {});
+}
 
 Quill.register(
   {
     'attributors/attribute/direction': DirectionAttribute,
-    'attributors/attribute/tableWidth': TableWidthAttribute,
-    'attributors/attribute/tableHeight': TableHeightAttribute,
-    'attributors/attribute/cellWidth': CellWidthAttribute,
-    'attributors/attribute/cellHeight': CellHeightAttribute,
+    ...registerAttributorArray('attributors/attribute/', TABLE_ATTR_ATTRIBUTORS),
+    ...registerAttributorArray('attributors/attribute/', TABLE_CELL_ATTR_ATTRIBUTORS),
 
     'attributors/class/align': AlignClass,
     'attributors/class/background': BackgroundClass,
@@ -87,28 +65,9 @@ Quill.register(
     'attributors/style/direction': DirectionStyle,
     'attributors/style/font': FontStyle,
     'attributors/style/size': SizeStyle,
-    'attributors/style/tableTextAlign': TableTextAlignStyle,
-    'attributors/style/tableBackgroundColor': TableBackgroundColorStyle,
-    'attributors/style/tableBorder': TableBorderStyle,
-    'attributors/style/tableBorderStyle': TableBorderStyleStyle,
-    'attributors/style/tableBorderColor': TableBorderColorStyle,
-    'attributors/style/tableBorderWidth': TableBorderWidthStyle,
-    'attributors/style/tableWidth': TableWidthStyle,
-    'attributors/style/tableHeight': TableHeightStyle,
-    'attributors/style/cellBackground': CellBackgroundColorStyle,
-    'attributors/style/cellBorder': CellBorderStyle,
-    'attributors/style/cellBorderStyle': CellBorderStyleStyle,
-    'attributors/style/cellBorderWidth': CellBorderWidthStyle,
-    'attributors/style/cellBorderColor': CellBorderColorStyle,
-    'attributors/style/cellPadding': CellPaddingStyle,
-    'attributors/style/cellPaddingTop': CellPaddingTopStyle,
-    'attributors/style/cellPaddingBottom': CellPaddingBottomStyle,
-    'attributors/style/cellPaddingLeft': CellPaddingLeftStyle,
-    'attributors/style/cellPaddingRight': CellPaddingRightStyle,
-    'attributors/style/cellVerticalAlign': CellVerticalAlignStyle,
-    'attributors/style/cellTextAlign': CellTextAlignStyle,
-    'attributors/style/cellWidth': CellWidthStyle,
-    'attributors/style/cellHeight': CellHeightStyle,
+
+    ...registerAttributorArray('attributors/style/', TABLE_STYLE_ATTRIBUTORS),
+    ...registerAttributorArray('attributors/style/', TABLE_CELL_STYLE_ATTRIBUTORS),
   },
   true,
 );

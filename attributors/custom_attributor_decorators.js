@@ -1,12 +1,12 @@
-import { removeTablePrefix } from '../formats/table/attributors/key_name_map';
+import { removeCustomPrefixFromKeyName } from '../formats/table/attributors/custom_attributor_prefix';
 
-export function decorateMethodWithKeyName(method, ...arg) {
-  const originKeyName = this.keyName;
-  this.keyName = removeTablePrefix(this.keyName);
+export function decorateMethodWithKeyName(method, ...args) {
+  const originalKeyName = this.keyName;
+  this.keyName = removeCustomPrefixFromKeyName(this.keyName);
 
-  const result = method.call(this, ...arg);
+  const result = method.call(this, ...args);
 
-  this.keyName = originKeyName;
+  this.keyName = originalKeyName;
   return result;
 }
 
