@@ -1,13 +1,13 @@
-import ElementAttributor from '../../../attributors/element_attributor';
+import OverriddenAttributor from '../../../attributors/attributor';
 import capitalize from '../../../utils/capitalize';
+import { KeyNameType } from '../../../attributors/utils';
 
 export default function prepareAttributor(
   { name, ...elementConfig },
-  attrName,
+  domAttrName,
 ) {
-  return new ElementAttributor(
-    `${name}${capitalize(attrName)}`,
-    attrName,
-    elementConfig,
-  );
+  const attrName = `${name}${capitalize(domAttrName)}`;
+  const keyName = `${KeyNameType.attribute}${name}_${domAttrName}`;
+
+  return new OverriddenAttributor(attrName, keyName, elementConfig);
 }

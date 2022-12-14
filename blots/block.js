@@ -9,6 +9,9 @@ import {
 import Break from './break';
 import Inline from './inline';
 import TextBlot from './text';
+import { overrideParchment } from '../parchment/override';
+
+overrideParchment();
 
 const NEWLINE_LENGTH = 1;
 
