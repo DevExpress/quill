@@ -1,11 +1,16 @@
-import { ClassAttributor } from 'parchment';
-import { decorateCanAdd, decorateMethodWithKeyName } from './custom_attributor_decorators';
+import { Attributor } from 'parchment';
+import { decorateCanAdd, decorateKeys, decorateMethodWithKeyName } from './decorators';
+import { KeyNameType } from './utils';
 
-export default class ElementClassAttributor extends ClassAttributor {
+export default class OverriddenAttributor extends Attributor {
   constructor(attrName, keyName, options = { allowedTags: [] }) {
     super(attrName, keyName, options);
 
     this.allowedTags = options.allowedTags ?? [];
+  }
+
+  static keys(node) {
+    return decorateKeys(super.keys, node, KeyNameType.attribute);
   }
 
   add(node, value) {

@@ -24,3 +24,8 @@ export const TABLE_CELL_STYLES = [
   'padding-bottom',
   'padding-left',
 ];
+
+export const TABLE_CELL_KEY_NAME_SET = new Set([
+  ...TABLE_CELL_ATTRIBUTES,
+  ...TABLE_CELL_STYLES,
+]);

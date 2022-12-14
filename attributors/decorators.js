@@ -1,4 +1,7 @@
-import { removeCustomPrefixFromKeyName } from '../formats/table/attributors/custom_attributor_prefix';
+import {
+  getKeyNameWithCustomPrefix,
+  removeCustomPrefixFromKeyName,
+} from './utils';
 
 export function decorateMethodWithKeyName(method, ...args) {
   const originalKeyName = this.keyName;
@@ -13,4 +16,9 @@ export function decorateMethodWithKeyName(method, ...args) {
 export function decorateCanAdd(originCanAdd, node, value) {
   const isNodeAllowed = this.allowedTags.indexOf(node.tagName) > -1;
   return isNodeAllowed && originCanAdd.call(this, node, value);
+}
+
+export function decorateKeys(originKeys, node, keyType) {
+  return originKeys(node)
+    .map((keyName) => getKeyNameWithCustomPrefix(node.tagName, keyName, keyType));
 }

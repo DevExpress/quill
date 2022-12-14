@@ -6,7 +6,23 @@ import {
   StyleAttributor,
   Scope,
 } from 'parchment';
-import { getKeyNameWithCustomPrefix } from '../formats/table/attributors/custom_attributor_prefix';
+import {
+  getKeyNameWithCustomPrefix,
+  KeyNameType,
+} from '../attributors/utils';
+
+function fillAttributes(tagName, blot, keyNames, keyType) {
+  return keyNames.map((keyName) => {
+    const normalizedKeyName = keyType
+      ? getKeyNameWithCustomPrefix(tagName, keyName, keyType)
+      : keyName;
+    return blot.scroll.query(normalizedKeyName, Scope.ATTRIBUTE);
+  }).filter((attributor) => attributor instanceof Attributor)
+    .reduce((result, attributor) => {
+      result[attributor.attrName] = attributor;
+      return result;
+    }, {});
+}
 
 export function overrideParchment() {
   // eslint-disable-next-line no-undef, func-names
@@ -20,21 +36,11 @@ export function overrideParchment() {
     const attributes = Attributor.keys(this.domNode);
     const classes = ClassAttributor.keys(this.domNode);
     const styles = StyleAttributor.keys(this.domNode);
-    const attributeNames = [...new Set(
-      attributes
-        .concat(classes)
-        .concat(styles),
-    )];
 
-    this.attributes = {};
-    attributeNames
-      .forEach((keyName) => {
-        const keyNameWithPrefix = getKeyNameWithCustomPrefix(tagName, keyName);
-        const attr = blot.scroll.query(keyNameWithPrefix, Scope.ATTRIBUTE);
-
-        if (attr instanceof Attributor) {
-          this.attributes[attr.attrName] = attr;
-        }
-      });
+    this.attributes = {
+      ...fillAttributes(tagName, blot, attributes, KeyNameType.attribute),
+      ...fillAttributes(tagName, blot, classes),
+      ...fillAttributes(tagName, blot, styles, KeyNameType.style),
+    };
   };
 }

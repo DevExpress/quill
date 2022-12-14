@@ -1,6 +1,6 @@
 import { Scope } from 'parchment';
-import ElementAttributor from '../../../attributors/element_attributor';
-import ElementStyleAttributor from '../../../attributors/element_style';
+import OverriddenAttributor from '../../../attributors/attributor';
+import OverriddenStyleAttributor from '../../../attributors/style_attributor';
 import { CELL_ATTRIBUTORS } from '../../../formats/table/attributors/cell';
 import { TABLE_ATTRIBUTORS } from '../../../formats/table/attributors/table';
 import { applyFormat } from '../../clipboard';
@@ -13,8 +13,8 @@ const ATTRIBUTORS = {
 export default function prepareAttributeMatcher(type) {
   const attributors = ATTRIBUTORS[type];
   return (node, delta, scroll) => {
-    const attributes = ElementAttributor.keys(node);
-    const styles = ElementStyleAttributor.keys(node);
+    const attributes = OverriddenAttributor.keys(node);
+    const styles = OverriddenStyleAttributor.keys(node);
     const formats = {};
     attributes.concat(styles).forEach((name) => {
       let attr = scroll.query(name, Scope.ATTRIBUTE);
