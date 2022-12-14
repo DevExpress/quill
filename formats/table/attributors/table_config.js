@@ -15,3 +15,8 @@ export const TABLE_STYLES = [
   'border-width',
   'border-color',
 ];
+
+export const TABLE_KEY_NAME_SET = new Set([
+  ...TABLE_ATTRIBUTES,
+  ...TABLE_STYLES,
+]);

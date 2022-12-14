@@ -1,5 +1,6 @@
-import ElementStyleAttributor from '../../../attributors/element_style';
+import OverriddenStyleAttributor from '../../../attributors/style_attributor';
 import capitalize from '../../../utils/capitalize';
+import { KeyNameType } from '../../../attributors/utils';
 
 export default function prepareStyleAttributor(
   { name, formatName, ...elementConfig },
@@ -10,7 +11,7 @@ export default function prepareStyleAttributor(
   const attrName = `${name}${capitalize(formatName ?? propName)}${
     propSubName ? capitalize(propSubName) : ''
   }`;
-  const keyName = `${name}_${prop}`;
+  const keyName = `${KeyNameType.style}${name}_${prop}`;
 
-  return new ElementStyleAttributor(attrName, keyName, elementConfig);
+  return new OverriddenStyleAttributor(attrName, keyName, elementConfig);
 }

@@ -1,8 +1,12 @@
 import { StyleAttributor } from 'parchment';
-import { decorateCanAdd, decorateMethodWithKeyName } from './custom_attributor_decorators';
-import { getKeyNameWithCustomPrefix } from '../formats/table/attributors/custom_attributor_prefix';
+import {
+  decorateCanAdd,
+  decorateKeys,
+  decorateMethodWithKeyName,
+} from './decorators';
+import { KeyNameType } from './utils';
 
-export default class ElementStyleAttributor extends StyleAttributor {
+export default class OverriddenStyleAttributor extends StyleAttributor {
   constructor(attrName, keyName, options = { allowedTags: [] }) {
     super(attrName, keyName, options);
 
@@ -10,11 +14,7 @@ export default class ElementStyleAttributor extends StyleAttributor {
   }
 
   static keys(node) {
-    return super.keys.call(this, node)
-      .map((keyName) => {
-        const result = getKeyNameWithCustomPrefix(node.tagName, keyName);
-        return result;
-      });
+    return decorateKeys(super.keys, node, KeyNameType.style);
   }
 
   add(node, value) {
