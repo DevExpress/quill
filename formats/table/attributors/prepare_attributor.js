@@ -3,11 +3,8 @@ import capitalize from '../../../utils/capitalize';
 
 export default function prepareAttributor(
   { name, ...elementConfig },
-  attrName,
+  keyName,
 ) {
-  return new ElementAttributor(
-    `${name}${capitalize(attrName)}`,
-    attrName,
-    elementConfig,
-  );
+  const attrName = `${name}${capitalize(keyName)}`;
+  return new ElementAttributor(attrName, keyName, elementConfig);
 }

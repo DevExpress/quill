@@ -3,13 +3,12 @@ import capitalize from '../../../utils/capitalize';
 
 export default function prepareStyleAttributor(
   { name, formatName, ...elementConfig },
-  propName,
-  subPropName = '',
+  prop,
 ) {
-  const fullName = `${name}_${propName}${subPropName ? `-${subPropName}` : ''}`;
-  return new ElementStyleAttributor(
-    `${name}${capitalize(formatName ?? propName)}${capitalize(subPropName)}`,
-    fullName,
-    elementConfig,
-  );
+  const [propName, propSubName] = prop.split('-');
+
+  const attrName = `${name}${capitalize(formatName ?? propName)}${propSubName ? capitalize(propSubName) : ''}`;
+  const keyName = `${name}_${prop}`;
+
+  return new ElementStyleAttributor(attrName, keyName, elementConfig);
 }

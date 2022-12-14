@@ -20,9 +20,9 @@ describe('Table Module', function () {
         },
       });
       const markup = `
-      <table style="border: 2px dashed green; background-color: azure;" width="800px" height="600px">
+      <table style='border: 2px dashed green; background-color: azure;' width='800px' height='600px'>
         <tbody>
-          <tr><td style="border: 2px solid red; text-align: center; vertical-align: bottom; background-color: aliceblue; padding-top: 10px;">a1</td><td width="100px" height="100px" style="padding: 20px;">a2</td><td>a3</td></tr>
+          <tr><td style='border: 2px solid red; text-align: center; vertical-align: bottom; background-color: aliceblue; padding-top: 10px;'>a1</td><td width='100px' height='100px' style='padding: 20px;'>a2</td><td>a3</td></tr>
         </tbody>
       </table>
       `;
@@ -167,13 +167,13 @@ describe('Table Module', function () {
 
     it('initial markup with formatting', function () {
       const markup = `
-      <table style="background-color: azure;">
+      <table style='background-color: azure;'>
         <tbody>
           <tr>
-            <td style="background-color: aliceblue;">
+            <td style='background-color: aliceblue;'>
               <p>a1</p>
             </td>
-            <td style="padding: 20px;">
+            <td style='padding: 20px;'>
               <p>a2</p>
             </td>
             <td>
@@ -196,22 +196,22 @@ describe('Table Module', function () {
         Quill,
         `<table>
           <thead>
-            <tr data-table-row="1">
-              <th class="ql-table-header-cell" data-table-header-row="1">
-                <p class="ql-table-header-cell-line" data-table-row="1" data-table-cell="1">H1</p>
+            <tr data-table-row='1'>
+              <th class='ql-table-header-cell' data-table-header-row='1'>
+                <p class='ql-table-header-cell-line' data-table-row='1' data-table-cell='1'>H1</p>
               </th>
-              <th class="ql-table-header-cell" data-table-header-row="1">
-                <p class="ql-table-header-cell-line" data-table-row="1" data-table-cell="2">H2</p>
+              <th class='ql-table-header-cell' data-table-header-row='1'>
+                <p class='ql-table-header-cell-line' data-table-row='1' data-table-cell='2'>H2</p>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr data-table-row="2">
-              <td class="ql-table-data-cell" data-table-row="2">
-                <p class="ql-table-cell-line" data-table-row="2" data-table-cell="1">A1</p>
+            <tr data-table-row='2'>
+              <td class='ql-table-data-cell' data-table-row='2'>
+                <p class='ql-table-cell-line' data-table-row='2' data-table-cell='1'>A1</p>
               </td>
-              <td class="ql-table-data-cell" data-table-row="2">
-                <p class="ql-table-cell-line" data-table-row="2" data-table-cell="2">A2</p>
+              <td class='ql-table-data-cell' data-table-row='2'>
+                <p class='ql-table-cell-line' data-table-row='2' data-table-cell='2'>A2</p>
               </td>
             </tr>
           </tbody>
@@ -246,7 +246,7 @@ describe('Table Module', function () {
 
     it('initial markup with thead and formatting', function () {
       const markup = `
-      <table style="background-color: azure;">
+      <table style='background-color: azure;'>
         <thead>
           <tr>
             <th>
@@ -262,10 +262,10 @@ describe('Table Module', function () {
         </thead>
         <tbody>
           <tr>
-            <td style="background-color: aliceblue;">
+            <td style='background-color: aliceblue;'>
               <p>a1</p>
             </td>
-            <td style="padding: 20px;">
+            <td style='padding: 20px;'>
               <p>a2</p>
             </td>
             <td>
@@ -317,8 +317,8 @@ describe('Table Module', function () {
         Quill,
         `<table>
           <tr>
-            <td data-row="1">1</td>
-            <td data-row="2">2</td>
+            <td data-row='1'>1</td>
+            <td data-row='2'>2</td>
           </tr>
         </table>`,
         this.container,
@@ -342,6 +342,116 @@ describe('Table Module', function () {
       `,
         true,
       );
+    });
+
+    it('initial markup with cell color', function () {
+      const markup = `
+      <table>
+        <thead>
+          <tr>
+            <th style='color: red'>
+              <p>h1</p>
+            </th>
+            <th style='color: red'>
+              <p>h2</p>
+            </th>
+            <th style='color: blue'>
+              <p>h3</p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style='color: red'>
+              <p>a1</p>
+            </td>
+            <td style='color: red'>
+              <p>a2</p>
+            </td>
+            <td style='color: blue'>
+              <p>a3</p>
+            </td>
+          </tr>
+          <tr>
+            <td style='color: green'>
+              <p>b1</p>
+            </td>
+            <td style='color: yellow'>
+              <p>b2</p>
+            </td>
+            <td style='color: purple'>
+              <p>b3</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      `;
+
+      const expectedHtml = `
+      <table>
+        <thead>
+          <tr data-table-row='1'>
+            <th class='ql-table-header-cell' data-table-header-row='1'>
+              <p class='ql-table-header-cell-line' data-table-row='1' data-table-cell='1'>
+                <span style='color: red;'>h1</span>
+              </p>
+            </th>
+            <th class='ql-table-header-cell' data-table-header-row='1'>
+              <p class='ql-table-header-cell-line' data-table-row='1' data-table-cell='2'>
+                <span style='color: red;'>h2</span>
+              </p>
+            </th>
+            <th class='ql-table-header-cell' data-table-header-row='1'>
+              <p class='ql-table-header-cell-line' data-table-row='1' data-table-cell='3'>
+                <span style='color: blue;'>h3</span>
+              </p>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-table-row='2'>
+            <td class='ql-table-data-cell' data-table-row='2'>
+              <p class='ql-table-cell-line' data-table-row='2' data-table-cell='1'>
+                <span style='color: red;'>a1</span>
+              </p>
+            </td>
+            <td class='ql-table-data-cell' data-table-row='2'>
+              <p class='ql-table-cell-line' data-table-row='2' data-table-cell='2'>
+                <span style='color: red;'>a2</span>
+              </p>
+            </td>
+            <td class='ql-table-data-cell' data-table-row='2'>
+              <p class='ql-table-cell-line' data-table-row='2' data-table-cell='3'>
+                <span style='color: blue;'>a3</span>
+              </p>
+            </td>
+          </tr>
+          <tr data-table-row='3'>
+            <td class='ql-table-data-cell' data-table-row='3'>
+              <p class='ql-table-cell-line' data-table-row='3' data-table-cell='1'>
+                <span style='color: green;'>b1</span>
+              </p>
+            </td>
+            <td class='ql-table-data-cell' data-table-row='3'>
+              <p class='ql-table-cell-line' data-table-row='3'data-table-cell='2'>
+                <span style='color: yellow;'>b2</span>
+              </p>
+            </td>
+            <td class='ql-table-data-cell' data-table-row='3'>
+              <p class='ql-table-cell-line' data-table-row='3' data-table-cell='3'>
+                <span style='color: purple;'>b3</span>
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>`;
+
+      const quill = this.initialize(Quill, markup, this.container, {
+        modules: {
+          table: true,
+        },
+      });
+      expect(quill.root).toEqualHTML(expectedHtml, true);
     });
   });
 
@@ -894,7 +1004,7 @@ describe('Table Module', function () {
         this.quill.format(`table${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
           `
-            <table style="${styleName}: ${value};">
+            <table style='${styleName}: ${value};'>
               <tbody>
                 <tr>
                   <td><p>a1</p></td>
@@ -917,7 +1027,7 @@ describe('Table Module', function () {
             <table>
               <tbody>
                 <tr>
-                  <td style="${styleName}: ${value};"><p>a1</p></td>
+                  <td style='${styleName}: ${value};'><p>a1</p></td>
                   <td><p>a2</p></td>
                 </tr>
               </tbody>
@@ -964,7 +1074,7 @@ describe('Table Module', function () {
         this.quill.format(`table${capitalize(formatName)}`, value);
         expect(this.quill.root).toEqualHTML(
           `
-            <table style="${styleName}: ${value};">
+            <table style='${styleName}: ${value};'>
               <thead>
                 <tr>
                   <th><p>h1</p></th>
@@ -993,7 +1103,7 @@ describe('Table Module', function () {
             <table>
               <thead>
                 <tr>
-                  <th style="${styleName}: ${value};"><p>h1</p></th>
+                  <th style='${styleName}: ${value};'><p>h1</p></th>
                   <th><p>h2</p></th>
                 </tr>
               </thead>
