@@ -17,9 +17,18 @@ import {
 import isDefined from '../../utils/is_defined';
 import { deltaEndsWith, applyFormat } from '../clipboard';
 import makeTableArrowHandler from './utils/make_table_arrow_handler';
-import prepareAttributeMatcher from './utils/prepare_attr_matcher';
-import { TABLE_FORMATS } from '../../formats/table/attributors/table';
-import { CELL_FORMATS } from '../../formats/table/attributors/cell';
+import {
+  prepareAttributeMatcher,
+  prepareCellAttributeMatcher,
+} from './utils/prepare_attr_matcher';
+import {
+  TABLE_ATTRIBUTORS,
+  TABLE_FORMATS,
+} from '../../formats/table/attributors/table';
+import {
+  CELL_ATTRIBUTORS,
+  CELL_FORMATS,
+} from '../../formats/table/attributors/cell';
 
 const EMPTY_RESULT = [null, null, null, -1];
 
@@ -62,8 +71,14 @@ class Table extends Module {
     });
 
     this.quill.clipboard.addMatcher('td, th', matchCell);
-    this.quill.clipboard.addMatcher('table', prepareAttributeMatcher('table'));
-    this.quill.clipboard.addMatcher('td, th', prepareAttributeMatcher('cell'));
+    this.quill.clipboard.addMatcher(
+      'table',
+      prepareAttributeMatcher(TABLE_ATTRIBUTORS),
+    );
+    this.quill.clipboard.addMatcher(
+      'td, th',
+      prepareCellAttributeMatcher(CELL_ATTRIBUTORS),
+    );
   }
 
   addKeyboardHandlers() {
