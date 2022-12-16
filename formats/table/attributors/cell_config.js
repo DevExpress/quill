@@ -1,6 +1,6 @@
 export const cellConfig = {
   name: 'cell',
-  allowedTags: ['TH', 'TD'],
+  allowedTags: ['TH', 'TD', 'TR'],
 };
 
 export const TABLE_CELL_ATTRIBUTES = [

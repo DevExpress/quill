@@ -415,7 +415,7 @@ function matchAlias(format, node, delta) {
 }
 
 function matchAttributor(node, delta, scroll) {
-  if (['TD', 'TH', 'TABLE'].indexOf(node.tagName) === -1) {
+  if (['TD', 'TH', 'TR', 'TABLE'].indexOf(node.tagName) === -1) {
     const attributes = Attributor.keys(node);
     const classes = ClassAttributor.keys(node);
     const styles = StyleAttributor.keys(node);

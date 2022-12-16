@@ -453,6 +453,192 @@ describe('Table Module', function () {
       });
       expect(quill.root).toEqualHTML(expectedHtml, true);
     });
+
+    it('initial markup with row styles', function () {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr style='text-align: right; background-color: #ff0000'>
+            <td>1</td>
+            <td>2</td>
+          </tr>
+        </table>`,
+        this.container,
+        { modules: { table: true } },
+      );
+
+      expect(quill.root).toEqualHTML(`
+      <table>
+        <tbody>
+        <tr>
+          <td class='ql-table-data-cell' style='text-align: right; background-color: rgb(255, 0, 0);'>
+            <p class='ql-table-cell-line'>1</p>
+          </td>
+          <td class='ql-table-data-cell' style='text-align: right; background-color: rgb(255, 0, 0);'>
+            <p class='ql-table-cell-line'>2</p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      `);
+    });
+
+    it('initial markup with row and cell styles that intersect', function () {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr style='text-align: right; background-color: #ff0000;'>
+            <td>1</td>
+            <td style='text-align: center; background-color: #00ff00'>2</td>
+          </tr>
+        </table>`,
+        this.container,
+        { modules: { table: true } },
+      );
+
+      expect(quill.root).toEqualHTML(`
+      <table>
+        <tbody>
+        <tr data-table-row='1'>
+          <td class='ql-table-data-cell' data-table-row='1'
+              style='text-align: right; background-color: rgb(255, 0, 0);'>
+            <p class='ql-table-cell-line' data-table-row='1' data-table-cell='1'
+               data-cellbackgroundcolor='rgb(255, 0, 0)'
+               data-celltextalign='right'>
+              1
+            </p>
+          </td>
+          <td class='ql-table-data-cell' data-table-row='1'
+              style='text-align: center; background-color: rgb(0, 255, 0);'>
+            <p class='ql-table-cell-line' data-table-row='1' data-table-cell='2'
+               data-cellbackgroundcolor='rgb(0, 255, 0)'
+               data-celltextalign='center'>
+              2
+            </p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      `);
+    });
+
+    it('initial markup with row and cell styles that dont intersect', function () {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr style='text-align: right; background-color: #3e3e3e;'>
+            <td>1</td>
+            <td style='color: #fff'>2</td>
+          </tr>
+          </table>`,
+        this.container,
+        { modules: { table: true } },
+      );
+
+      expect(quill.root).toEqualHTML(`
+      <table>
+        <tbody>
+        <tr data-table-row='1'>
+          <td class='ql-table-data-cell' data-table-row='1'
+              style='text-align: right; background-color: rgb(62, 62, 62);'>
+            <p class='ql-table-cell-line'
+               data-table-row='1' data-table-cell='1'
+               data-cellbackgroundcolor='rgb(62, 62, 62)'
+               data-celltextalign='right'>1
+            </p>
+          </td>
+          <td class='ql-table-data-cell' data-table-row='1'
+              style='text-align: right; background-color: rgb(62, 62, 62);'>
+            <p class='ql-table-cell-line'
+               data-table-row='1' data-table-cell='2'
+               data-cellbackgroundcolor='rgb(62, 62, 62)'
+               data-celltextalign='right'>
+               <span style='color: rgb(255, 255, 255);'>2</span>
+            </p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      `);
+    });
+
+    it('initial markup with row and header cells styles that intersect', function () {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr style='text-align: right; color: #ff0000;'>
+            <th>1</th>
+            <th style='text-align: center; color: #00ff00'>2</th>
+          </tr>
+        </table>`,
+        this.container,
+        { modules: { table: true } },
+      );
+
+      expect(quill.root).toEqualHTML(`
+      <table>
+        <tbody>
+        <tr data-table-row='1'>
+          <td class='ql-table-data-cell' data-table-row='1' style='text-align: right;'>
+            <p class='ql-table-cell-line'
+               data-table-row='1'
+               data-table-cell='1'
+               data-celltextalign='right'>
+              <span style='color: rgb(255, 0, 0);'>1</span>
+            </p>
+          </td>
+          <td class='ql-table-data-cell' data-table-row='1' style='text-align: center;'>
+            <p class='ql-table-cell-line'
+               data-table-row='1'
+               data-table-cell='2'
+               data-celltextalign='center'>
+              <span style='color: rgb(0, 255, 0);'>2</span>
+            </p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      `);
+    });
+
+    it('initial markup with row and header cells styles that dont intersect', function () {
+      const quill = this.initialize(
+        Quill,
+        `<table>
+          <tr style='text-align: right; background-color: #3e3e3e;'>
+            <th>1</th>
+            <th style='color: #fff'>2</th>
+          </tr>
+        </table>`,
+        this.container,
+        { modules: { table: true } },
+      );
+
+      expect(quill.root).toEqualHTML(`
+      <table>
+        <tbody>
+        <tr data-table-row='1'>
+          <td class='ql-table-data-cell' data-table-row='1'
+              style='text-align: right; background-color: rgb(62, 62, 62);'>
+            <p class='ql-table-cell-line'
+               data-table-row='1' data-table-cell='1'
+               data-cellbackgroundcolor='rgb(62, 62, 62)'
+               data-celltextalign='right'>1</p>
+          </td>
+          <td class='ql-table-data-cell' data-table-row='1'
+              style='text-align: right; background-color: rgb(62, 62, 62);'>
+            <p class='ql-table-cell-line'
+               data-table-row='1' data-table-cell='2'
+               data-cellbackgroundcolor='rgb(62, 62, 62)'
+               data-celltextalign='right'>
+              <span style='color: rgb(255, 255, 255);'>2</span>
+            </p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      `);
+    });
   });
 
   describe('modify table', function () {
