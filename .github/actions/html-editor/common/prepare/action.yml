@@ -18,7 +18,7 @@ runs:
     - name: Checkout DevExtreme branch
       uses: actions/checkout@v3
       with:
-        repository: devexpress/devextreme
+        repository: EugeniyKiyashko/devextreme
         ref: ${{ inputs.branch }}
         path: ${{ inputs.working-directory }}
 
