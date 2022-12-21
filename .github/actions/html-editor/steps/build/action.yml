@@ -24,7 +24,8 @@ runs:
         DEVEXTREME_TEST_CI: 'true'
         DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
-      run: npm run build:dev
+        BUILD_TESTCAFE: 'true'
+      run: npm run build:testcafe
 
     - name: Zip artifacts
       shell: bash
