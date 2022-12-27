@@ -1,0 +1,50 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        required: true
+        description: Publishing version (tag name)
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.version }}
+
+      - name: Build
+        uses: ./.github/actions/quill/steps/build
+
+      - name: Get artifact
+        uses: ./.github/actions/quill/common/get-artifact
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access=public
+
+      - name: Setup NPM tags for 1.5.x
+        if: startsWith(inputs.version, '1.5')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 21_2
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 22_1
+
+      - name: Setup NPM tags for 1.6.x
+        if: startsWith(inputs.version, '1.6')
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 22_2
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 23_1
