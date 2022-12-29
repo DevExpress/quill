@@ -38,13 +38,13 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm dist-tag add devextreme-quill@${{ inputs.version }} 21_2
           npm dist-tag add devextreme-quill@${{ inputs.version }} 22_1
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 22_2
 
       - name: Setup NPM tags for 1.6.x
         if: startsWith(inputs.version, '1.6')
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 22_1
           npm dist-tag add devextreme-quill@${{ inputs.version }} 22_2
-          npm dist-tag add devextreme-quill@${{ inputs.version }} 23_1
