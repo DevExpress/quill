@@ -223,9 +223,9 @@ class Clipboard extends Module {
     }
   }
 
-  onCopy(range) {
-    const text = this.quill.getText(range);
-    const html = this.quill.getSemanticHTML(range);
+  onCopy({ index, length }) {
+    const text = this.quill.getText(index, length);
+    const html = this.quill.getSemanticHTML(index, length);
     return { html, text };
   }
 
