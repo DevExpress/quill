@@ -31,6 +31,26 @@ describe('Clipboard', function () {
         }, 2);
       });
 
+      it('paste multiline text', function (done) {
+        this.quill.setSelection(0, 8);
+
+        const captureData = {
+          ...this.clipboardEvent,
+          clipboardData: {
+            ...this.clipboardData,
+            getData: (type) => (type === 'text/html' ? '1<br>' : '1\n'),
+          },
+        };
+
+        this.quill.clipboard.onCapturePaste(captureData);
+        setTimeout(() => {
+          expect(this.quill.root).toEqualHTML(
+            '<p>1</p><p>8</p>',
+          );
+          done();
+        }, 2);
+      });
+
       // Copying from Word includes both html and files
       it('pastes html data if present with file', function (done) {
         const upload = spyOn(this.quill.uploader, 'upload');

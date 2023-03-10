@@ -88,7 +88,7 @@ class Clipboard extends Module {
     this.tableBlots.push(blotName);
   }
 
-  convert({ html, text }, formats = {}) {
+  convert({ html, text, keepLastNewLine }, formats = {}) {
     if (formats[CodeBlock.blotName]) {
       return new Delta().insert(text, {
         [CodeBlock.blotName]: formats[CodeBlock.blotName],
@@ -96,7 +96,7 @@ class Clipboard extends Module {
     }
 
     return html
-      ? this.applyMatchers(html, formats)
+      ? this.applyMatchers(html, keepLastNewLine, formats)
       : this.applyTextMatchers(text);
   }
 
@@ -115,7 +115,7 @@ class Clipboard extends Module {
     }, new Delta());
   }
 
-  applyMatchers(html, formats = {}) {
+  applyMatchers(html, keepLastNewLine, formats = {}) {
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const container = doc.body;
     const nodeMatches = new WeakMap();
@@ -132,7 +132,8 @@ class Clipboard extends Module {
     );
     // Remove trailing newline
     if (
-      deltaEndsWith(delta, '\n')
+      !keepLastNewLine
+      && deltaEndsWith(delta, '\n')
       && (delta.ops[delta.ops.length - 1].attributes == null
         || Object.values(formats).some((blotName) => this.tableBlots.includes(blotName)))
     ) {
@@ -212,7 +213,11 @@ class Clipboard extends Module {
     }
 
     const text = e.clipboardData.getData('text/plain');
-    this.onPaste(range, { html, text });
+    this.onPaste(range, {
+      html,
+      text,
+      keepLastNewLine: true,
+    });
   }
 
   raiseCallback(name, event) {
@@ -229,9 +234,9 @@ class Clipboard extends Module {
     return { html, text };
   }
 
-  onPaste(range, { text, html }) {
+  onPaste(range, { text, html, keepLastNewLine }) {
     const formats = this.quill.getFormat(range.index);
-    const pastedDelta = this.convert({ text, html }, formats);
+    const pastedDelta = this.convert({ text, html, keepLastNewLine }, formats);
     debug.log('onPaste', pastedDelta, { text, html });
     const delta = new Delta()
       .retain(range.index)
