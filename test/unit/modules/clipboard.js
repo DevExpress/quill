@@ -31,7 +31,7 @@ describe('Clipboard', function () {
         }, 2);
       });
 
-      it('paste multiline text', function (done) {
+      it('last line break should not be cut on a multiline text paste', function (done) {
         this.quill.setSelection(0, 8);
 
         const captureData = {

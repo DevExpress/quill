@@ -897,9 +897,12 @@ describe('Editor', function () {
       expect(editor.getHTML(0, 11)).toEqual('&lt;b&gt;Test&lt;/b&gt;');
     });
 
-    it('multiline html', function () {
+    it('text should be wrapped to P tag when get part of initial text with new line on end', function () {
       const editor = this.initialize(Editor, '<p>1</p><br><p>2</p>');
-      expect(editor.getHTML(0, 2)).toEqual('<p>1</p>');
+
+      const html = editor.getHTML(0, 2);
+
+      expect(html).toEqual('<p>1</p>');
     });
 
     it('multiline code', function () {
