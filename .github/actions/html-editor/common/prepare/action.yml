@@ -11,7 +11,7 @@ inputs:
   node-version:
     description: Node.js version
     required: true
-    default: '18'
+    default: '15'
 runs:
   using: composite
   steps:
