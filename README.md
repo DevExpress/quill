@@ -25,7 +25,7 @@ In comparison with the original library, **DevExtreme Quill** supports basic tab
 [Modules](/docs/modules.md) allow users to customize the **DevExtreme Quill**'s behavior and functionality. The following are official modules:
 
 - [Clipboard](/docs/modules/clipboard.md)
-- [History](docs/docs/modules/history.md)
+- [History](docs/modules/history.md)
 - [Keyboard](/docs/modules/keyboard.md)
 - [Syntax](/docs/modules/syntax.md)
 - [Table](/docs/modules/table.md)
