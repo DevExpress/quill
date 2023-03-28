@@ -177,7 +177,9 @@ class Selection {
   }
 
   getNativeRange() {
-    const selection = document.getSelection();
+    const ownerDocument = this.root.getRootNode();
+    const selection = ownerDocument.getSelection?.() ?? document.getSelection();
+
     if (selection == null || selection.rangeCount <= 0) return null;
     const nativeRange = selection.getRangeAt(0);
     if (nativeRange == null) return null;
@@ -194,9 +196,11 @@ class Selection {
   }
 
   hasFocus() {
+    const ownerDocument = this.root.getRootNode();
+
     return (
-      document.activeElement === this.root
-      || contains(this.root, document.activeElement)
+      ownerDocument.activeElement === this.root
+      || contains(this.root, ownerDocument.activeElement)
     );
   }
 

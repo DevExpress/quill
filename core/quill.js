@@ -9,6 +9,7 @@ import Selection, { Range } from './selection';
 import instances from './instances';
 import logger from './logger';
 import Theme from './theme';
+import isDefined from '../utils/is_defined';
 
 const debug = logger('quill');
 
@@ -275,6 +276,9 @@ class Quill {
   }
 
   getFormat(index = this.getSelection(true), length = 0) {
+    if (!isDefined(index)) {
+      return {};
+    }
     if (typeof index === 'number') {
       return this.editor.getFormat(index, length);
     }
