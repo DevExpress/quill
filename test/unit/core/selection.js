@@ -626,7 +626,7 @@ describe('Selection', function () {
 
   describe('ShadowDom', function () {
     beforeEach(function () {
-      this.containerForShadow = document.appendChild(document.createElement('div'));
+      this.containerForShadow = document.body.appendChild(document.createElement('div'));
       const shadow = this.containerForShadow.attachShadow({ mode: 'open' });
       const docFragment = document.createDocumentFragment();
 
