@@ -4,8 +4,8 @@ import Emitter from '../../../core/emitter';
 
 describe('Selection', function () {
   beforeEach(function () {
-    this.setup = (html, index) => {
-      this.selection = this.initialize(Selection, html);
+    this.setup = (html, index, container) => {
+      this.selection = this.initialize(Selection, html, container);
       this.selection.setRange(new Range(index));
     };
   });
@@ -621,6 +621,31 @@ describe('Selection', function () {
       expect(() => {
         this.bounds = selection.getBounds(0, 10);
       }).not.toThrow();
+    });
+  });
+
+  describe('ShadowDom', function () {
+    beforeEach(function () {
+      this.containerForShadow = document.appendChild(document.createElement('div'));
+      const shadow = this.containerForShadow.attachShadow({ mode: 'open' });
+      const docFragment = document.createDocumentFragment();
+
+      shadow.appendChild(docFragment);
+
+      this.componentContainer = docFragment.appendChild(document.createElement('div'));
+
+    });
+
+    afterEach(function () {
+      this.containerForShadow.remove();
+    });
+
+    it('getNativeRange in ShadowDom', function () {
+      this.setup('<p>0123</p>', 2);
+      this.selection.format('underline', true);
+      this.selection.scroll.update();
+      const native = this.selection.getNativeRange();
+      expect(native.start.node).toEqual(this.selection.cursor.textNode);
     });
   });
 });
