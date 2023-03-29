@@ -633,7 +633,6 @@ describe('Selection', function () {
       shadow.appendChild(docFragment);
 
       this.componentContainer = docFragment.appendChild(document.createElement('div'));
-
     });
 
     afterEach(function () {
