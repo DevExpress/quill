@@ -640,7 +640,7 @@ describe('Selection', function () {
     });
 
     it('getNativeRange in ShadowDom', function () {
-      this.setup('<p>0123</p>', 2);
+      this.setup('<p>0123</p>', 2, this.componentContainer);
       this.selection.format('underline', true);
       this.selection.scroll.update();
       const native = this.selection.getNativeRange();
