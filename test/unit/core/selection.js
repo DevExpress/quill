@@ -639,21 +639,19 @@ describe('Selection', function () {
     });
 
     it('getNativeRange should return actual result for selected content', function () {
+      this.setup('<p id="text_wrapper">0123</p>', 0, this.componentContainer);
       const { shadowRoot } = this.containerForShadow;
-      this.setup('<p id="text_wrapper">0123</p>', 2, this.componentContainer);
-      const elem = shadowRoot.getElementById('text_wrapper');
-
+      const textWrapper = shadowRoot.getElementById('text_wrapper');
       const range = new window.Range();
-      range.setStart(elem, 0);
-      range.setEnd(elem, 1);
-
+      range.setStart(textWrapper, 0);
+      range.setEnd(textWrapper, 1);
       shadowRoot.getSelection().removeAllRanges();
       shadowRoot.getSelection().addRange(range);
 
-      const native = this.selection.getNativeRange();
+      const nativeSelection = this.selection.getNativeRange();
 
-      expect(native.start.offset).toEqual(0);
-      expect(native.end.offset).toEqual(4);
+      expect(nativeSelection.start.offset).toEqual(0);
+      expect(nativeSelection.end.offset).toEqual(4);
     });
 
     it('hasFocus should return actual state', function () {
