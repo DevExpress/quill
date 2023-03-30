@@ -210,6 +210,12 @@ describe('Quill', function () {
         Emitter.sources.API,
       );
     });
+
+    it('getFormat should return empty object when getSelection returns null(Behavior of Safari in ShadowDom)', function () {
+      this.quill.getSelection = () => null;
+
+      expect(this.quill.getFormat()).toEqual({});
+    });
   });
 
   describe('events', function () {

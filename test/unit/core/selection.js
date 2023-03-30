@@ -639,20 +639,30 @@ describe('Selection', function () {
     });
 
     it('getNativeRange should return actual result for selected content', function () {
-      this.setup('<p id="elem">0123</p>', 2, this.componentContainer);
-      const elem = this.containerForShadow.shadowRoot.getElementById('elem');
+      const { shadowRoot } = this.containerForShadow;
+      this.setup('<p id="text_wrapper">0123</p>', 2, this.componentContainer);
+      const elem = shadowRoot.getElementById('text_wrapper');
 
       const range = new window.Range();
       range.setStart(elem, 0);
       range.setEnd(elem, 1);
 
-      this.containerForShadow.shadowRoot.getSelection().removeAllRanges();
-      this.containerForShadow.shadowRoot.getSelection().addRange(range);
+      shadowRoot.getSelection().removeAllRanges();
+      shadowRoot.getSelection().addRange(range);
 
       const native = this.selection.getNativeRange();
 
       expect(native.start.offset).toEqual(0);
       expect(native.end.offset).toEqual(4);
+    });
+
+    it('hasFocus should return actual state', function () {
+      this.setup('<p>0123</p>', 2, this.componentContainer);
+      const textWrapper = this.containerForShadow.shadowRoot.querySelector('p');
+
+      textWrapper.focus();
+
+      expect(this.selection.hasFocus()).toEqual(true);
     });
   });
 });
