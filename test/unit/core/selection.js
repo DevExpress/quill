@@ -627,24 +627,32 @@ describe('Selection', function () {
   describe('ShadowDom', function () {
     beforeEach(function () {
       this.containerForShadow = document.body.appendChild(document.createElement('div'));
-      const shadow = this.containerForShadow.attachShadow({ mode: 'open' });
-      const docFragment = document.createDocumentFragment();
+      this.containerForShadow.attachShadow({ mode: 'open' });
 
-      shadow.appendChild(docFragment);
+      this.containerForShadow.shadowRoot.innerHTML = '<div></div>';
 
-      this.componentContainer = docFragment.appendChild(document.createElement('div'));
+      this.componentContainer = this.containerForShadow.shadowRoot.querySelector('div');
     });
 
     afterEach(function () {
       this.containerForShadow.remove();
     });
 
-    it('getNativeRange in ShadowDom', function () {
-      this.setup('<p>0123</p>', 2, this.componentContainer);
-      this.selection.format('underline', true);
-      this.selection.scroll.update();
+    it('getNativeRange should return actual result for selected content', function () {
+      this.setup('<p id="elem">0123</p>', 2, this.componentContainer);
+      const elem = this.containerForShadow.shadowRoot.getElementById('elem');
+
+      const range = new window.Range();
+      range.setStart(elem, 0);
+      range.setEnd(elem, 1);
+
+      this.containerForShadow.shadowRoot.getSelection().removeAllRanges();
+      this.containerForShadow.shadowRoot.getSelection().addRange(range);
+
       const native = this.selection.getNativeRange();
-      expect(native.start.node).toEqual(this.selection.cursor.textNode);
+
+      expect(native.start.offset).toEqual(0);
+      expect(native.end.offset).toEqual(4);
     });
   });
 });
