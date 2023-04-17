@@ -16,7 +16,7 @@ class CellLine extends Block {
     const node = super.create(value);
     CELL_IDENTITY_KEYS.forEach((key) => {
       const identityMarker = key === 'row' ? tableId : cellId;
-      node.setAttribute(`${DATA_PREFIX}${key}`, value[key] ?? identityMarker());
+      node.setAttribute(`${DATA_PREFIX}${key}`, value?.[key] ?? identityMarker());
     });
 
     return node;
@@ -196,6 +196,12 @@ class TableCell extends BaseCell {
     return node;
   }
 
+  deleteAt(index, length) {
+    this.children.forEachAt(index, length, function (child, offset, childLength) {
+      child.deleteAt(offset, childLength);
+    });
+  }
+
   format(name, value) {
     if (name === 'row') {
       this.domNode.setAttribute(`${DATA_PREFIX}${name}`, value);
@@ -210,6 +216,7 @@ class TableCell extends BaseCell {
 TableCell.blotName = 'tableCell';
 TableCell.className = 'ql-table-data-cell';
 TableCell.dataAttribute = `${DATA_PREFIX}row`;
+TableCell.defaultChild = CellLine;
 
 class TableHeaderCell extends BaseCell {
   static create(value) {
@@ -315,6 +322,12 @@ class TableRow extends BaseRow {
     super(scroll, domNode);
 
     this.childFormatName = 'table';
+  }
+
+  deleteAt(index, length) {
+    this.children.forEachAt(index, length, function (child, offset, childLength) {
+      child.deleteAt(offset, childLength);
+    });
   }
 }
 TableRow.blotName = 'tableRow';

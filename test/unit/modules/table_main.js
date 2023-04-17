@@ -1166,6 +1166,107 @@ describe('Table Module', function () {
         true,
       );
     });
+
+    describe('deleteAt', function () {
+      it('should not remove a cell (T1062588)', function () {
+        this.quill.setSelection(0);
+        this.table.deleteRow();
+  
+        this.quill.scroll.deleteAt(5, 3);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <tbody>
+                <tr>
+                  <td><p>b1</p></td>
+                  <td><p>b2</p></td>
+                  <td><p><br></p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+  
+      it('should not remove a cell if several cells are selected', function () {
+        this.quill.setSelection(0);
+        this.table.deleteRow();
+  
+        this.quill.scroll.deleteAt(1, 7);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <tbody>
+                <tr>
+                  <td><p>b</p></td>
+                  <td><p><br></p></td>
+                  <td><p><br></p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+  
+      it('should not remove a row', function () {
+        this.quill.scroll.deleteAt(5, 12);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <tbody>
+                <tr>
+                  <td><p>a1</p></td>
+                  <td><p>a2</p></td>
+                  <td><p><br></p></td>
+                </tr>
+                <tr>
+                  <td><p><br></p></td>
+                  <td><p><br></p></td>
+                  <td><p><br></p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+  
+      it('should remove a table', function () {
+        this.quill.scroll.deleteAt(0, 18);
+        expect(this.quill.root).toEqualHTML(
+          `
+          <p><br></p>
+          `,
+          true,
+        );
+      });
+    });
+
+    it('type should not remove a cell if it is selected', function () {
+      this.quill.updateContents(new Delta().retain(14).delete(5).insert('_INPUT_'), 'user');
+
+      expect(this.quill.root).toEqualHTML(
+        `
+          <table>
+            <tbody>
+              <tr>
+                <td><p>a1</p></td>
+                <td><p>a2</p></td>
+                <td><p>a3</p></td>
+              </tr>
+              <tr>
+                <td><p>b1</p></td>
+                <td><p>b2_INPUT_</p></td>
+                <td><p><br></p></td>
+              </tr>
+            </tbody>
+          </table>
+        `,
+        true,
+      );
+    });
   });
 
   describe('customize table', function () {

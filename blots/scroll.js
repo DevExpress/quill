@@ -3,6 +3,7 @@ import Emitter from '../core/emitter';
 import Block, { BlockEmbed } from './block';
 import Break from './break';
 import Container from './container';
+import { CellLine } from '../formats/table';
 
 function isLine(blot) {
   return blot instanceof Block || blot instanceof BlockEmbed;
@@ -44,7 +45,10 @@ class Scroll extends ScrollBlot {
     const [last] = this.line(index + length);
     super.deleteAt(index, length);
     if (last != null && first !== last && offset > 0) {
-      if (first instanceof BlockEmbed || last instanceof BlockEmbed) {
+      if (
+          first instanceof BlockEmbed || last instanceof BlockEmbed
+          || first instanceof CellLine || last instanceof CellLine
+      ) {
         this.optimize();
         return;
       }
