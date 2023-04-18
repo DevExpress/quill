@@ -309,7 +309,8 @@ class Keyboard extends Module {
       const [prev] = this.quill.getLine(range.index - 1);
       if (prev) {
         const isPrevLineEmpty = prev.statics.blotName === 'block' && prev.length() <= 1;
-        if (!isPrevLineEmpty) {
+        const isPrevLineTable = prev.statics.blotName.startsWith('table');
+        if (!isPrevLineEmpty && !isPrevLineTable) {
           const curFormats = line.formats();
           const prevFormats = this.quill.getFormat(range.index - 1, 1);
           formats = AttributeMap.diff(curFormats, prevFormats) || {};

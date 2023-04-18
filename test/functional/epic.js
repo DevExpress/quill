@@ -251,7 +251,7 @@ describe('quill', function () {
   });
 });
 
-describe('table header', function () {
+describe('table header: ', function () {
   it('cell should not be removed on typing if it is selected', async function () {
     const browser = await puppeteer.launch({
       headless: false,
@@ -283,6 +283,107 @@ describe('table header', function () {
           </tr>
         </thead>
         </table>
+        <p><br></p>
+      `.replace(/\s/g, ''),
+    );
+  });
+
+  it('no new cell line should be add to table cell if backspace is pressed on the position after table', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table_header.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Backspace');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <thead>
+          <tr>
+            <th><p>1</p></th>
+            <th><p>2</p></th>
+            <th><p>3</p></th>
+          </tr>
+        </thead>
+        </table>
+        <p><br></p>
+      `.replace(/\s/g, ''),
+    );
+  });
+});
+
+describe('table:', function () {
+  it('cell should not be removed on typing if it is selected', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+
+    await page.keyboard.down('Shift');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.up('Shift');
+
+    await page.keyboard.press('c');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2c</p></td>
+            <td><p><br></p></td>
+          </tr>
+        </tbody>
+        </table>
+        <p><br></p>
+      `.replace(/\s/g, ''),
+    );
+  });
+
+  it('no new cell line should be add to table cell if backspace is pressed on the position after table', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Backspace');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2</p></td>
+            <td><p>3</p></td>
+          </tr>
+        </tbody>
+        </table>
+        <p><br></p>
       `.replace(/\s/g, ''),
     );
   });

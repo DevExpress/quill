@@ -1246,9 +1246,9 @@ describe('Table Module', function () {
           <table>
             <thead>
               <tr>
-                <th><p>h1</p></td>
-                <th><p>h2</p></td>
-                <th><p>h3</p></td>
+                <th><p>h1</p></th>
+                <th><p>h2</p></th>
+                <th><p>h3</p></th>
               </tr>
             </thead>
           </table>
@@ -1265,9 +1265,9 @@ describe('Table Module', function () {
             <table>
               <thead>
                 <tr>
-                  <th><p>h1</p></td>
-                  <th><p><br></p></td>
-                  <th><p><br></p></td>
+                  <th><p>h1</p></th>
+                  <th><p><br></p></th>
+                  <th><p><br></p></th>
                 </tr>
               </thead>
             </table>
@@ -1294,6 +1294,68 @@ describe('Table Module', function () {
                 </tr>
               </tbody>
             </table>
+          `,
+          true,
+        );
+      });
+
+      it('should not move cells content if selection ends after table', function () {
+        const markup = `
+          <table>
+            <tbody>
+              <tr>
+                <td><p>h1</p></td>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+        `;
+        this.quill = this.initialize(Quill, markup, this.container, {
+          modules: {
+            table: true,
+          },
+        });
+        this.quill.scroll.deleteAt(2, 1);
+        expect(this.quill.root).toEqualHTML(
+          `
+          <table>
+            <tbody>
+              <tr>
+                <td><p>h1</p></td>
+              </tr>
+            </tbody>
+          </table>
+          `,
+          true,
+        );
+      });
+
+      it('should not move header cells content if selection ends after table', function () {
+        const markup = `
+          <table>
+            <thead>
+              <tr>
+                <th><p>h1</p></th>
+              </tr>
+            </thead>
+          </table>
+          <br>
+        `;
+        this.quill = this.initialize(Quill, markup, this.container, {
+          modules: {
+            table: true,
+          },
+        });
+        this.quill.scroll.deleteAt(2, 1);
+        expect(this.quill.root).toEqualHTML(
+          `
+          <table>
+            <thead>
+              <tr>
+                <th><p>h1</p></th>
+              </tr>
+            </thead>
+          </table>
           `,
           true,
         );

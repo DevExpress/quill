@@ -45,19 +45,15 @@ class Scroll extends ScrollBlot {
     const [last] = this.line(index + length);
     super.deleteAt(index, length);
     if (last != null && first !== last && offset > 0) {
-      const isCrossCellDelete = first instanceof CellLine
-        && last instanceof CellLine
+      const isCrossCellDelete = (first instanceof CellLine || last instanceof CellLine)
         && first.parent !== last.parent;
-      if (
-        first instanceof BlockEmbed || last instanceof BlockEmbed
-        || isCrossCellDelete
-      ) {
-        this.optimize();
-        return;
+      const includesEmbedBlock = first instanceof BlockEmbed || last instanceof BlockEmbed;
+
+      if (!includesEmbedBlock && !isCrossCellDelete) {
+        const ref = last.children.head instanceof Break ? null : last.children.head;
+        first.moveChildren(last, ref);
+        first.remove();
       }
-      const ref = last.children.head instanceof Break ? null : last.children.head;
-      first.moveChildren(last, ref);
-      first.remove();
     }
     this.optimize();
   }
