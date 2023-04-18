@@ -183,6 +183,12 @@ class BaseCell extends Container {
     }
     super.optimize(...args);
   }
+
+  deleteAt(index, length) {
+    this.children.forEachAt(index, length, function (child, offset, childLength) {
+      child.deleteAt(offset, childLength);
+    });
+  }
 }
 BaseCell.tagName = ['TD', 'TH'];
 
@@ -194,12 +200,6 @@ class TableCell extends BaseCell {
       node.setAttribute(attrName, value.row);
     }
     return node;
-  }
-
-  deleteAt(index, length) {
-    this.children.forEachAt(index, length, function (child, offset, childLength) {
-      child.deleteAt(offset, childLength);
-    });
   }
 
   format(name, value) {

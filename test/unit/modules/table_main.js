@@ -1209,6 +1209,41 @@ describe('Table Module', function () {
           true,
         );
       });
+
+      it('should not remove a header cell if several cells are selected', function () {
+        const markup = `
+          <table>
+            <thead>
+              <tr>
+                <th><p>h1</p></td>
+                <th><p>h2</p></td>
+                <th><p>h3</p></td>
+              </tr>
+            </thead>
+          </table>
+        `;
+        this.quill = this.initialize(Quill, markup, this.container, {
+          modules: {
+            table: true,
+          },
+        });
+  
+        this.quill.scroll.deleteAt(3, 7);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <thead>
+                <tr>
+                  <th><p>h1</p></td>
+                  <th><p><br></p></td>
+                  <th><p><br></p></td>
+                </tr>
+              </thead>
+            </table>
+          `,
+          true,
+        );
+      });
   
       it('should not remove a row', function () {
         this.quill.scroll.deleteAt(5, 12);
