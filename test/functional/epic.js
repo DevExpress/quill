@@ -251,7 +251,7 @@ describe('quill', function () {
   });
 });
 
-describe('table header', function() {
+describe('table header', function () {
   it('cell should not be removed on typing if it is selected', async function () {
     const browser = await puppeteer.launch({
       headless: false,
@@ -260,7 +260,7 @@ describe('table header', function() {
 
     await page.goto('http://127.0.0.1:8080/table_header.html');
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
-   
+
     await page.click('[data-table-cell="3"]');
 
     await page.keyboard.down('Shift');
@@ -283,10 +283,10 @@ describe('table header', function() {
           </tr>
         </thead>
         </table>
-      `.replace(/\s/g, '')
+      `.replace(/\s/g, ''),
     );
   });
-})
+});
 
 function getSelectionInTextNode() {
   const {

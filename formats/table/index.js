@@ -185,7 +185,7 @@ class BaseCell extends Container {
   }
 
   deleteAt(index, length) {
-    this.children.forEachAt(index, length, function (child, offset, childLength) {
+    this.children.forEachAt(index, length, (child, offset, childLength) => {
       child.deleteAt(offset, childLength);
     });
   }
@@ -326,7 +326,7 @@ class TableRow extends BaseRow {
   }
 
   deleteAt(index, length) {
-    this.children.forEachAt(index, length, function (child, offset, childLength) {
+    this.children.forEachAt(index, length, (child, offset, childLength) => {
       child.deleteAt(offset, childLength);
     });
   }

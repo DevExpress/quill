@@ -46,7 +46,7 @@ class Scroll extends ScrollBlot {
     super.deleteAt(index, length);
     if (last != null && first !== last && offset > 0) {
       if (
-          first instanceof BlockEmbed || last instanceof BlockEmbed
+        first instanceof BlockEmbed || last instanceof BlockEmbed
           || first instanceof CellLine || last instanceof CellLine
       ) {
         this.optimize();

@@ -1171,7 +1171,7 @@ describe('Table Module', function () {
       it('should not remove a cell (T1062588)', function () {
         this.quill.setSelection(0);
         this.table.deleteRow();
-  
+
         this.quill.scroll.deleteAt(5, 3);
         expect(this.quill.root).toEqualHTML(
           `
@@ -1188,11 +1188,11 @@ describe('Table Module', function () {
           true,
         );
       });
-  
+
       it('should not remove a cell if several cells are selected', function () {
         this.quill.setSelection(0);
         this.table.deleteRow();
-  
+
         this.quill.scroll.deleteAt(1, 7);
         expect(this.quill.root).toEqualHTML(
           `
@@ -1227,7 +1227,7 @@ describe('Table Module', function () {
             table: true,
           },
         });
-  
+
         this.quill.scroll.deleteAt(3, 7);
         expect(this.quill.root).toEqualHTML(
           `
@@ -1244,7 +1244,7 @@ describe('Table Module', function () {
           true,
         );
       });
-  
+
       it('should not remove a row', function () {
         this.quill.scroll.deleteAt(5, 12);
         expect(this.quill.root).toEqualHTML(
@@ -1267,7 +1267,7 @@ describe('Table Module', function () {
           true,
         );
       });
-  
+
       it('should remove a table', function () {
         this.quill.scroll.deleteAt(0, 18);
         expect(this.quill.root).toEqualHTML(
