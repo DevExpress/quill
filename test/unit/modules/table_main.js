@@ -1189,6 +1189,37 @@ describe('Table Module', function () {
         );
       });
 
+      it('should remove a cell line', function () {
+        const markup = `
+          <table>
+            <tbody>
+              <tr>
+                <td>a1<br>a2</td>
+              </tr>
+            </tbody>
+          </table>
+        `;
+        this.quill = this.initialize(Quill, markup, this.container, {
+          modules: {
+            table: true,
+          },
+        });
+
+        this.quill.scroll.deleteAt(2, 3);
+        expect(this.quill.root).toEqualHTML(
+          `
+            <table>
+              <tbody>
+                <tr>
+                  <td><p>a1</p></td>
+                </tr>
+              </tbody>
+            </table>
+          `,
+          true,
+        );
+      });
+
       it('should not remove a cell if several cells are selected', function () {
         this.quill.setSelection(0);
         this.table.deleteRow();
