@@ -47,7 +47,7 @@ class Scroll extends ScrollBlot {
     if (last != null && first !== last && offset > 0) {
       if (
         first instanceof BlockEmbed || last instanceof BlockEmbed
-          || first instanceof CellLine || last instanceof CellLine
+        || first instanceof CellLine || last instanceof CellLine
       ) {
         this.optimize();
         return;
