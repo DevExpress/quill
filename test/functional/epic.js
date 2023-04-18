@@ -11,6 +11,10 @@ const EMBED = `<span>${GUARD_CHAR}<span contenteditable="false"><span contentedi
 const P1 = 'Call me Ishmael. Some years ago—never mind how long precisely-having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the ocean with me.';
 const P2 = 'There now is your insular city of the Manhattoes, belted round by wharves as Indian isles by coral reefs—commerce surrounds it with her surf. Right and left, the streets take you waterward. Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers there.';
 
+function sanitizeTableHtml(html) {
+  return html.replace(/(<\w+)((\s+class\s*=\s*"[^"]*")|(\s+data-[\w-]+\s*=\s*"[^"]*"))*(\s*>)/gi, '$1$5');
+}
+
 describe('quill', function () {
   it('compose an epic', async function () {
     const browser = await puppeteer.launch({
@@ -246,6 +250,43 @@ describe('quill', function () {
     await browser.close();
   });
 });
+
+describe('table header', function() {
+  it('cell should not be removed on typing if it is selected', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table_header.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+   
+    await page.click('[data-table-cell="3"]');
+
+    await page.keyboard.down('Shift');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.up('Shift');
+
+    await page.keyboard.press('c');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <thead>
+          <tr>
+            <th><p>1</p></th>
+            <th><p>2c</p></th>
+            <th><p><br></p></th>
+          </tr>
+        </thead>
+        </table>
+      `.replace(/\s/g, '')
+    );
+  });
+})
 
 function getSelectionInTextNode() {
   const {

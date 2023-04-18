@@ -243,6 +243,7 @@ TableHeaderCell.tagName = ['TH', 'TD'];
 TableHeaderCell.className = 'ql-table-header-cell';
 TableHeaderCell.blotName = 'tableHeaderCell';
 TableHeaderCell.dataAttribute = `${DATA_PREFIX}header-row`;
+TableHeaderCell.defaultChild = HeaderCellLine;
 
 class BaseRow extends Container {
   checkMerge() {
