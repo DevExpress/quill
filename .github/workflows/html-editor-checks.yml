@@ -9,7 +9,7 @@ on:
       - master
 
 env:
-  DEVEXTREME_BRANCHES: '["22_2", "22_1"]'
+  DEVEXTREME_BRANCHES: '["rework-browsers-pin", "22_2", "22_1"]'
 
 jobs:
   set-up-branches:
@@ -78,31 +78,27 @@ jobs:
           branch: ${{ matrix.branch }}
           test-suite: ${{ matrix.test-suite }}
 
-  # NOTE: FireFox version specified in DevExtreme cannot be installed on ubuntu-latest.
-  # We need to change the runner.
-  # https://github.com/DevExpress/DevExtreme/blob/23_1/.github/actions/pin-browsers/action.yml#L14 
-  #
-  # testcafe:
-  #   needs: [build-devextreme, set-up-branches]
-  #   runs-on: ubuntu-latest
-  #   timeout-minutes: 15
-  #   name: testcafe ${{ matrix.branch }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       branch: ${{ fromJson(needs.set-up-branches.outputs.branches) }}
-  #       test-suite: [
-  #         { componentFolder: 'htmlEditor', quarantineMode: false },
-  #       ]
-  #   steps:
-  #     - name: Checkout Quill repository
-  #       uses: actions/checkout@v3
-  #       with:
-  #         path: quill-repo
+  testcafe:
+    needs: [build-devextreme, set-up-branches]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    name: testcafe ${{ matrix.branch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        branch: ${{ fromJson(needs.set-up-branches.outputs.branches) }}
+        test-suite: [
+          { componentFolder: 'htmlEditor', quarantineMode: false },
+        ]
+    steps:
+      - name: Checkout Quill repository
+        uses: actions/checkout@v3
+        with:
+          path: quill-repo
 
-  #     - name: Testcafe tests
-  #       uses: ./quill-repo/.github/actions/html-editor/steps/testcafe-tests
-  #       with:
-  #         branch: ${{ matrix.branch }}
-  #         component-directory: ${{ matrix.test-suite.componentFolder }}
-  #         quarantine-mode: ${{ matrix.test-suite.quarantineMode }}
+      - name: Testcafe tests
+        uses: ./quill-repo/.github/actions/html-editor/steps/testcafe-tests
+        with:
+          branch: ${{ matrix.branch }}
+          component-directory: ${{ matrix.test-suite.componentFolder }}
+          quarantine-mode: ${{ matrix.test-suite.quarantineMode }}
