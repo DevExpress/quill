@@ -11,6 +11,12 @@ const CELL_IDENTITY_KEYS = ['row', 'cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 const DATA_PREFIX = 'data-table-';
 
+function deleteChildrenAt(children, index, length) {
+  children.forEachAt(index, length, (child, offset, childLength) => {
+    child.deleteAt(offset, childLength);
+  });
+}
+
 class CellLine extends Block {
   static create(value) {
     const node = super.create(value);
@@ -185,9 +191,7 @@ class BaseCell extends Container {
   }
 
   deleteAt(index, length) {
-    this.children.forEachAt(index, length, (child, offset, childLength) => {
-      child.deleteAt(offset, childLength);
-    });
+    deleteChildrenAt(this.children, index, length);
   }
 }
 BaseCell.tagName = ['TD', 'TH'];
@@ -326,9 +330,7 @@ class TableRow extends BaseRow {
   }
 
   deleteAt(index, length) {
-    this.children.forEachAt(index, length, (child, offset, childLength) => {
-      child.deleteAt(offset, childLength);
-    });
+    deleteChildrenAt(this.children, index, length);
   }
 }
 TableRow.blotName = 'tableRow';
