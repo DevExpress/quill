@@ -259,6 +259,9 @@ describe('Table copy/pasting', function () {
     page.on('error', () => {
       expect(true).toEqual(false);
     });
+    page.on('pageerror', () => {
+      expect(true).toEqual(false);
+    });
 
     // await page.waitForTimeout(100000);
 
