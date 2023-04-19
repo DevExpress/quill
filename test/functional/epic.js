@@ -256,27 +256,12 @@ describe('Table copy/pasting', function () {
 
     await page.goto('http://127.0.0.1:8080/table_copy_pasting.html');
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
-    page.on('error', () => {
-      expect(true).toEqual(false);
-    });
+
     page.on('pageerror', () => {
       expect(true).toEqual(false);
     });
 
-    // await page.waitForTimeout(100000);
-
-    // await page.click('[data-list="ordered"] p');
-
-    // const elem = await page.$eval('[data-list="ordered"]', (e) => e.childNodes[1]);
-    // elem.dispatchEvent(new Event('click'));
-
-    // await page.keyboard.down('Shift');
-    // await page.keyboard.press('ArrowDown');
-    // await page.keyboard.up('Shift');
-
-    await page.click('#button');
-
-    // await page.waitForTimeout(2000);
+    // await page.click('#button');
 
     await page.keyboard.down(SHORTKEY);
     await page.keyboard.press('c');
