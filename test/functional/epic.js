@@ -3,13 +3,15 @@ const puppeteer = require('puppeteer');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
 
-const SHORTKEY = process.platform === 'darwin' ? 'Meta' : 'Control';
+const isMac = process.platform === 'darwin';
+const SHORTKEY = isMac ? 'Meta' : 'Control';
 
 const CHAPTER = 'Chapter 1. Loomings.';
 const GUARD_CHAR = '\uFEFF';
 const EMBED = `<span>${GUARD_CHAR}<span contenteditable="false"><span contenteditable="false">#test</span></span>${GUARD_CHAR}</span>`;
 const P1 = 'Call me Ishmael. Some years ago—never mind how long precisely-having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people’s hats off—then, I account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship. There is nothing surprising in this. If they but knew it, almost all men in their degree, some time or other, cherish very nearly the same feelings towards the ocean with me.';
 const P2 = 'There now is your insular city of the Manhattoes, belted round by wharves as Indian isles by coral reefs—commerce surrounds it with her surf. Right and left, the streets take you waterward. Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers there.';
+const HOST = 'http://127.0.0.1:8080';
 
 function sanitizeTableHtml(html) {
   return html.replace(/(<\w+)((\s+class\s*=\s*"[^"]*")|(\s+data-[\w-]+\s*=\s*"[^"]*"))*(\s*>)/gi, '$1$5');
@@ -22,7 +24,7 @@ describe('quill', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://127.0.0.1:8080/index.html');
+    await page.goto(`${HOST}/index.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
     const title = await page.title();
     expect(title).toEqual('DevExtreme-Quill Base Editing');
@@ -258,7 +260,7 @@ describe('table header: ', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://127.0.0.1:8080/table_header.html');
+    await page.goto(`${HOST}/table_header.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     await page.click('[data-table-cell="3"]');
@@ -296,7 +298,7 @@ describe('table:', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.goto(`${HOST}/table.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     await page.click('[data-table-cell="3"]');
@@ -332,7 +334,7 @@ describe('table:', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.goto(`${HOST}/table.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     await page.click('[data-table-cell="3"]');
@@ -362,7 +364,7 @@ describe('table:', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.goto(`${HOST}/table.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     await page.click('[data-table-cell="3"]');
@@ -395,7 +397,7 @@ describe('table:', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.goto(`${HOST}table.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     await page.click('[data-table-cell="3"]');
@@ -423,6 +425,38 @@ describe('table:', function () {
     );
   });
 });
+// Copy/paste emulation des not working on Mac. See https://github.com/puppeteer/puppeteer/issues/1313
+if (!isMac) {
+  describe('List copy/pasting into table', function () {
+    it('Should be no errors when list is pasted into table cell(T1155500)', async function () {
+      const tableCellSelector = '[data-table-cell="2"]';
+      const browser = await puppeteer.launch({
+        headless: false,
+      });
+      const page = await browser.newPage();
+      const pressKeyWithShortkey = async (keyName) => {
+        await page.keyboard.down(SHORTKEY);
+        await page.keyboard.press(keyName);
+        await page.keyboard.up(SHORTKEY);
+      };
+
+      await page.goto(`${HOST}/table_copy_pasting.html`);
+      await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+      page.on('pageerror', () => {
+        expect(true).toEqual(false);
+      });
+
+      pressKeyWithShortkey('c');
+      await page.click(tableCellSelector);
+      pressKeyWithShortkey('v');
+
+      const liElementsCount = await page.$$eval('li', (e) => e.length);
+
+      expect(liElementsCount).toEqual(4);
+    });
+  });
+}
 
 function getSelectionInTextNode() {
   const {
