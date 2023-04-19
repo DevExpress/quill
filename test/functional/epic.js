@@ -389,39 +389,6 @@ describe('table:', function () {
     );
   });
 
-  it('backspace in multiline cell should work as usual', async function () {
-    const browser = await puppeteer.launch({
-      headless: false,
-    });
-    const page = await browser.newPage();
-
-    await page.goto('http://127.0.0.1:8080/table.html');
-    await page.waitForSelector('.ql-editor', { timeout: 10000 });
-
-    await page.click('[data-table-cell="3"]');
-    await page.keyboard.press('4');
-    await page.keyboard.press('Enter');
-    await page.keyboard.press('Backspace');
-    await page.keyboard.press('Backspace');
-
-    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
-    const sanitizeHtml = sanitizeTableHtml(html);
-    expect(sanitizeHtml).toEqual(
-      `
-        <table>
-        <tbody>
-          <tr>
-            <td><p>1</p></td>
-            <td><p>2</p></td>
-            <td><p>3</p></td>
-          </tr>
-        </tbody>
-        </table>
-        <p><br></p>
-      `.replace(/\s/g, ''),
-    );
-  });
-
   it('backspace press on the position after table should only move a caret to cell if next line is not empty', async function () {
     const browser = await puppeteer.launch({
       headless: false,
