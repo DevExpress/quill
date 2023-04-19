@@ -9,7 +9,7 @@ on:
       - master
 
 env:
-  DEVEXTREME_BRANCHES: '["23_1", "22_2", "22_1"]'
+  DEVEXTREME_BRANCHES: '["22_2", "22_1"]'
 
 jobs:
   set-up-branches:
