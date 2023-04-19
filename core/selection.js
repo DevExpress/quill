@@ -287,10 +287,10 @@ class Selection {
   }
 
   getLeafPosition(leaf, offset, inclusive) {
-    // if (leaf instanceof LeafBlot) {
-    return leaf.position(offset, inclusive);
-    // }
-    // return [leaf.domNode, offset];
+    if (leaf instanceof LeafBlot) {
+      return leaf.position(offset, inclusive);
+    }
+    return [leaf.domNode, offset];
   }
 
   scrollIntoView(scrollingContainer) {
