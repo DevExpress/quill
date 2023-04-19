@@ -3,7 +3,8 @@ const puppeteer = require('puppeteer');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
 
-const SHORTKEY = process.platform === 'darwin' ? 'Meta' : 'Control';
+const isMac = process.platform === 'darwin';
+const SHORTKEY = isMac ? 'Meta' : 'Control';
 
 const CHAPTER = 'Chapter 1. Loomings.';
 const GUARD_CHAR = '\uFEFF';
@@ -248,36 +249,38 @@ describe('quill', function () {
   });
 });
 
-describe('List copy/pasting into table', function () {
-  it('Should be no errors when list pasted into table cell(T1155500)', async function () {
-    // Test can be red on Mac because https://github.com/puppeteer/puppeteer/issues/1313
-    const tableCellSelector = '[data-table-cell="2"]';
-    const browser = await puppeteer.launch({
-      headless: false,
+// Copy/paste emulation des not working on Mac. See https://github.com/puppeteer/puppeteer/issues/1313
+if (!isMac) {
+  describe('List copy/pasting into table', function () {
+    it('Should be no errors when list is pasted into table cell(T1155500)', async function () {
+      const tableCellSelector = '[data-table-cell="2"]';
+      const browser = await puppeteer.launch({
+        headless: false,
+      });
+      const page = await browser.newPage();
+      const pressKeyWithShortkey = async (keyName) => {
+        await page.keyboard.down(SHORTKEY);
+        await page.keyboard.press(keyName);
+        await page.keyboard.up(SHORTKEY);
+      };
+
+      await page.goto(`${HOST}/table_copy_pasting.html`);
+      await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+      page.on('pageerror', () => {
+        expect(true).toEqual(false);
+      });
+
+      pressKeyWithShortkey('c');
+      await page.click(tableCellSelector);
+      pressKeyWithShortkey('v');
+
+      const liElementsCount = await page.$$eval('li', (e) => e.length);
+
+      expect(liElementsCount).toEqual(4);
     });
-    const page = await browser.newPage();
-    const pressKeyWithShortkey = async (keyName) => {
-      await page.keyboard.down(SHORTKEY);
-      await page.keyboard.press(keyName);
-      await page.keyboard.up(SHORTKEY);
-    };
-
-    await page.goto(`${HOST}/table_copy_pasting.html`);
-    await page.waitForSelector('.ql-editor', { timeout: 10000 });
-
-    page.on('pageerror', () => {
-      expect(true).toEqual(false);
-    });
-
-    pressKeyWithShortkey('c');
-    await page.click(tableCellSelector);
-    pressKeyWithShortkey('v');
-
-    const liElementsCount = await page.$$eval('li', (e) => e.length);
-
-    expect(liElementsCount).toEqual(4);
   });
-});
+}
 
 function getSelectionInTextNode() {
   const {
