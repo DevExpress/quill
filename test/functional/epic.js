@@ -247,12 +247,18 @@ describe('quill', function () {
   });
 });
 
-describe('Table copy/pasting', function () {
-  it('do not crash', async function () {
+describe('List copy/pasting into table', function () {
+  it('Should be no errors when list pasted into table cell(T1155500)', async function () {
+    // Test can be red on Mac because https://github.com/puppeteer/puppeteer/issues/1313
     const browser = await puppeteer.launch({
       headless: false,
     });
     const page = await browser.newPage();
+    const execActionWithShortkey = async (actionKey) => {
+      await page.keyboard.down(SHORTKEY);
+      await page.keyboard.press(actionKey);
+      await page.keyboard.up(SHORTKEY);
+    };
 
     await page.goto('http://127.0.0.1:8080/table_copy_pasting.html');
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
@@ -261,17 +267,9 @@ describe('Table copy/pasting', function () {
       expect(true).toEqual(false);
     });
 
-    // await page.click('#button');
-
-    await page.keyboard.down(SHORTKEY);
-    await page.keyboard.press('c');
-    await page.keyboard.up(SHORTKEY);
-
+    execActionWithShortkey('c');
     await page.click('[data-table-cell="2"]');
-
-    await page.keyboard.down(SHORTKEY);
-    await page.keyboard.press('v');
-    await page.keyboard.up(SHORTKEY);
+    execActionWithShortkey('v');
 
     const liCount = await page.$$eval('li', (e) => e.length);
 

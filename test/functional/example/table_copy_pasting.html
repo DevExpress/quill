@@ -11,7 +11,6 @@
 
 <body>
     <div>
-        <button id="button">select</button>
         <div id="editor">
             <table>
                 <tbody>
@@ -35,18 +34,15 @@
 </body>
 
 <script>
-    const editorElem = document.getElementById('editor');
-    const editor = new DevExpress.Quill(editorElem, {
+    const editorContainer = document.getElementById('editor');
+    const quillInstance = new DevExpress.Quill(editorContainer, {
       modules: {
         table: true
       }
     });
 
-    // document.getElementById('button').addEventListener('click', ()=>{
-    editor.focus();
-    editor.setSelection(2, 6);
-    // });
-    
+    quillInstance.focus();
+    quillInstance.setSelection(2, 6);
 </script>
 
 </html>
