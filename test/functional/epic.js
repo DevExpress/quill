@@ -287,37 +287,6 @@ describe('table header: ', function () {
       `.replace(/\s/g, ''),
     );
   });
-
-  it('no new cell line should be add to table cell if backspace is pressed on the position after table', async function () {
-    const browser = await puppeteer.launch({
-      headless: false,
-    });
-    const page = await browser.newPage();
-
-    await page.goto('http://127.0.0.1:8080/table_header.html');
-    await page.waitForSelector('.ql-editor', { timeout: 10000 });
-
-    await page.click('[data-table-cell="3"]');
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('Backspace');
-
-    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
-    const sanitizeHtml = sanitizeTableHtml(html);
-    expect(sanitizeHtml).toEqual(
-      `
-        <table>
-        <thead>
-          <tr>
-            <th><p>1</p></th>
-            <th><p>2</p></th>
-            <th><p>3</p></th>
-          </tr>
-        </thead>
-        </table>
-        <p><br></p>
-      `.replace(/\s/g, ''),
-    );
-  });
 });
 
 describe('table:', function () {
@@ -357,7 +326,7 @@ describe('table:', function () {
     );
   });
 
-  it('no new cell line should be add to table cell if backspace is pressed on the position after table', async function () {
+  it('backspace press on the position after table should remove an empty line and not add it to the cell', async function () {
     const browser = await puppeteer.launch({
       headless: false,
     });
@@ -383,7 +352,106 @@ describe('table:', function () {
           </tr>
         </tbody>
         </table>
+      `.replace(/\s/g, ''),
+    );
+  });
+
+  it('backspace in multiline cell should work as usual', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('4');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.press('Backspace');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2</p></td>
+            <td><p>3</p></td>
+          </tr>
+        </tbody>
+        </table>
         <p><br></p>
+      `.replace(/\s/g, ''),
+    );
+  });
+
+  it('backspace in multiline cell should work as usual', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('4');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.press('Backspace');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2</p></td>
+            <td><p>3</p></td>
+          </tr>
+        </tbody>
+        </table>
+        <p><br></p>
+      `.replace(/\s/g, ''),
+    );
+  });
+
+  it('backspace press on the position after table should only move a caret to cell if next line is not empty', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('g');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.press('w');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2</p></td>
+            <td><p>3w</p></td>
+          </tr>
+        </tbody>
+        </table>
+        <p>g</p>
       `.replace(/\s/g, ''),
     );
   });

@@ -1325,6 +1325,7 @@ describe('Table Module', function () {
               </tr>
             </tbody>
           </table>
+          <p><br></p>
           `,
           true,
         );
@@ -1339,7 +1340,7 @@ describe('Table Module', function () {
               </tr>
             </thead>
           </table>
-          <br>
+          <p><br></p>
         `;
         this.quill = this.initialize(Quill, markup, this.container, {
           modules: {
@@ -1356,6 +1357,7 @@ describe('Table Module', function () {
               </tr>
             </thead>
           </table>
+          <p><br></p>
           `,
           true,
         );

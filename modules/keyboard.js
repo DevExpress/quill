@@ -310,6 +310,14 @@ class Keyboard extends Module {
       if (prev) {
         const isPrevLineEmpty = prev.statics.blotName === 'block' && prev.length() <= 1;
         const isPrevLineTable = prev.statics.blotName.startsWith('table');
+        const isLineEmpty = line.statics.blotName === 'block' && line.length() <= 1;
+
+        if (isPrevLineTable) {
+          if (isLineEmpty) {
+            line.remove();
+          }
+          this.quill.setSelection(range.index - 1);
+        }
         if (!isPrevLineEmpty && !isPrevLineTable) {
           const curFormats = line.formats();
           const prevFormats = this.quill.getFormat(range.index - 1, 1);
