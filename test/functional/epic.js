@@ -397,7 +397,7 @@ describe('table:', function () {
     });
     const page = await browser.newPage();
 
-    await page.goto(`${HOST}table.html`);
+    await page.goto(`${HOST}/table.html`);
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     await page.click('[data-table-cell="3"]');
@@ -424,7 +424,39 @@ describe('table:', function () {
       `.replace(/\s/g, ''),
     );
   });
+
+  it('backspace press on the position after table should remove empty line and move caret to a cell if next line is empty', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto(`${HOST}/table.html`);
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Backspace');
+    await page.keyboard.press('w');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2</p></td>
+            <td><p>3w</p></td>
+          </tr>
+        </tbody>
+        </table>
+      `.replace(/\s/g, ''),
+    );
+  });
 });
+
 // Copy/paste emulation des not working on Mac. See https://github.com/puppeteer/puppeteer/issues/1313
 if (!isMac) {
   describe('List copy/pasting into table', function () {
