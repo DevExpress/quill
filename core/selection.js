@@ -140,13 +140,13 @@ class Selection {
     let node;
     let [leaf, offset] = this.scroll.leaf(index);
     if (leaf == null) return null;
-    [node, offset] = this.getLeafPosition(leaf, offset, true);
+    [node, offset] = this.getPositionData(leaf, offset, true);
     const range = document.createRange();
     if (length > 0) {
       range.setStart(node, offset);
       [leaf, offset] = this.scroll.leaf(index + length);
       if (leaf == null) return null;
-      [node, offset] = this.getLeafPosition(leaf, offset, true);
+      [node, offset] = this.getPositionData(leaf, offset, true);
       range.setEnd(node, offset);
       return range.getBoundingClientRect();
     }
@@ -277,7 +277,7 @@ class Selection {
     indexes.forEach((index, i) => {
       index = Math.min(scrollLength - 1, index);
       const [leaf, leafOffset] = this.scroll.leaf(index);
-      const [node, offset] = this.getLeafPosition(leaf, leafOffset, i !== 0);
+      const [node, offset] = this.getPositionData(leaf, leafOffset, i !== 0);
       args.push(node, offset);
     });
     if (args.length < 2) {
@@ -286,7 +286,7 @@ class Selection {
     return args;
   }
 
-  getLeafPosition(leaf, offset, inclusive) {
+  getPositionData(leaf, offset, inclusive) {
     if (leaf instanceof LeafBlot) {
       return leaf.position(offset, inclusive);
     }
