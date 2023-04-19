@@ -247,6 +247,47 @@ describe('quill', function () {
   });
 });
 
+describe('Table copy/pasting', function () {
+  it('do not crash', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto('http://127.0.0.1:8080/table_copy_pasting.html');
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    // await page.waitForTimeout(100000);
+
+    // await page.click('[data-list="ordered"] p');
+
+    // const elem = await page.$eval('[data-list="ordered"]', (e) => e.childNodes[1]);
+    // elem.dispatchEvent(new Event('click'));
+
+    // await page.keyboard.down('Shift');
+    // await page.keyboard.press('ArrowDown');
+    // await page.keyboard.up('Shift');
+
+    await page.click('#button');
+
+    // await page.waitForTimeout(2000);
+
+    await page.keyboard.down(SHORTKEY);
+    await page.keyboard.press('c');
+    await page.keyboard.up(SHORTKEY);
+
+    await page.click('[data-table-cell="2"]');
+
+    await page.keyboard.down(SHORTKEY);
+    await page.keyboard.press('v');
+    await page.keyboard.up(SHORTKEY);
+
+    const liCount = await page.$$eval('li', (e) => e.length);
+
+    expect(liCount).toEqual(4);
+  });
+});
+
 function getSelectionInTextNode() {
   const {
     anchorNode, anchorOffset, focusNode, focusOffset,
