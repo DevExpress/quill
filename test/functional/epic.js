@@ -256,6 +256,9 @@ describe('Table copy/pasting', function () {
 
     await page.goto('http://127.0.0.1:8080/table_copy_pasting.html');
     await page.waitForSelector('.ql-editor', { timeout: 10000 });
+    page.on('error', () => {
+      expect(true).toEqual(false);
+    });
 
     // await page.waitForTimeout(100000);
 
