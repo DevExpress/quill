@@ -20,9 +20,6 @@ jobs:
       - name: Build
         uses: ./.github/actions/quill/steps/build
 
-      - name: Get artifact
-        uses: ./.github/actions/quill/common/get-artifact
-
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
