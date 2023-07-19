@@ -451,8 +451,10 @@ Keyboard.DEFAULTS = {
     },
     tab: {
       key: 'tab',
-      handler(range, context) {
-        if (context.format.table) return true;
+      handler(range, { format }) {
+        const isInTable = format.tableCellLine || format.tableHeaderCellLine
+        || format.tableHeaderCell || format.table;
+        if (isInTable) return true;
         this.quill.history.cutoff();
         const delta = new Delta()
           .retain(range.index)
