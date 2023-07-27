@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>DevExtreme jQuery Example</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="./css/dx.light.css" />
+
+    <script type="text/javascript" src="./js/jquery.js"></script>
+    <script type="text/javascript" src="../dist/dx-quill.js"></script>
+    <script type="text/javascript" src="./js/dx.all.debug.js" charset="utf-8"></script>
+    <script type="text/javascript" src="./data.js" charset="utf-8"></script>
+</head>
+
+<body>
+    <div role="main">
+        <h1 style="position: fixed; left: 0; top: 0; clip: rect(1px, 1px, 1px, 1px);">Test header</h1>
+
+        <div id="html-editor"></div>
+        <script>
+            $(function () {
+                const editor = $('#html-editor').dxHtmlEditor({
+                    height: 725,
+                    value: markup,
+                    imageUpload: {
+                        tabs: ['file', 'url'],
+                        fileUploadMode: 'base64',
+                    },
+                    toolbar: {
+                        items: [
+                            'undo', 'redo', 'separator',
+                            {
+                                name: 'size',
+                                acceptedValues: ['8pt', '10pt', '12pt', '14pt', '18pt', '24pt', '36pt'],
+                                options: { inputAttr: { 'aria-label': 'Font size' } },
+                            },
+                            {
+                                name: 'font',
+                                acceptedValues: ['Arial', 'Courier New', 'Georgia', 'Impact', 'Lucida Console', 'Tahoma', 'Times New Roman', 'Verdana'],
+                                options: { inputAttr: { 'aria-label': 'Font family' } },
+                            },
+                            'separator', 'bold', 'italic', 'strike', 'underline', 'separator',
+                            'alignLeft', 'alignCenter', 'alignRight', 'alignJustify', 'separator',
+                            'orderedList', 'bulletList', 'separator',
+                            {
+                                name: 'header',
+                                acceptedValues: [false, 1, 2, 3, 4, 5],
+                                options: { inputAttr: { 'aria-label': 'Header' } },
+                            }, 'separator',
+                            'color', 'background', 'separator',
+                            'link', 'image', 'separator',
+                            'clear', 'codeBlock', 'blockquote', 'separator',
+                            'insertTable', 'deleteTable',
+                            'insertRowAbove', 'insertRowBelow', 'deleteRow',
+                            'insertColumnLeft', 'insertColumnRight', 'deleteColumn',
+                        ],
+                    },
+                    mediaResizing: {
+                        enabled: true,
+                    },
+                }).dxHtmlEditor('instance');
+
+            });
+        </script>
+    </div>
+</body>
+
+</html>

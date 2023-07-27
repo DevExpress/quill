@@ -34,7 +34,8 @@
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "parchment": "^2.0.1",
-    "quill-delta": "^5.0.0"
+    "quill-delta": "^5.0.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
@@ -85,6 +86,7 @@
     "url": "https://www.devexpress.com/support/"
   },
   "scripts": {
+    "dev": "node ./_develop/prepare_playground.mjs && webpack-dev-server --config _develop/webpack.config.js",
     "puppeteer:init": "npm install --prefix ./node-modules/puppeteer",
     "clean": "rimraf dist/* && rimraf test/functional/example/src",
     "copy-dist": "ncp dist test/functional/example/src",

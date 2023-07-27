@@ -9,3 +9,5 @@
 .vscode/
 .cache/
 .http-log
+/playground/css
+/playground/js

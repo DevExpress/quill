@@ -158,5 +158,14 @@ module.exports = (env) => {
     return baseConfig;
   }
 
-  return baseConfig;
+  baseConfig.output.publicPath = '/dist';
+  return {
+    ...baseConfig,
+    devServer: {
+      static: ['dist', 'playground'],
+      hot: true,
+      open: true,
+      port: 9002,
+    },
+  };
 };
