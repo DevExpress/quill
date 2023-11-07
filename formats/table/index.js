@@ -372,7 +372,6 @@ class RowContainer extends Container {
       && !(this.parent instanceof this.statics.requiredContainer)
     ) {
       const { domNode } = getLastChildrenHead(this.children);
-      // const { domNode } = this.children.head.children.head.children.head;
 
       if (domNode) {
         const formats = {};
@@ -559,7 +558,6 @@ class TableContainer extends Container {
     const formats = {};
     const childElem = this.cells()[0].domNode.firstElementChild;
     Object.keys(TABLE_FORMATS).forEach((format) => {
-      // const value = childElem.dataset[format.toLowerCase()];
       const value = childElem?.dataset[format.toLowerCase()];
       if (value) {
         formats[format] = value;

@@ -161,7 +161,7 @@ class Scroll extends ScrollBlot {
       const record = records.pop();
 
       if (!shouldRemoveMutation(record)) {
-        mutations.push();
+        mutations.push(record);
       }
     }
 
