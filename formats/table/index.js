@@ -7,7 +7,6 @@ import { TABLE_FORMATS } from './attributors/table';
 import getId from './get_id';
 import toggleAttribute from './toggle_attribute';
 
-const QL_TABLE_CELL_LINE_CLASS = 'ql-table-cell-line';
 const CELL_IDENTITY_KEYS = ['row', 'cell'];
 const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
 const DATA_PREFIX = 'data-table-';
@@ -345,37 +344,16 @@ class TableHeaderRow extends BaseRow {
 }
 TableHeaderRow.blotName = 'tableHeaderRow';
 
-const getLastChildrenHead = (children) => {
-  const { head } = children;
-
-  if (!head) {
-    return null;
-  }
-
-  if (head.domNode.className === QL_TABLE_CELL_LINE_CLASS) {
-    return head.domNode;
-  }
-
-  const childrenHead = head.children?.head;
-
-  if (childrenHead) {
-    getLastChildrenHead(head.children);
-  }
-
-  return head;
-};
-
 class RowContainer extends Container {
   optimize(...args) {
     if (
       this.statics.requiredContainer
       && !(this.parent instanceof this.statics.requiredContainer)
     ) {
-      const { domNode } = getLastChildrenHead(this.children);
+      const domNode = this.children.head.children.head.children.head?.domNode || null;
+      const formats = {};
 
       if (domNode) {
-        const formats = {};
-
         Object.keys(TABLE_FORMATS).forEach((format) => {
           const value = domNode.dataset[format.toLowerCase()];
 
@@ -383,9 +361,9 @@ class RowContainer extends Container {
             formats[format] = value;
           }
         });
-
-        this.wrap(this.statics.requiredContainer.blotName, formats);
       }
+
+      this.wrap(this.statics.requiredContainer.blotName, formats);
     }
 
     super.optimize(...args);

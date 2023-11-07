@@ -139,9 +139,7 @@ class Scroll extends ScrollBlot {
 
   optimize(mutations = [], context = {}) {
     if (this.batch) return;
-
     super.optimize(mutations, context);
-
     if (mutations.length > 0) {
       this.emitter.emit(Emitter.events.SCROLL_OPTIMIZE, mutations, context);
     }
@@ -161,32 +159,23 @@ class Scroll extends ScrollBlot {
         this.batch = this.batch.concat(mutations);
         this.toggleBlankClass();
       }
-
       return;
     }
-
     let source = Emitter.sources.USER;
-
     if (typeof mutations === 'string') {
       source = mutations;
     }
-
     if (!Array.isArray(mutations)) {
       mutations = this.observer.takeRecords();
     }
-
     mutations = mutations.filter(({ target }) => {
       const blot = this.find(target, true);
-
       return blot && blot.scroll === this;
     });
-
     if (mutations.length > 0) {
       this.emitter.emit(Emitter.events.SCROLL_BEFORE_UPDATE, source, mutations);
     }
-
     super.update(mutations.concat([])); // pass copy
-
     if (mutations.length > 0) {
       this.emitter.emit(Emitter.events.SCROLL_UPDATE, source, mutations);
     }
