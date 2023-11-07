@@ -1,12 +1,24 @@
-import { Scope, ScrollBlot, ContainerBlot } from 'parchment';
+import {
+  Scope, ScrollBlot, ParentBlot, ContainerBlot,
+} from 'parchment';
 import Emitter from '../core/emitter';
 import Block, { BlockEmbed } from './block';
 import Break from './break';
 import Container from './container';
 import { CellLine } from '../formats/table';
 
+const TABLE_TAGS = ['TD', 'TH', 'TR', 'TBODY', 'THEAD', 'TABLE'];
+const MAX_OPTIMIZE_ITERATIONS = 100;
+
 function isLine(blot) {
   return blot instanceof Block || blot instanceof BlockEmbed;
+}
+
+function shouldRemoveMutation(mutation) {
+  const isTableTag = TABLE_TAGS.includes(mutation.target.tagName);
+  const isChildOfTableTag = TABLE_TAGS.includes(mutation.target.offsetParent?.tagName);
+
+  return isTableTag || isChildOfTableTag;
 }
 
 class Scroll extends ScrollBlot {
@@ -137,9 +149,102 @@ class Scroll extends ScrollBlot {
     return getLines(this, index, length);
   }
 
+  scrollBlotOptimize(mutations, context) {
+    ParentBlot.prototype.optimize.call(this, context);
+
+    const mutationsMap = context.mutationsMap || new WeakMap();
+    // We must modify mutations directly, cannot make copy and then modify
+    let records = Array.from(this.observer.takeRecords());
+    // Array.push currently seems to be implemented by a non-tail recursive function
+    // so we cannot just mutations.push.apply(mutations, this.observer.takeRecords());
+    while (records.length > 0) {
+      const record = records.pop();
+
+      if (!shouldRemoveMutation(record)) {
+        mutations.push();
+      }
+    }
+
+    const mark = (blot, markParent = true) => {
+      if (blot == null || blot === this) {
+        return;
+      }
+      if (blot.domNode.parentNode == null) {
+        return;
+      }
+      if (!mutationsMap.has(blot.domNode)) {
+        mutationsMap.set(blot.domNode, []);
+      }
+      if (markParent) {
+        mark(blot.parent);
+      }
+    };
+
+    const optimize = (blot) => {
+      // Post-order traversal
+      if (!mutationsMap.has(blot.domNode)) {
+        return;
+      }
+      if (blot instanceof ParentBlot) {
+        blot.children.forEach(optimize);
+      }
+      mutationsMap.delete(blot.domNode);
+      blot.optimize(context);
+    };
+
+    let remaining = mutations;
+
+    for (let i = 0; remaining.length > 0; i += 1) {
+      if (i >= MAX_OPTIMIZE_ITERATIONS) {
+        throw new Error('[Parchment] Maximum optimize iterations reached');
+      }
+
+      remaining.forEach((mutation) => {
+        const blot = this.find(mutation.target, true);
+
+        if (blot == null) {
+          return;
+        }
+
+        if (blot.domNode === mutation.target) {
+          if (mutation.type === 'childList') {
+            mark(this.find(mutation.previousSibling, false));
+
+            Array.from(mutation.addedNodes).forEach((node) => {
+              const child = this.find(node, false);
+
+              mark(child, false);
+
+              if (child instanceof ParentBlot) {
+                child.children.forEach((grandChild) => {
+                  mark(grandChild, false);
+                });
+              }
+            });
+          } else if (mutation.type === 'attributes') {
+            mark(blot.prev);
+          }
+        }
+
+        mark(blot);
+      });
+
+      this.children.forEach(optimize);
+
+      remaining = Array.from(this.observer.takeRecords());
+      records = remaining.slice();
+
+      while (records.length > 0) {
+        mutations.push(records.pop());
+      }
+    }
+  }
+
   optimize(mutations = [], context = {}) {
     if (this.batch) return;
-    super.optimize(mutations, context);
+
+    this.scrollBlotOptimize(mutations, context);
+
     if (mutations.length > 0) {
       this.emitter.emit(Emitter.events.SCROLL_OPTIMIZE, mutations, context);
     }
@@ -159,23 +264,36 @@ class Scroll extends ScrollBlot {
         this.batch = this.batch.concat(mutations);
         this.toggleBlankClass();
       }
+
       return;
     }
+
     let source = Emitter.sources.USER;
+
     if (typeof mutations === 'string') {
       source = mutations;
     }
+
     if (!Array.isArray(mutations)) {
       mutations = this.observer.takeRecords();
     }
-    mutations = mutations.filter(({ target }) => {
-      const blot = this.find(target, true);
+
+    mutations = mutations.filter((mutation) => {
+      if (shouldRemoveMutation(mutation)) {
+        return false;
+      }
+
+      const blot = this.find(mutation.target, true);
+
       return blot && blot.scroll === this;
     });
+
     if (mutations.length > 0) {
       this.emitter.emit(Emitter.events.SCROLL_BEFORE_UPDATE, source, mutations);
     }
+
     super.update(mutations.concat([])); // pass copy
+
     if (mutations.length > 0) {
       this.emitter.emit(Emitter.events.SCROLL_UPDATE, source, mutations);
     }
