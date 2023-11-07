@@ -350,7 +350,7 @@ class RowContainer extends Container {
       this.statics.requiredContainer
       && !(this.parent instanceof this.statics.requiredContainer)
     ) {
-      const domNode = this.children.head.children.head.children.head?.domNode || null;
+      const domNode = this.children.head.children.head.children?.head?.domNode || null;
       const formats = {};
 
       if (domNode) {
