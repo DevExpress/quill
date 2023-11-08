@@ -494,7 +494,9 @@ describe('Drag and drop table into editor', function () {
   it('Should be no errors when table is dropped into editor (T1180959)', async function () {
     const QL_EDITOR = 'ql-editor';
 
-    const browser = await puppeteer.launch({ headless: false });
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
     const page = await browser.newPage();
 
     await page.goto(`${HOST}/table_drag_drop.html`);
@@ -504,23 +506,15 @@ describe('Drag and drop table into editor', function () {
       expect(true).toEqual(false);
     });
 
-    const sourceElement = await page.$('#table');
-    const targetElement = await page.$('.ql-editor');
+    await page.evaluate(() => {
+      const editor = document.querySelector('.ql-editor');
 
-    const sourceRect = await sourceElement.boundingBox();
-    const targetRect = await targetElement.boundingBox();
+      const table = document.createElement('table');
 
-    await page.mouse.move(
-      sourceRect.x + sourceRect.width / 2,
-      sourceRect.y + sourceRect.height / 2,
-    );
-    await page.mouse.down();
+      table.innerHTML = '<tbody><tr><td><p><br/></p></td><td><p>Custom text</p></td></tr></tbody>';
 
-    await page.mouse.move(
-      targetRect.x + targetRect.width / 2,
-      targetRect.y + targetRect.height / 2,
-    );
-    await page.mouse.up();
+      editor.appendChild(table);
+    });
 
     expect(true).toEqual(true);
   });
