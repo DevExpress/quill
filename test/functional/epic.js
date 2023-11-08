@@ -490,6 +490,42 @@ if (!isMac) {
   });
 }
 
+describe('Drag and drop table into editor', function () {
+  it('Should be no errors when table is dropped into editor (T1180959)', async function () {
+    const QL_EDITOR = 'ql-editor';
+
+    const browser = await puppeteer.launch({ headless: false });
+    const page = await browser.newPage();
+
+    await page.goto(`${HOST}/table_drag_drop.html`);
+    await page.waitForSelector(`.${QL_EDITOR}`, { timeout: 10000 });
+
+    page.on('pageerror', () => {
+      expect(true).toEqual(false);
+    });
+
+    const sourceElement = await page.$('#table');
+    const targetElement = await page.$('.ql-editor');
+
+    const sourceRect = await sourceElement.boundingBox();
+    const targetRect = await targetElement.boundingBox();
+
+    await page.mouse.move(
+      sourceRect.x + sourceRect.width / 2,
+      sourceRect.y + sourceRect.height / 2,
+    );
+    await page.mouse.down();
+
+    await page.mouse.move(
+      targetRect.x + targetRect.width / 2,
+      targetRect.y + targetRect.height / 2,
+    );
+    await page.mouse.up();
+
+    expect(true).toEqual(true);
+  });
+});
+
 function getSelectionInTextNode() {
   const {
     anchorNode, anchorOffset, focusNode, focusOffset,

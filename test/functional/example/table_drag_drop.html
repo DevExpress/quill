@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevExtreme-Quill</title>
+    <link rel="stylesheet" type="text/css" href="src/dx-quill.core.css" />
+    <script type="text/javascript" src="src/dx-quill.js"></script>
+</head>
+
+<body>
+    <div>
+        <table id="table">
+            <tbody>
+                <tr>
+                    <td>
+                        <p>Custom text</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div id="editor">
+            <br>
+        </div>
+    </div>
+</body>
+
+<script>
+    const editorContainer = document.getElementById('editor');
+    const quillInstance = new DevExpress.Quill(editorContainer, {
+        modules: {
+            table: true
+        }
+    });
+</script>
+
+</html>
