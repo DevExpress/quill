@@ -492,15 +492,13 @@ if (!isMac) {
 
 describe('Drag and drop table into editor', function () {
   it('Should be no errors when table is dropped into editor (T1180959)', async function () {
-    const QL_EDITOR = 'ql-editor';
-
     const browser = await puppeteer.launch({
       headless: false,
     });
     const page = await browser.newPage();
 
     await page.goto(`${HOST}/table_drag_drop.html`);
-    await page.waitForSelector(`.${QL_EDITOR}`, { timeout: 10000 });
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
 
     page.on('pageerror', () => {
       expect(true).toEqual(false);
