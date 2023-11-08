@@ -491,7 +491,7 @@ if (!isMac) {
 }
 
 describe('Mutation content with table', function () {
-  it('Should be no errors when table is append to editor (T1180959)', async function () {
+  it('Should be no errors when table is inserted to editor (T1180959)', async function () {
     const browser = await puppeteer.launch({
       headless: false,
     });
