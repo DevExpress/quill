@@ -490,8 +490,8 @@ if (!isMac) {
   });
 }
 
-describe('Drag and drop table into editor', function () {
-  it('Should be no errors when table is dropped into editor (T1180959)', async function () {
+describe('Mutation content with table', function () {
+  it('Should be no errors when table is append to editor (T1180959)', async function () {
     const browser = await puppeteer.launch({
       headless: false,
     });
