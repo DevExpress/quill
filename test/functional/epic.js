@@ -456,7 +456,7 @@ describe('table:', function () {
     );
   });
 
-  it('enter press on the position after table should add empty line and move caret to a next line', async function () {
+  it('enter press on the position after table should add empty line and move caret to a next line (T1195607)', async function () {
     const browser = await puppeteer.launch({
       headless: false,
     });
