@@ -455,6 +455,38 @@ describe('table:', function () {
       `.replace(/\s/g, ''),
     );
   });
+
+  it('enter press on the position after table should add empty line and move caret to a next line', async function () {
+    const browser = await puppeteer.launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+
+    await page.goto(`${HOST}/table_no_new_line.html`);
+    await page.waitForSelector('.ql-editor', { timeout: 10000 });
+
+    await page.click('[data-table-cell="3"]');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('w');
+
+    const html = await page.$eval('.ql-editor', (e) => e.innerHTML);
+    const sanitizeHtml = sanitizeTableHtml(html);
+    expect(sanitizeHtml).toEqual(
+      `
+        <table>
+        <tbody>
+          <tr>
+            <td><p>1</p></td>
+            <td><p>2</p></td>
+            <td><p>3</p></td>
+          </tr>
+        </tbody>
+        </table>
+        <p>w</p>
+      `.replace(/\s/g, ''),
+    );
+  });
 });
 
 // Copy/paste emulation des not working on Mac. See https://github.com/puppeteer/puppeteer/issues/1313

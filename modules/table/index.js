@@ -29,8 +29,10 @@ import {
   CELL_ATTRIBUTORS,
   CELL_FORMATS,
 } from '../../formats/table/attributors/cell';
+import insertParagraphBelow from './utils/insert_pr_above';
 
 const EMPTY_RESULT = [null, null, null, -1];
+const ELEMENT_NODE = 1;
 
 class Table extends Module {
   static register() {
@@ -292,11 +294,25 @@ Table.keyboardBindings = {
     suffix: /^$/,
     handler() {},
   },
-  'table cell enter': {
+  'table enter': {
     key: 'enter',
     shiftKey: null,
     format: ['tableCellLine', 'tableHeaderCellLine'],
     handler(range, context) {
+      const module = this.quill.getModule('table');
+      if (!module) {
+        return;
+      }
+
+      const { quill } = this;
+      const [table] = module.getTable(range);
+
+      if (this.quill.selection?.lastNative.native.endContainer.nodeType === ELEMENT_NODE) {
+        const index = table.offset();
+        insertParagraphBelow({ quill, index, table });
+        return;
+      }
+
       if (this.quill.selection?.composing) return;
       if (range.length > 0) {
         this.quill.scroll.deleteAt(range.index, range.length);
