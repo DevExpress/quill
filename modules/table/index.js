@@ -306,8 +306,10 @@ Table.keyboardBindings = {
 
       const { quill } = this;
       const [table] = module.getTable(range);
+      const isCaretPositionAfterTable = this.quill.selection?.lastNative
+        .native.endContainer.nodeType === ELEMENT_NODE;
 
-      if (this.quill.selection?.lastNative.native.endContainer.nodeType === ELEMENT_NODE) {
+      if (isCaretPositionAfterTable) {
         const index = table.offset();
         insertParagraphBelow({ quill, index, table });
         return;
