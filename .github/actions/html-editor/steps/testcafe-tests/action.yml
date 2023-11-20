@@ -30,7 +30,12 @@ runs:
         working-directory: ${{ inputs.working-directory }}
 
     - name: Pin browsers
+      if: ${{ startsWith(inputs.branch, '22') }}
       uses: ./devextreme-repo/.github/actions/pin-browsers
+
+    - name: Setup chrome
+      if: ${{ !startsWith(inputs.branch, '22') }}
+      uses: ./devextreme-repo/.github/actions/setup-chrome
 
     - name: Prepare localization
       shell: bash

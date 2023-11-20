@@ -27,6 +27,12 @@ runs:
         BUILD_TESTCAFE: 'true'
       run: npm run build:testcafe
 
+    - name: Build:systemjs
+      if: ${{ !startsWith(inputs.branch, '22') }}
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: npm run build:systemjs
+
     - name: Zip artifacts
       shell: bash
       working-directory: ${{ inputs.working-directory }}
