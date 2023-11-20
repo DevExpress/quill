@@ -8,6 +8,10 @@ inputs:
     description: DevExtreme checkout directory
     required: true
     default: devextreme-repo
+  devextreme-package-directory:
+    description: DevExtreme package path
+    required: true
+    default: devextreme-repo
   test-suite:
     description: QUnit test suite to run
     required: true
@@ -29,16 +33,16 @@ runs:
       uses: ./quill-repo/.github/actions/html-editor/common/get-artifact
       with:
         branch: ${{ inputs.branch }}
-        working-directory: ${{ inputs.working-directory }}
+        working-directory: ${{ inputs.devextreme-package-directory }}
 
     - name: Build dotnet
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       run: dotnet build build/build-dotnet.sln
 
     - name: QUnit tests
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       env:
         CONSTEL: ${{ inputs.test-suite }}
         NORENOVATION: 'false'

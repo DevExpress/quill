@@ -8,6 +8,10 @@ inputs:
     description: DevExtreme checkout directory
     required: true
     default: devextreme-repo
+  devextreme-package-directory:
+    description: DevExtreme package path
+    required: true
+    default: devextreme-repo
   component-directory:
     description: The component directory with Testcafe tests
     required: true
@@ -27,7 +31,7 @@ runs:
       uses: ./quill-repo/.github/actions/html-editor/common/get-artifact
       with:
         branch: ${{ inputs.branch }}
-        working-directory: ${{ inputs.working-directory }}
+        working-directory: ${{ inputs.devextreme-package-directory }}
 
     - name: Pin browsers
       if: ${{ startsWith(inputs.branch, '22') }}
@@ -39,12 +43,12 @@ runs:
 
     - name: Prepare localization
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       run: npx gulp localization
 
     - name: Run TestCafe tests
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       run: |
         all_args="--concurrency 2 --browsers=chrome:devextreme-shr2 --componentFolder ${{ inputs.component-directory }} --quarantineMode ${{ env.TEST_SUITE.quarantineMode}}"
         echo "$all_args"
@@ -55,7 +59,7 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: compared-screenshots
-        path: ${{ inputs.working-directory }}/testing/testcafe/artifacts/compared-screenshots/**/*
+        path: ${{ inputs.devextreme-package-directory }}/testing/testcafe/artifacts/compared-screenshots/**/*
         if-no-files-found: ignore
 
     - name: Copy failed test artifacts
@@ -63,5 +67,5 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: failed-tests
-        path: ${{ inputs.working-directory }}/testing/testcafe/artifacts/failedtests/**/*
+        path: ${{ inputs.devextreme-package-directory }}/testing/testcafe/artifacts/failedtests/**/*
         if-no-files-found: ignore
