@@ -9,7 +9,7 @@ on:
 #      - master
 
 env:
-  DEVEXTREME_BRANCHES: '["22_2", "23_1"]'
+  DEVEXTREME_BRANCHES: '["23_2", "23_1"]'
 
 jobs:
   set-up-branches:
@@ -18,9 +18,6 @@ jobs:
     outputs:
       branches: ${{ steps.set-matrix.outputs.branches }}
     steps:
-      - name: Checkout Quill repository
-        uses: actions/checkout@v3
-
       - name: Setup matrix
         id: set-matrix
         run: |
@@ -55,6 +52,7 @@ jobs:
         uses: ./quill-repo/.github/actions/html-editor/steps/build
         with:
           branch: ${{ matrix.branch }}
+          devextreme-package-directory: ${{ matrix.branch == '23_2' && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
 
   qunit:
     needs: [build-devextreme, set-up-branches]

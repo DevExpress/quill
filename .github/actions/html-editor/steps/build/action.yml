@@ -8,6 +8,10 @@ inputs:
     description: DevExtreme checkout directory
     required: true
     default: devextreme-repo
+  devextreme-package-directory:
+    description: DevExtreme package path
+    required: true
+    default: devextreme-repo
 runs:
   using: composite
   steps:
@@ -19,23 +23,27 @@ runs:
 
     - name: Build
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       env:
         DEVEXTREME_TEST_CI: 'true'
         DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
         BUILD_TESTCAFE: 'true'
-      run: npm run build:testcafe
+      run: |
+        pwd
+        ls
+        cat package.json
+        npm run build:testcafe
 
     - name: Build:systemjs
       if: ${{ !startsWith(inputs.branch, '22') }}
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       run: npm run build:systemjs
 
     - name: Zip artifacts
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.devextreme-package-directory }}
       run: |
         7z a -tzip -mx3 -mmt2 devextreme-artifact.zip artifacts scss/bundles
 
@@ -43,5 +51,5 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: devextreme-artifact-${{ inputs.branch }}
-        path: ${{ inputs.working-directory }}/devextreme-artifact.zip
+        path: ${{ inputs.devextreme-package-directory }}/devextreme-artifact.zip
         retention-days: 1
