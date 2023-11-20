@@ -5,11 +5,11 @@ on:
     branches:
       - master
   pull_request:
-#    branches:
-#      - master
+    branches:
+      - master
 
 env:
-  DEVEXTREME_BRANCHES: '["23_2", "23_1"]'
+  DEVEXTREME_BRANCHES: '["23_2", "23_1", "22_2", "22_1"]'
 
 jobs:
   set-up-branches:
