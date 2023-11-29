@@ -6,10 +6,6 @@ runs:
     - name: Prepare Quill environment
       uses: ./.github/actions/quill/common/prepare
 
-    - name: Init puppeteer
-      shell: bash
-      run: npm install --prefix ./node_modules/puppeteer
-
     - name: Get artifact
       uses: ./.github/actions/quill/common/get-artifact
 
@@ -19,4 +15,4 @@ runs:
 
     - name: Run functional tests
       shell: bash
-      run: xvfb-run --auto-servernum npm run ci:test:functional
+      run: npm run test:functional -- --browsers="chrome:headless"

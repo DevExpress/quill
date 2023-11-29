@@ -2,7 +2,6 @@
 /* eslint-env node */
 
 const createTestCafe = require('testcafe');
-const fs = require('fs');
 const process = require('process');
 const parseArgs = require('minimist');
 require('nconf').argv();
@@ -39,7 +38,7 @@ createTestCafe({
       },
     });
 
-    runner.concurrency(args.concurrency || 1);
+    runner.concurrency(args.concurrency || 3);
 
     const filters = [];
     if (indices) {
@@ -55,9 +54,9 @@ createTestCafe({
       filters.push((name) => name === testName);
     }
     if (filters.length) {
-      runner.filter((...args) => {
-        for (let i = 0; i < filters.length; i++) {
-          if (!filters[i](...args)) {
+      runner.filter((...params) => {
+        for (let i = 0; i < filters.length; i + 1) {
+          if (!filters[i](...params)) {
             return false;
           }
         }
