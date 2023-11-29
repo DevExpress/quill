@@ -67,11 +67,7 @@ createTestCafe({
       runner.cache = args.cache;
     }
 
-    const runOptions = {
-      // quarantineMode: { successThreshold: 1, attemptLimit: 3 },
-    };
-
-    return runner.run(runOptions);
+    return runner.run();
   })
   .then((failedCount) => {
     testCafe.close();

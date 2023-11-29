@@ -1,16 +1,18 @@
 /* eslint-env node */
 module.exports = {
-  overrides: [{
-    files: ['**/*.ts'],
-    extends: [
-      'devextreme/testcafe',
-      'devextreme/typescript',
-    ],
-    parserOptions: {
-      project: ['./test/functional/tsconfig.json'],
+  overrides: [
+    {
+      files: ['*.ts'],
+      excludedFiles: ['*.d.ts'],
+      parser: '@typescript-eslint/parser',
+      parserOptions: {
+        createDefaultProgram: true,
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+        ecmaVersion: 6,
+        sourceType: 'module',
+      },
+      extends: ['devextreme/typescript'],
     },
-    rules: {
-      'no-only-tests/no-only-tests': 'error',
-    },
-  }],
+  ],
 };

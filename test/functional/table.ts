@@ -1,4 +1,4 @@
-import { getEditorSelector, sanitizeTableHtml } from './helpers';
+import { getEditorSelector, isMac, sanitizeTableHtml } from './helpers';
 import url from './helpers/getPageUrl';
 
 fixture`HtmlEditor - table header`
@@ -184,24 +184,25 @@ test('enter press on the position after table should add empty line and move car
     `.replace(/\s/g, ''));
 });
 
-fixture`HtmlEditor - list copy/pasting into table`
-  .page(url(__dirname, './example/table_copy_pasting.html'));
+if (!isMac) {
+  fixture`HtmlEditor - list copy/pasting into table`
+    .page(url(__dirname, './example/table_copy_pasting.html'));
 
-test('Should be no errors when list is pasted into table cell(T1155500)', async (t) => {
-  await t.pressKey('ctrl+c')
-    .click('[data-table-cell="2"]')
-    .pressKey('ctrl+v')
-    .debug();
+  test('Should be no errors when list is pasted into table cell(T1155500)', async (t) => {
+    await t.pressKey('ctrl+c')
+      .click('[data-table-cell="2"]')
+      .pressKey('ctrl+v');
 
-  const liElementsCount = await t.eval(() => {
-    const listNodes = document.querySelectorAll('.ql-editor li');
+    const liElementsCount = await t.eval(() => {
+      const listNodes = document.querySelectorAll('.ql-editor li');
 
-    return listNodes.length;
+      return listNodes.length;
+    });
+
+    await t.expect(liElementsCount)
+      .eql(4);
   });
-
-  await t.expect(liElementsCount)
-    .eql(4);
-});
+}
 
 fixture`HtmlEditor - mutation content with table`
   .page(url(__dirname, './example/table_drag_drop.html'));

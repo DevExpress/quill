@@ -8,7 +8,7 @@ export interface CustomSelector extends Selector {
 
 export function getEditorSelector(selector: string) {
   return <CustomSelector>Selector(selector).addCustomDOMProperties({
-    innerHTML: el => el.innerHTML.replace(/&nbsp;/g, ' ')
+    innerHTML: (el) => el.innerHTML.replace(/&nbsp;/g, ' '),
   });
 }
 
@@ -22,26 +22,30 @@ export function sanitizeTableHtml(html: string) {
   return html.replace(/(<\w+)((\s+class\s*=\s*"[^"]*")|(\s+data-[\w-]+\s*=\s*"[^"]*"))*(\s*>)/gi, '$1$5');
 }
 
-export async function pressKeyCombination(t: TestController, key: string, count: number, modifier?: string) {
-  for (let k = 0; k < count; k++) {
-    await t.pressKey(modifier ? `${modifier}+${key}` : key);
-  }
+export function pressKeyCombination(
+  t: TestController, key: string, count: number, modifier?: string,
+) {
+  return Promise.all(
+    Array(count)
+      .fill(0)
+      // without async we get a testcafe error
+      .map(async () => t.pressKey(modifier ? `${modifier}+${key}` : key)),
+  );
 }
 
 export async function moveCaretToStart(t: TestController) {
   await pressKeyCombination(t, 'up', 20);
 }
 
+type DataNode = Node & { data: string };
 export function getSelectionInTextNode() {
   const {
     anchorNode, anchorOffset, focusNode, focusOffset,
   } = document.getSelection();
   return JSON.stringify([
-    // @ts-ignore
-    anchorNode.data,
+    (anchorNode as DataNode).data,
     anchorOffset,
-    // @ts-ignore
-    focusNode.data,
+    (focusNode as DataNode).data,
     focusOffset,
   ]);
 }

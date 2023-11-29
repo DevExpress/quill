@@ -34,8 +34,7 @@
     "lodash.isequal": "^4.5.0",
     "lodash.merge": "^4.6.2",
     "parchment": "^2.0.1",
-    "quill-delta": "^5.0.0",
-    "webpack-dev-server": "^4.15.1"
+    "quill-delta": "^5.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",
@@ -77,7 +76,8 @@
     "typescript": "^4.8.4",
     "wait-on": "^6.0.1",
     "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "license": "BSD-3-Clause",
   "repository": {
