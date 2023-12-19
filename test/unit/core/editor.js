@@ -295,6 +295,61 @@ describe('Editor', function () {
     });
   });
 
+  // T1200561
+  describe('deltaContainsRetain functionality', function () {
+    it('delta should be empty when deltaContainsRetain returns false(T1200561)', function () {
+      const editor = this.initialize(Editor, '<p></p>');
+
+      editor.deltaContainsRetain = () => {
+        return false;
+      };
+
+      const sourceDelta = new Delta().insert('123');
+      editor.update(sourceDelta);
+
+      const newDelta = new Delta().insert('new string');
+
+      const resultDelta = editor.update(newDelta);
+
+      expect(resultDelta.ops.length).toEqual(0);
+    });
+
+    it('delta should be empty when deltaContainsRetain returns true(T1200561)', function () {
+      const editor = this.initialize(Editor, '<p></p>');
+
+      editor.deltaContainsRetain = () => {
+        return true;
+      };
+
+      const sourceDelta = new Delta().insert('123');
+      editor.update(sourceDelta);
+
+      const newDelta = new Delta().insert('new string');
+
+      const resultDelta = editor.update(newDelta);
+
+      expect(resultDelta.ops.length).toEqual(1);
+    });
+
+    it('deltaContainsRetain should return true when delta contains retain operation(T1200561)', function () {
+      const editor = this.initialize(Editor, '<p></p>');
+      const delta = new Delta().retain(3);
+
+      const deltaContainsRetain = editor.deltaContainsRetain(delta);
+
+      expect(deltaContainsRetain).toEqual(true);
+    });
+
+    it('deltaContainsRetain should return false when delta not contains retain operation(T1200561)', function () {
+      const editor = this.initialize(Editor, '<p></p>');
+      const delta = new Delta().insert('123');
+
+      const deltaContainsRetain = editor.deltaContainsRetain(delta);
+
+      expect(deltaContainsRetain).toEqual(false);
+    });
+  });
+
   describe('applyDelta', function () {
     it('insert', function () {
       const editor = this.initialize(Editor, '<p></p>');

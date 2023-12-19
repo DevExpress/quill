@@ -9,6 +9,7 @@ import Block, { BlockEmbed, bubbleFormats } from '../blots/block';
 import Break from '../blots/break';
 import TextBlot, { escapeText } from '../blots/text';
 import removeClass from '../utils/remove_class';
+import isDefined from '../utils/is_defined';
 
 const ASCII = /^[ -~]*$/;
 
@@ -243,10 +244,17 @@ class Editor {
     } else {
       this.delta = this.getDelta();
       if (!change || !isEqual(oldDelta.compose(change), this.delta)) {
-        change = oldDelta.diff(this.delta, selectionInfo);
+        if (!this.deltaContainsRetain(oldDelta)) {
+          change = oldDelta.diff(this.delta, selectionInfo);
+        }
       }
     }
     return change;
+  }
+
+  // T1200561
+  deltaContainsRetain(delta) {
+    return delta.ops.some((op) => isDefined(op.retain));
   }
 }
 
