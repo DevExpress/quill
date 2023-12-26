@@ -398,23 +398,30 @@ function traverse(scroll, node, elementMatchers, textMatchers, nodeMatches) {
         textMatchers,
         nodeMatches,
       );
-      if (childNode.nodeType === node.ELEMENT_NODE) {
-        const isNextNodeList = idx < allNodes.length - 2
-          && allNodes[idx + 2].nodeType === node.ELEMENT_NODE
-          && ['ul', 'ol'].indexOf(allNodes[idx + 2].tagName.toLowerCase()) > -1;
-        const forceNewLine = childNode.tagName.toLowerCase() === 'br' && isNextNodeList;
+      const nextNode = idx < allNodes.length - 1 && allNodes[idx + 1];
+      const isNextNodeList = nextNode
+        && nextNode.nodeType === node.ELEMENT_NODE
+        && ['ul', 'ol'].indexOf(nextNode.tagName.toLowerCase()) > -1;
 
+      if (childNode.nodeType === node.ELEMENT_NODE) {
         childrenDelta = elementMatchers.reduce((reducedDelta, matcher) => {
           return matcher(childNode, reducedDelta, scroll);
         }, childrenDelta);
         childrenDelta = (nodeMatches.get(childNode) || []).reduce(
           (reducedDelta, matcher) => {
-            return matcher(childNode, reducedDelta, scroll, forceNewLine);
+            return matcher(childNode, reducedDelta, scroll);
           },
           childrenDelta,
         );
       }
-      return delta.concat(childrenDelta);
+
+      const newDelta = delta.concat(childrenDelta);
+
+      if (isNextNodeList) {
+        newDelta.insert('\n');
+      }
+
+      return newDelta;
     }, new Delta());
   }
   return new Delta();

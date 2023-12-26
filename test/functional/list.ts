@@ -12,7 +12,7 @@ test('multiline break before list should not merge with the 1st list item (T1206
 
   await t.expect(tableContent.replace(/\s/g, ''))
     .eql(`
-      <p>Test Headline<br></p>
+      <p>Test Headline<br><br></p>
       <ol>
         <li><span class="ql-ui" contenteditable="false"></span>First</li>
         <li><span class="ql-ui" contenteditable="false"></span>Second</li>
