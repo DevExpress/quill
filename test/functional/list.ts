@@ -8,8 +8,6 @@ test('multiline break before list should not merge with the 1st list item (T1206
   const editor = getEditorSelector('.ql-editor');
   const tableContent = sanitizeTableHtml(await editor.innerHTML);
 
-  // await t.debug();
-
   await t.expect(tableContent.replace(/\s/g, ''))
     .eql(`
       <p>Test Headline<br><br></p>

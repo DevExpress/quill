@@ -65,6 +65,8 @@ const STYLE_ATTRIBUTORS = [
   return memo;
 }, {});
 
+let multilineParagraph = false;
+
 class Clipboard extends Module {
   constructor(quill, options) {
     super(quill, options);
@@ -404,6 +406,7 @@ function traverse(scroll, node, elementMatchers, textMatchers, nodeMatches) {
         && ['ul', 'ol'].indexOf(nextNode.tagName.toLowerCase()) > -1;
 
       if (childNode.nodeType === node.ELEMENT_NODE) {
+        multilineParagraph = childNode.tagName.toLowerCase() === 'br';
         childrenDelta = elementMatchers.reduce((reducedDelta, matcher) => {
           return matcher(childNode, reducedDelta, scroll);
         }, childrenDelta);
@@ -417,7 +420,7 @@ function traverse(scroll, node, elementMatchers, textMatchers, nodeMatches) {
 
       const newDelta = delta.concat(childrenDelta);
 
-      if (isNextNodeList) {
+      if (multilineParagraph && isNextNodeList) {
         newDelta.insert('\n');
       }
 
