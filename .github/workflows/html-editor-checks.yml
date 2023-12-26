@@ -52,7 +52,7 @@ jobs:
         uses: ./quill-repo/.github/actions/html-editor/steps/build
         with:
           branch: ${{ matrix.branch }}
-          devextreme-package-directory: ${{ matrix.branch == '23_2' && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
+          devextreme-package-directory: ${{ (matrix.branch == '23_2' || matrix.branch == '24_1') && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
 
   qunit:
     needs: [build-devextreme, set-up-branches]
@@ -74,7 +74,7 @@ jobs:
         uses: ./quill-repo/.github/actions/html-editor/steps/qunit-tests
         with:
           branch: ${{ matrix.branch }}
-          devextreme-package-directory: ${{ matrix.branch == '23_2' && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
+          devextreme-package-directory: ${{ (matrix.branch == '23_2' || matrix.branch == '24_1') && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
           test-suite: ${{ matrix.test-suite }}
 
   testcafe:
@@ -99,6 +99,6 @@ jobs:
         uses: ./quill-repo/.github/actions/html-editor/steps/testcafe-tests
         with:
           branch: ${{ matrix.branch }}
-          devextreme-package-directory: ${{ matrix.branch == '23_2' && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
+          devextreme-package-directory: ${{ (matrix.branch == '23_2' || matrix.branch == '24_1') && 'devextreme-repo/packages/devextreme' || 'devextreme-repo' }}
           component-directory: ${{ matrix.test-suite.componentFolder }}
           quarantine-mode: ${{ matrix.test-suite.quarantineMode }}
