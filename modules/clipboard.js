@@ -390,7 +390,7 @@ function traverse(scroll, node, elementMatchers, textMatchers, nodeMatches) {
     }, new Delta());
   }
   if (node.nodeType === node.ELEMENT_NODE) {
-    return Array.from(node.childNodes || []).reduce((delta, childNode) => {
+    return Array.from(node.childNodes || []).reduce((delta, childNode, idx, allNodes) => {
       let childrenDelta = traverse(
         scroll,
         childNode,
@@ -399,12 +399,17 @@ function traverse(scroll, node, elementMatchers, textMatchers, nodeMatches) {
         nodeMatches,
       );
       if (childNode.nodeType === node.ELEMENT_NODE) {
+        const isNextNodeList = idx < allNodes.length - 2
+          && allNodes[idx + 2].nodeType === node.ELEMENT_NODE
+          && ['ul', 'ol'].indexOf(allNodes[idx + 2].tagName.toLowerCase()) > -1;
+        const forceNewLine = childNode.tagName.toLowerCase() === 'br' && isNextNodeList;
+
         childrenDelta = elementMatchers.reduce((reducedDelta, matcher) => {
           return matcher(childNode, reducedDelta, scroll);
         }, childrenDelta);
         childrenDelta = (nodeMatches.get(childNode) || []).reduce(
           (reducedDelta, matcher) => {
-            return matcher(childNode, reducedDelta, scroll, true);
+            return matcher(childNode, reducedDelta, scroll, forceNewLine);
           },
           childrenDelta,
         );
