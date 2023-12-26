@@ -404,7 +404,7 @@ function traverse(scroll, node, elementMatchers, textMatchers, nodeMatches) {
         }, childrenDelta);
         childrenDelta = (nodeMatches.get(childNode) || []).reduce(
           (reducedDelta, matcher) => {
-            return matcher(childNode, reducedDelta, scroll);
+            return matcher(childNode, reducedDelta, scroll, true);
           },
           childrenDelta,
         );

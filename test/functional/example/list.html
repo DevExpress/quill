@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevExtreme-Quill Base Editing</title>
+    <link rel="stylesheet" type="text/css" href="src/dx-quill.core.css"/>
+    <script type="text/javascript" src="src/dx-quill.js"></script>
+</head>
+
+<body>
+    <div>
+        <div id="editor">
+            Test Headline
+            <br><br>
+            <ul>
+                <li>First</li>
+                <li>Second</li>
+                <li>Third</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+<script>
+    const editorElem = document.getElementById('editor');
+    const editor = new DevExpress.Quill(editorElem, {
+      modules: {
+        multiline: true
+      }
+    });
+</script>
+</html>
