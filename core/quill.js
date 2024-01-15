@@ -10,6 +10,7 @@ import instances from './instances';
 import logger from './logger';
 import Theme from './theme';
 import isDefined from '../utils/is_defined';
+import Composition from './composition';
 
 const debug = logger('quill');
 
@@ -90,11 +91,13 @@ class Quill {
     });
     this.editor = new Editor(this.scroll);
     this.selection = new Selection(this.scroll, this.emitter);
+    this.composition = new Composition(this.scroll, this.emitter);
     this.theme = new this.options.theme(this, this.options); // eslint-disable-line new-cap
     this.keyboard = this.theme.addModule('keyboard');
     this.clipboard = this.theme.addModule('clipboard');
     this.history = this.theme.addModule('history');
     this.uploader = this.theme.addModule('uploader');
+    this.theme.addModule('input');
     this.theme.init();
     this.emitter.on(Emitter.events.EDITOR_CHANGE, (type) => {
       if (type === Emitter.events.TEXT_CHANGE) {

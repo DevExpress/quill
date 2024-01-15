@@ -13,6 +13,7 @@ import Clipboard from './modules/clipboard';
 import History from './modules/history';
 import Keyboard from './modules/keyboard';
 import Uploader from './modules/uploader';
+import Input from './modules/input';
 
 Quill.register({
   'blots/block': Block,
@@ -29,6 +30,7 @@ Quill.register({
   'modules/history': History,
   'modules/keyboard': Keyboard,
   'modules/uploader': Uploader,
+  'modules/input': Input,
 });
 
 export default Quill;

@@ -69,11 +69,11 @@ class Selection {
   }
 
   handleComposition() {
-    this.root.addEventListener('compositionstart', () => {
+    this.root.addEventListener(Emitter.events.COMPOSITION_BEFORE_START, () => {
       this.composing = true;
       this.scroll.batchStart();
     });
-    this.root.addEventListener('compositionend', () => {
+    this.root.addEventListener(Emitter.events.COMPOSITION_END, () => {
       this.scroll.batchEnd();
       this.composing = false;
       if (this.cursor.parent) {

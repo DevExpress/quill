@@ -56,6 +56,10 @@ Emitter.events = {
   SELECTION_CHANGE: 'selection-change',
   TEXT_CHANGE: 'text-change',
   CONTENT_SETTED: 'content-setted',
+  COMPOSITION_BEFORE_START: 'composition-before-start',
+  COMPOSITION_START: 'composition-start',
+  COMPOSITION_BEFORE_END: 'composition-before-end',
+  COMPOSITION_END: 'composition-end',
 };
 Emitter.sources = {
   API: 'api',
