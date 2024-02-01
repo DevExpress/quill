@@ -133,7 +133,7 @@ class Quill {
   }
 
   toggleBlankClass() {
-    const isComposing = this.selection.composing;
+    const { isComposing } = this.composition;
     this.root.classList.toggle('ql-blank', this.editor.isBlank(isComposing));
   }
 
