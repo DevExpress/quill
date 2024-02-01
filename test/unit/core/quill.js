@@ -747,6 +747,37 @@ describe('Quill', function () {
     });
   });
 
+  describe('beforeinput event usage', function () {
+    beforeEach(function () {
+      this.initialize(HTMLElement, '<div><p style="color: red;">tewt</p></div>');
+      this.quill = new Quill(this.container.firstChild, {});
+      this.original = this.quill.getContents();
+    });
+
+    it('before input handling', function () {
+      const expected = '<p><span style="color: red;">new text</span></p>';
+      this.quill.setSelection(0, 4);
+      let preventDefaultCalled = false;
+      const inputModule = this.quill.getModule('input');
+
+      const eventArg = {
+        inputType: 'insertText',
+        data: 'new text',
+        getTargetRanges() {
+          return [document.getSelection().getRangeAt(0)];
+        },
+        preventDefault() {
+          preventDefaultCalled = true;
+        },
+      };
+
+      inputModule.handleBeforeInput(eventArg);
+
+      expect(this.quill.getSemanticHTML()).toEqual(expected);
+      expect(preventDefaultCalled).toEqual(true);
+    });
+  });
+
   describe('placeholder', function () {
     beforeEach(function () {
       this.initialize(HTMLElement, '<div><p></p></div>');
