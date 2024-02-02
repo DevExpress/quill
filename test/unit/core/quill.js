@@ -751,7 +751,6 @@ describe('Quill', function () {
     beforeEach(function () {
       this.initialize(HTMLElement, '<div><p style="color: red;">tewt</p></div>');
       this.quill = new Quill(this.container.firstChild, {});
-      this.original = this.quill.getContents();
     });
 
     it('before input handling', function () {
@@ -784,7 +783,6 @@ describe('Quill', function () {
       this.quill = new Quill(this.container.firstChild, {
         placeholder: 'a great day to be a placeholder',
       });
-      this.original = this.quill.getContents();
     });
 
     it('blank editor', function () {
