@@ -14,10 +14,10 @@ class Range {
 }
 
 class Selection {
-  constructor(scroll, emitter) {
+  constructor(scroll, emitter, composition) {
     this.emitter = emitter;
     this.scroll = scroll;
-    this.composing = false;
+    this.composition = composition;
     this.mouseDown = false;
     this.root = this.scroll.domNode;
     this.cursor = this.scroll.create('cursor', this);
@@ -25,10 +25,9 @@ class Selection {
     this.savedRange = new Range(0, 0);
     this.lastRange = this.savedRange;
     this.lastNative = null;
-    // this.handleComposition();
     this.handleDragging();
     this.emitter.listenDOM('selectionchange', document, () => {
-      if (!this.mouseDown && !this.composing) {
+      if (!this.mouseDown && !this.composition.isComposing) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }
     });
@@ -66,29 +65,6 @@ class Selection {
       }
     });
     this.update(Emitter.sources.SILENT);
-  }
-
-  handleComposition() {
-    this.root.addEventListener(Emitter.events.COMPOSITION_BEFORE_START, () => {
-      this.composing = true;
-      this.scroll.batchStart();
-    });
-    this.root.addEventListener(Emitter.events.COMPOSITION_END, () => {
-      this.scroll.batchEnd();
-      this.composing = false;
-      if (this.cursor.parent) {
-        const range = this.cursor.restore();
-        if (!range) return;
-        setTimeout(() => {
-          this.setNativeRange(
-            range.startNode,
-            range.startOffset,
-            range.endNode,
-            range.endOffset,
-          );
-        }, 1);
-      }
-    });
   }
 
   handleDragging() {
@@ -392,7 +368,7 @@ class Selection {
     }
     if (!isEqual(oldRange, this.lastRange)) {
       if (
-        !this.composing
+        !this.composition.isComposing
         && nativeRange != null
         && nativeRange.native.collapsed
         && nativeRange.start.node !== this.cursor.textNode

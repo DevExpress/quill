@@ -90,8 +90,8 @@ class Quill {
       toggleBlankClass: this.toggleBlankClass.bind(this),
     });
     this.editor = new Editor(this.scroll);
-    this.selection = new Selection(this.scroll, this.emitter);
     this.composition = new Composition(this.scroll, this.emitter);
+    this.selection = new Selection(this.scroll, this.emitter, this.composition);
     this.theme = new this.options.theme(this, this.options); // eslint-disable-line new-cap
     this.keyboard = this.theme.addModule('keyboard');
     this.clipboard = this.theme.addModule('clipboard');
