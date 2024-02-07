@@ -16,7 +16,8 @@ describe('subscriptions', function () {
       },
     };
 
-    const input = new Input(quill, {});
+    // eslint-disable-next-line no-new
+    new Input(quill, {});
 
     expect(addEventListenerCallCount).toEqual(1);
     expect(eventName).toEqual('beforeinput');
