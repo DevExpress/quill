@@ -2,83 +2,107 @@ import Block from '../../../blots/block';
 import Composition from '../../../core/composition';
 import Emitter from '../../../core/emitter';
 
-describe('subscriptions', function () {
-  it('subscription on compositionstart and compositionend events should be', function () {
-    const callsArgs = [];
-    let addEventListenerCallCount = 0;
-    const scroll = {
+function getEmitterMock() {
+  let emitCallCount = 0;
+  const emitArgs = [];
+
+  return {
+    getMockInfo: () => ({
+      emitCallCount,
+      emitArgs,
+    }),
+    emitter: {
+      emit: (eventName, event) => {
+        emitCallCount += 1;
+        emitArgs.push({
+          eventName,
+          event,
+        });
+      },
+    },
+  };
+}
+
+function getScrollMock(target) {
+  const addEventListenerCallsArgs = [];
+  let batchStartCallCount = 0;
+  let batchEndCallCount = 0;
+
+  return {
+    getAddEventListenerArgs: () => ({
+      addEventListenerCallsArgs,
+    }),
+    getMockInfo: () => ({
+      batchEndCallCount,
+      batchStartCallCount,
+      addEventListenerCallsArgs,
+    }),
+    scroll: {
       domNode: {
-        addEventListener(name, callback) {
-          callsArgs.push({
+        addEventListener: (name, callback) => {
+          addEventListenerCallsArgs.push({
             name,
             callback,
           });
-          addEventListenerCallCount += 1;
         },
       },
-    };
+      find: () => {
+        return new Block({ query() {} }, target);
+      },
+      batchStart: () => {
+        batchStartCallCount += 1;
+      },
+      batchEnd: () => {
+        batchEndCallCount += 1;
+      },
+    },
+  };
+}
+
+describe('subscriptions', function () {
+  it('subscription on compositionstart and compositionend events should be', function () {
+    const scrollMock = getScrollMock({});
     // eslint-disable-next-line no-new
-    new Composition(scroll, {});
+    new Composition(scrollMock.scroll, {});
 
-    expect(addEventListenerCallCount).toEqual(2);
+    const { addEventListenerCallsArgs } = scrollMock.getAddEventListenerArgs();
 
-    expect(callsArgs[0].name).toEqual('compositionstart');
-    expect(typeof callsArgs[0].callback).toEqual('function');
+    expect(addEventListenerCallsArgs.length).toEqual(2);
 
-    expect(callsArgs[1].name).toEqual('compositionend');
-    expect(typeof callsArgs[1].callback).toEqual('function');
+    expect(addEventListenerCallsArgs[0].name).toEqual('compositionstart');
+    expect(typeof addEventListenerCallsArgs[0].callback).toEqual('function');
+
+    expect(addEventListenerCallsArgs[1].name).toEqual('compositionend');
+    expect(typeof addEventListenerCallsArgs[1].callback).toEqual('function');
   });
 
   describe('events triggering', function () {
     beforeEach(function () {
-      this.addEventListenerCallsArgs = [];
       this.target = document.createElement('p');
-      this.batchStartCallCount = 0;
-      this.batchEndCallCount = 0;
-      this.emitCallCount = 0;
-      this.emitArgs = [];
-      const emitterMock = {
-        emit: (eventName, event) => {
-          this.emitCallCount += 1;
-          this.emitArgs.push({
-            eventName,
-            event,
-          });
-        },
-      };
-      const scrollMock = {
-        domNode: {
-          addEventListener: (name, callback) => {
-            this.addEventListenerCallsArgs.push({
-              name,
-              callback,
-            });
-          },
-        },
-        find: () => {
-          return new Block({ query() {} }, this.target);
-        },
-        batchStart: () => {
-          this.batchStartCallCount += 1;
-        },
-        batchEnd: () => {
-          this.batchEndCallCount += 1;
-        },
-      };
+      this.emitMock = getEmitterMock();
 
-      this.composition = new Composition(scrollMock, emitterMock);
+      this.scrollMock = getScrollMock(this.target);
+
+      this.composition = new Composition(this.scrollMock.scroll, this.emitMock.emitter);
     });
 
     it('trigger compositionstart event', function () {
       const eventArg = {
         target: this.target,
       };
-      this.addEventListenerCallsArgs[0].callback(eventArg);
 
-      expect(this.batchStartCallCount).toEqual(1);
-      expect(this.emitCallCount).toEqual(2);
-      expect(this.emitArgs[0].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_START);
-      expect(this.emitArgs[1].eventName).toEqual(Emitter.events.COMPOSITION_START);
+      const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
+
+      addEventListenerCallsArgs[0].callback(eventArg);
+
+      const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
+
+      const { batchStartCallCount } = this.scrollMock.getMockInfo();
+
+      expect(batchStartCallCount).toEqual(1);
+      expect(emitCallCount).toEqual(2);
+      expect(emitArgs[0].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_START);
+      expect(emitArgs[1].eventName).toEqual(Emitter.events.COMPOSITION_START);
     });
 
     it('trigger compositionend event', function () {
@@ -86,14 +110,18 @@ describe('subscriptions', function () {
         target: this.target,
       };
 
-      this.addEventListenerCallsArgs[0].callback(eventArg);
+      const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
 
-      this.addEventListenerCallsArgs[1].callback(eventArg);
+      addEventListenerCallsArgs[0].callback(eventArg);
+      addEventListenerCallsArgs[1].callback(eventArg);
 
-      expect(this.batchEndCallCount).toEqual(1);
-      expect(this.emitCallCount).toEqual(4);
-      expect(this.emitArgs[2].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_END);
-      expect(this.emitArgs[3].eventName).toEqual(Emitter.events.COMPOSITION_END);
+      const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
+      const { batchEndCallCount } = this.scrollMock.getMockInfo();
+
+      expect(batchEndCallCount).toEqual(1);
+      expect(emitCallCount).toEqual(4);
+      expect(emitArgs[2].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_END);
+      expect(emitArgs[3].eventName).toEqual(Emitter.events.COMPOSITION_END);
     });
   });
 });
