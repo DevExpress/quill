@@ -59,7 +59,27 @@ function getScrollMock(target) {
   };
 }
 
-describe('subscriptions', function () {
+function getQuillMock() {
+  let endFormatCallCount = 0;
+  let quillFormatingState = false;
+
+  return {
+    getMockInfo: () => ({
+      endFormatCallCount,
+    }),
+    setFormattingState: (state) => {
+      quillFormatingState = state;
+    },
+    quill: {
+      endFormat: () => {
+        endFormatCallCount += 1;
+      },
+      isFormattingStarted: () => quillFormatingState,
+    },
+  };
+}
+
+describe('composition events', function () {
   it('subscription on compositionstart and compositionend events should be', function () {
     const scrollMock = getScrollMock({});
     // eslint-disable-next-line no-new
@@ -82,8 +102,13 @@ describe('subscriptions', function () {
       this.emitMock = getEmitterMock();
 
       this.scrollMock = getScrollMock(this.target);
+      this.quillMock = getQuillMock();
 
-      this.composition = new Composition(this.scrollMock.scroll, this.emitMock.emitter);
+      this.composition = new Composition(
+        this.scrollMock.scroll,
+        this.emitMock.emitter,
+        this.quillMock.quill,
+      );
     });
 
     it('trigger compositionstart event', function () {
@@ -96,13 +121,14 @@ describe('subscriptions', function () {
       addEventListenerCallsArgs[0].callback(eventArg);
 
       const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
-
       const { batchStartCallCount } = this.scrollMock.getMockInfo();
+      const { endFormatCallCount } = this.quillMock.getMockInfo();
 
       expect(batchStartCallCount).toEqual(1);
       expect(emitCallCount).toEqual(2);
       expect(emitArgs[0].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_START);
       expect(emitArgs[1].eventName).toEqual(Emitter.events.COMPOSITION_START);
+      expect(endFormatCallCount).toEqual(1);
     });
 
     it('trigger compositionend event', function () {
@@ -117,11 +143,34 @@ describe('subscriptions', function () {
 
       const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
       const { batchEndCallCount } = this.scrollMock.getMockInfo();
+      const { endFormatCallCount } = this.quillMock.getMockInfo();
 
       expect(batchEndCallCount).toEqual(1);
       expect(emitCallCount).toEqual(4);
       expect(emitArgs[2].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_END);
       expect(emitArgs[3].eventName).toEqual(Emitter.events.COMPOSITION_END);
+      expect(endFormatCallCount).toEqual(2);
+    });
+
+    it('trigger compositionend event. Formatting was started', function () {
+      const eventArg = {
+        target: this.target,
+      };
+
+      const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
+
+      this.quillMock.setFormattingState(true);
+
+      addEventListenerCallsArgs[0].callback(eventArg);
+      addEventListenerCallsArgs[1].callback(eventArg);
+
+      const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
+      const { batchEndCallCount } = this.scrollMock.getMockInfo();
+
+      expect(batchEndCallCount).toEqual(0);
+      expect(emitCallCount).toEqual(2);
+      expect(emitArgs[0].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_START);
+      expect(emitArgs[1].eventName).toEqual(Emitter.events.COMPOSITION_START);
     });
   });
 });

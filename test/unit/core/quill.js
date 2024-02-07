@@ -216,6 +216,25 @@ describe('Quill', function () {
 
       expect(this.quill.getFormat()).toEqual({});
     });
+
+    describe('formattingStarted state usage', function () {
+      it('default state should be false', function () {
+        expect(this.quill.isFormattingStarted()).toEqual(false);
+      });
+
+      it('state should be "true" after startFormat call', function () {
+        this.quill.startFormat();
+
+        expect(this.quill.isFormattingStarted()).toEqual(true);
+      });
+
+      it('state should be "true" after startFormat&endFormat call', function () {
+        this.quill.startFormat();
+        this.quill.endFormat();
+
+        expect(this.quill.isFormattingStarted()).toEqual(false);
+      });
+    });
   });
 
   describe('events', function () {
