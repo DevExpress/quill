@@ -14,6 +14,7 @@ import './unit/core/editor';
 import './unit/core/selection';
 import './unit/core/quill';
 import './unit/core/input';
+import './unit/core/composition';
 
 import './unit/formats/color';
 import './unit/formats/link';
