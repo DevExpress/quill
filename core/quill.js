@@ -91,7 +91,7 @@ class Quill {
       toggleBlankClass: this.toggleBlankClass.bind(this),
     });
     this.editor = new Editor(this.scroll);
-    this.composition = new Composition(this.scroll, this.emitter, this);
+    this.composition = new Composition(this.scroll, this.emitter);
     this.selection = new Selection(this.scroll, this.emitter, this.composition);
     this.theme = new this.options.theme(this, this.options); // eslint-disable-line new-cap
     this.keyboard = this.theme.addModule('keyboard');
@@ -451,15 +451,7 @@ class Quill {
   }
 
   startFormat() {
-    this.formattingStarted = true;
-  }
-
-  endFormat() {
-    this.formattingStarted = false;
-  }
-
-  isFormattingStarted() {
-    return this.formattingStarted;
+    this.composition.handleCompositionEnd({});
   }
 }
 Quill.DEFAULTS = {

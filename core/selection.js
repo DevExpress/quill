@@ -133,7 +133,11 @@ class Selection {
         range.setStart(node, offset);
         range.setEnd(node, offset + 1);
       } else {
-        range.setStart(node, offset - 1);
+        let decrementedOffset = offset - 1;
+        if (decrementedOffset < 0) {
+          decrementedOffset = 0;
+        }
+        range.setStart(node, decrementedOffset);
         range.setEnd(node, offset);
         side = 'right';
       }
@@ -331,6 +335,9 @@ class Selection {
           endNode = endNode.parentNode;
         }
         const range = document.createRange();
+        if (startOffset < 0) {
+          startOffset = 0;
+        }
         range.setStart(startNode, startOffset);
         range.setEnd(endNode, endOffset);
         selection.removeAllRanges();

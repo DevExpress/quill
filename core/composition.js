@@ -2,9 +2,8 @@ import Embed from '../blots/embed';
 import Emitter from './emitter';
 
 class Composition {
-  constructor(scroll, emitter, quill) {
+  constructor(scroll, emitter) {
     this.scroll = scroll;
-    this.quill = quill;
     this.emitter = emitter;
     this.isComposing = false;
     scroll.domNode.addEventListener('compositionstart', (event) => {
@@ -31,21 +30,13 @@ class Composition {
       this.emitter.emit(Emitter.events.COMPOSITION_START, event);
       this.isComposing = true;
     }
-
-    this.quill.endFormat();
   }
 
   handleCompositionEnd(event) {
-    if (this.quill.isFormattingStarted()) {
-      this.isComposing = false;
-      return;
-    }
-
     this.emitter.emit(Emitter.events.COMPOSITION_BEFORE_END, event);
     this.scroll.batchEnd();
     this.emitter.emit(Emitter.events.COMPOSITION_END, event);
     this.isComposing = false;
-    this.quill.endFormat();
   }
 }
 

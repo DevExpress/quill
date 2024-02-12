@@ -217,22 +217,16 @@ describe('Quill', function () {
       expect(this.quill.getFormat()).toEqual({});
     });
 
-    describe('formattingStarted state usage', function () {
-      it('default state should be false', function () {
-        expect(this.quill.isFormattingStarted()).toEqual(false);
-      });
+    describe('startFormat method', function () {
+      it('handleCompositionEnd method should be called on startFormat call', function () {
+        let handleCompositionEndCallCount = 0;
+        this.quill.composition.handleCompositionEnd = () => {
+          handleCompositionEndCallCount += 1;
+        };
 
-      it('state should be "true" after startFormat call', function () {
         this.quill.startFormat();
 
-        expect(this.quill.isFormattingStarted()).toEqual(true);
-      });
-
-      it('state should be "true" after startFormat&endFormat call', function () {
-        this.quill.startFormat();
-        this.quill.endFormat();
-
-        expect(this.quill.isFormattingStarted()).toEqual(false);
+        expect(handleCompositionEndCallCount).toEqual(1);
       });
     });
   });
