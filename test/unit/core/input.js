@@ -1,7 +1,7 @@
 import Input from '../../../modules/input';
 
 describe('subscriptions', function () {
-  it('subscribtion on beforeinput event should be', function () {
+  it('subscription on beforeinput event should be', function () {
     let addEventListenerCallCount = 0;
     let eventName = '';
     let handler;
