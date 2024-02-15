@@ -89,7 +89,7 @@ describe('composition events', function () {
       );
     });
 
-    it('trigger compositionstart event', function () {
+    it('batchStart should be called when compositionstart event triggered', function () {
       const eventArg = {
         target: this.target,
       };
@@ -107,7 +107,7 @@ describe('composition events', function () {
       expect(emitArgs[1].eventName).toEqual(Emitter.events.COMPOSITION_START);
     });
 
-    it('trigger compositionend event', function () {
+    it('batchEnd should be called when compositionend event triggered', function () {
       const eventArg = {
         target: this.target,
       };
