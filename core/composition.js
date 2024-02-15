@@ -19,6 +19,10 @@ class Composition {
     });
   }
 
+  isConposingStagted() {
+    return this.isComposing;
+  }
+
   handleCompositionStart(event) {
     const blot = event.target instanceof Node
       ? this.scroll.find(event.target, true)

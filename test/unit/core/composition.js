@@ -78,10 +78,14 @@ describe('composition events', function () {
 
   describe('events triggering', function () {
     beforeEach(function () {
-      this.target = document.createElement('p');
+      const target = document.createElement('p');
       this.emitMock = getEmitterMock();
 
-      this.scrollMock = getScrollMock(this.target);
+      this.scrollMock = getScrollMock(target);
+
+      this.eventArg = {
+        target,
+      };
 
       this.composition = new Composition(
         this.scrollMock.scroll,
@@ -90,13 +94,9 @@ describe('composition events', function () {
     });
 
     it('batchStart should be called when compositionstart event triggered', function () {
-      const eventArg = {
-        target: this.target,
-      };
-
       const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
 
-      addEventListenerCallsArgs[0].callback(eventArg);
+      addEventListenerCallsArgs[0].callback(this.eventArg);
 
       const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
       const { batchStartCallCount } = this.scrollMock.getMockInfo();
@@ -108,14 +108,10 @@ describe('composition events', function () {
     });
 
     it('batchEnd should be called when compositionend event triggered', function () {
-      const eventArg = {
-        target: this.target,
-      };
-
       const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
 
-      addEventListenerCallsArgs[0].callback(eventArg);
-      addEventListenerCallsArgs[1].callback(eventArg);
+      addEventListenerCallsArgs[0].callback(this.eventArg);
+      addEventListenerCallsArgs[1].callback(this.eventArg);
 
       const { emitCallCount, emitArgs } = this.emitMock.getMockInfo();
       const { batchEndCallCount } = this.scrollMock.getMockInfo();
@@ -124,6 +120,33 @@ describe('composition events', function () {
       expect(emitCallCount).toEqual(4);
       expect(emitArgs[2].eventName).toEqual(Emitter.events.COMPOSITION_BEFORE_END);
       expect(emitArgs[3].eventName).toEqual(Emitter.events.COMPOSITION_END);
+    });
+
+    it('isConposingStagted should return false when composition is not started', function () {
+      const isCompositionStarted = this.composition.isConposingStagted();
+
+      expect(isCompositionStarted).toEqual(false);
+    });
+
+    it('isConposingStagted should return true when composition is started', function () {
+      const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
+
+      addEventListenerCallsArgs[0].callback(this.eventArg);
+
+      const isCompositionStarted = this.composition.isConposingStagted();
+
+      expect(isCompositionStarted).toEqual(true);
+    });
+
+    it('isConposingStagted should return false when composition is ended', function () {
+      const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
+
+      addEventListenerCallsArgs[0].callback(this.eventArg);
+      addEventListenerCallsArgs[1].callback(this.eventArg);
+
+      const isCompositionStarted = this.composition.isConposingStagted();
+
+      expect(isCompositionStarted).toEqual(false);
     });
   });
 });

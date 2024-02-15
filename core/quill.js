@@ -133,8 +133,8 @@ class Quill {
   }
 
   toggleBlankClass() {
-    const { isComposing } = this.composition;
-    this.root.classList.toggle('ql-blank', this.editor.isBlank(isComposing));
+    const isConposingStagted = this.composition.isConposingStagted();
+    this.root.classList.toggle('ql-blank', this.editor.isBlank(isConposingStagted));
   }
 
   addContainer(container, refNode = null) {

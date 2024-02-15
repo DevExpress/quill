@@ -47,7 +47,7 @@ class Input extends Module {
 
   handleBeforeInput(event) {
     if (
-      this.quill.composition.isComposing
+      this.quill.composition.isConposingStagted()
       || event.defaultPrevented
       || !INSERT_TYPES.includes(event.inputType)
     ) {

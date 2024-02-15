@@ -34,7 +34,7 @@ class Selection {
     this.lastNative = null;
     this.handleDragging();
     this.emitter.listenDOM('selectionchange', document, () => {
-      if (!this.mouseDown && !this.composition.isComposing) {
+      if (!this.mouseDown && !this.composition.isConposingStagted()) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }
     });
@@ -382,7 +382,7 @@ class Selection {
     }
     if (!isEqual(oldRange, this.lastRange)) {
       if (
-        !this.composition.isComposing
+        !this.composition.isConposingStagted()
         && nativeRange != null
         && nativeRange.native.collapsed
         && nativeRange.start.node !== this.cursor.textNode

@@ -144,6 +144,10 @@ function compareNodes(node1, node2, ignoredAttributes = []) {
   return null;
 }
 
+const MockComposition = {
+  isConposingStagted: () => false,
+};
+
 function initialize(component, html, container = this.container, options = {}) {
   if (typeof html === 'object') {
     container.innerHTML = html.html;
@@ -156,7 +160,7 @@ function initialize(component, html, container = this.container, options = {}) {
   const scroll = new Scroll(globalRegistry, container, { emitter });
   if (component === Scroll) return scroll;
   if (component === Editor) return new Editor(scroll);
-  const composition = options.composition || {};
+  const composition = options.composition || MockComposition;
   if (component === Selection) return new Selection(scroll, emitter, composition);
   if (component[0] === Editor && component[1] === Selection) {
     return [new Editor(scroll), new Selection(scroll, emitter, composition)];
