@@ -6,6 +6,13 @@ import logger from './logger';
 
 const debug = logger('quill:selection');
 
+function toNotNegative(value) {
+  if (value < 0) {
+    return 0;
+  }
+  return value;
+}
+
 class Range {
   constructor(index, length = 0) {
     this.index = index;
@@ -133,10 +140,9 @@ class Selection {
         range.setStart(node, offset);
         range.setEnd(node, offset + 1);
       } else {
-        let decrementedOffset = offset - 1;
-        if (decrementedOffset < 0) {
-          decrementedOffset = 0;
-        }
+        // needed for composition events handling on Android devices
+        const decrementedOffset = toNotNegative(offset - 1);
+
         range.setStart(node, decrementedOffset);
         range.setEnd(node, offset);
         side = 'right';
@@ -335,9 +341,10 @@ class Selection {
           endNode = endNode.parentNode;
         }
         const range = document.createRange();
-        if (startOffset < 0) {
-          startOffset = 0;
-        }
+
+        // needed for composition events handling on Android devices
+        startOffset = toNotNegative(startOffset);
+        endOffset = toNotNegative(endOffset);
         range.setStart(startNode, startOffset);
         range.setEnd(endNode, endOffset);
         selection.removeAllRanges();

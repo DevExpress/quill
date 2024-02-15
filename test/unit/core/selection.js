@@ -77,6 +77,14 @@ describe('Selection', function () {
       expect(range.length).toEqual(0);
     });
 
+    it('should no exceptions when offset is negative', function () {
+      const selection = this.initialize(Selection, '<p>0123</p>');
+      selection.setNativeRange(this.container.firstChild.firstChild, -1);
+      const [range] = selection.getRange();
+      expect(range.index).toEqual(0);
+      expect(range.length).toEqual(0);
+    });
+
     it('line boundaries', function () {
       const selection = this.initialize(Selection, '<p><br></p><p>12</p>');
       selection.setNativeRange(
