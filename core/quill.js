@@ -65,7 +65,6 @@ class Quill {
   }
 
   constructor(container, options = {}) {
-    this.formattingStarted = false;
     this.options = expandConfig(container, options);
     this.container = this.options.container;
     if (this.container == null) {
