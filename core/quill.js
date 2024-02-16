@@ -188,6 +188,7 @@ class Quill {
   }
 
   format(name, value, source = Emitter.sources.API) {
+    this.applyCompositionChanges();
     return modify.call(
       this,
       () => {
@@ -449,7 +450,7 @@ class Quill {
     );
   }
 
-  startFormat() {
+  applyCompositionChanges() {
     this.composition.handleCompositionEnd({});
   }
 }
