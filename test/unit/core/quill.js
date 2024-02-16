@@ -217,17 +217,15 @@ describe('Quill', function () {
       expect(this.quill.getFormat()).toEqual({});
     });
 
-    describe('startFormat method', function () {
-      it('handleCompositionEnd method should be called on startFormat call', function () {
-        let handleCompositionEndCallCount = 0;
-        this.quill.composition.handleCompositionEnd = () => {
-          handleCompositionEndCallCount += 1;
-        };
+    it('compotion.handleCompositionEnd method should be called on format', function () {
+      let handleCompositionEndCallCount = 0;
+      this.quill.composition.handleCompositionEnd = () => {
+        handleCompositionEndCallCount += 1;
+      };
 
-        this.quill.startFormat();
+      this.quill.format('bold', true);
 
-        expect(handleCompositionEndCallCount).toEqual(1);
-      });
+      expect(handleCompositionEndCallCount).toEqual(1);
     });
   });
 
