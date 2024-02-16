@@ -35,6 +35,5 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npm dist-tag add devextreme-quill@${{ inputs.version }} 22_1
-          npm dist-tag add devextreme-quill@${{ inputs.version }} 22_2
           npm dist-tag add devextreme-quill@${{ inputs.version }} 23_1
+          npm dist-tag add devextreme-quill@${{ inputs.version }} 23_2
