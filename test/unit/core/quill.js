@@ -217,7 +217,7 @@ describe('Quill', function () {
       expect(this.quill.getFormat()).toEqual({});
     });
 
-    it('compotion.handleCompositionEnd method should be called on format', function () {
+    it('composition.handleCompositionEnd method should be called on formating', function () {
       let handleCompositionEndCallCount = 0;
       this.quill.composition.handleCompositionEnd = () => {
         handleCompositionEndCallCount += 1;

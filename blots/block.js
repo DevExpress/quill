@@ -78,7 +78,7 @@ class Block extends BlockBlot {
   insertBefore(blot, ref) {
     const { head } = this.children;
 
-    // condition needed for composition events handling on Android devices
+    // NOTE: This condition is necessary for correct composition events handling on Android devices.
     if (!ref || this.domNode.contains(ref.domNode)) {
       super.insertBefore(blot, ref);
     }

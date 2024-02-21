@@ -77,7 +77,7 @@ describe('Selection', function () {
       expect(range.length).toEqual(0);
     });
 
-    it('should no exceptions when offset is negative', function () {
+    it('no exceptions should be presented when offset is negative', function () {
       const selection = this.initialize(Selection, '<p>0123</p>');
       selection.setNativeRange(this.container.firstChild.firstChild, -1);
       const [range] = selection.getRange();
