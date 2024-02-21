@@ -145,7 +145,7 @@ function compareNodes(node1, node2, ignoredAttributes = []) {
 }
 
 const MockComposition = {
-  isConposingStagted: () => false,
+  isCompositionInProgress: () => false,
 };
 
 function initialize(component, html, container = this.container, options = {}) {

@@ -19,7 +19,7 @@ class Composition {
     });
   }
 
-  isConposingStagted() {
+  isCompositionInProgress() {
     return this.isComposing;
   }
 

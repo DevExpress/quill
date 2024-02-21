@@ -122,29 +122,29 @@ describe('composition events', function () {
       expect(emitArgs[3].eventName).toEqual(Emitter.events.COMPOSITION_END);
     });
 
-    it('isConposingStagted should return false when composition is not started', function () {
-      const isCompositionStarted = this.composition.isConposingStagted();
+    it('isCompositionInProgress should return false when composition is not started', function () {
+      const isCompositionStarted = this.composition.isCompositionInProgress();
 
       expect(isCompositionStarted).toEqual(false);
     });
 
-    it('isConposingStagted should return true when composition is started', function () {
+    it('isCompositionInProgress should return true when composition is started', function () {
       const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
 
       addEventListenerCallsArgs[0].callback(this.eventArg);
 
-      const isCompositionStarted = this.composition.isConposingStagted();
+      const isCompositionStarted = this.composition.isCompositionInProgress();
 
       expect(isCompositionStarted).toEqual(true);
     });
 
-    it('isConposingStagted should return false when composition is ended', function () {
+    it('isCompositionInProgress should return false when composition is ended', function () {
       const { addEventListenerCallsArgs } = this.scrollMock.getAddEventListenerArgs();
 
       addEventListenerCallsArgs[0].callback(this.eventArg);
       addEventListenerCallsArgs[1].callback(this.eventArg);
 
-      const isCompositionStarted = this.composition.isConposingStagted();
+      const isCompositionStarted = this.composition.isCompositionInProgress();
 
       expect(isCompositionStarted).toEqual(false);
     });
