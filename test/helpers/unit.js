@@ -144,21 +144,26 @@ function compareNodes(node1, node2, ignoredAttributes = []) {
   return null;
 }
 
-function initialize(klass, html, container = this.container, options = {}) {
+const MockComposition = {
+  isCompositionInProgress: () => false,
+};
+
+function initialize(component, html, container = this.container, options = {}) {
   if (typeof html === 'object') {
     container.innerHTML = html.html;
   } else {
     container.innerHTML = html.replace(/\n\s*/g, '');
   }
-  if (klass === HTMLElement) return container;
-  if (klass === Quill) return new Quill(container, options);
+  if (component === HTMLElement) return container;
+  if (component === Quill) return new Quill(container, options);
   const emitter = new Emitter();
   const scroll = new Scroll(globalRegistry, container, { emitter });
-  if (klass === Scroll) return scroll;
-  if (klass === Editor) return new Editor(scroll);
-  if (klass === Selection) return new Selection(scroll, emitter);
-  if (klass[0] === Editor && klass[1] === Selection) {
-    return [new Editor(scroll), new Selection(scroll, emitter)];
+  if (component === Scroll) return scroll;
+  if (component === Editor) return new Editor(scroll);
+  const composition = options.composition || MockComposition;
+  if (component === Selection) return new Selection(scroll, emitter, composition);
+  if (component[0] === Editor && component[1] === Selection) {
+    return [new Editor(scroll), new Selection(scroll, emitter, composition)];
   }
   return null;
 }

@@ -6,6 +6,13 @@ import logger from './logger';
 
 const debug = logger('quill:selection');
 
+function toNotNegative(value) {
+  if (value < 0) {
+    return 0;
+  }
+  return value;
+}
+
 class Range {
   constructor(index, length = 0) {
     this.index = index;
@@ -14,10 +21,10 @@ class Range {
 }
 
 class Selection {
-  constructor(scroll, emitter) {
+  constructor(scroll, emitter, composition) {
     this.emitter = emitter;
     this.scroll = scroll;
-    this.composing = false;
+    this.composition = composition;
     this.mouseDown = false;
     this.root = this.scroll.domNode;
     this.cursor = this.scroll.create('cursor', this);
@@ -25,10 +32,9 @@ class Selection {
     this.savedRange = new Range(0, 0);
     this.lastRange = this.savedRange;
     this.lastNative = null;
-    this.handleComposition();
     this.handleDragging();
     this.emitter.listenDOM('selectionchange', document, () => {
-      if (!this.mouseDown && !this.composing) {
+      if (!this.mouseDown && !this.composition.isCompositionInProgress()) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
       }
     });
@@ -66,29 +72,6 @@ class Selection {
       }
     });
     this.update(Emitter.sources.SILENT);
-  }
-
-  handleComposition() {
-    this.root.addEventListener('compositionstart', () => {
-      this.composing = true;
-      this.scroll.batchStart();
-    });
-    this.root.addEventListener('compositionend', () => {
-      this.scroll.batchEnd();
-      this.composing = false;
-      if (this.cursor.parent) {
-        const range = this.cursor.restore();
-        if (!range) return;
-        setTimeout(() => {
-          this.setNativeRange(
-            range.startNode,
-            range.startOffset,
-            range.endNode,
-            range.endOffset,
-          );
-        }, 1);
-      }
-    });
   }
 
   handleDragging() {
@@ -157,7 +140,10 @@ class Selection {
         range.setStart(node, offset);
         range.setEnd(node, offset + 1);
       } else {
-        range.setStart(node, offset - 1);
+        // needed for composition events handling on Android devices
+        const decrementedOffset = toNotNegative(offset - 1);
+
+        range.setStart(node, decrementedOffset);
         range.setEnd(node, offset);
         side = 'right';
       }
@@ -355,6 +341,10 @@ class Selection {
           endNode = endNode.parentNode;
         }
         const range = document.createRange();
+
+        // needed for composition events handling on Android devices
+        startOffset = toNotNegative(startOffset);
+        endOffset = toNotNegative(endOffset);
         range.setStart(startNode, startOffset);
         range.setEnd(endNode, endOffset);
         selection.removeAllRanges();
@@ -392,7 +382,7 @@ class Selection {
     }
     if (!isEqual(oldRange, this.lastRange)) {
       if (
-        !this.composing
+        !this.composition.isCompositionInProgress()
         && nativeRange != null
         && nativeRange.native.collapsed
         && nativeRange.start.node !== this.cursor.textNode
