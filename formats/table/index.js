@@ -355,7 +355,7 @@ class RowContainer extends Container {
 
       if (domNode) {
         Object.keys(TABLE_FORMATS).forEach((format) => {
-          const value = domNode.dataset[format.toLowerCase()];
+          const value = domNode.dataset?.[format.toLowerCase()];
 
           if (value) {
             formats[format] = value;
