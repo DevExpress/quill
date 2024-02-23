@@ -6,6 +6,8 @@ import { Range } from '../../../core/selection';
 import TableMain from '../../../modules/table';
 import Embed from '../../../blots/embed';
 
+const STYLE_ATTRIBUTE_KEY = 'style-data-key';
+
 describe('Quill', function () {
   it('imports', function () {
     Object.keys(Quill.imports).forEach(function (path) {
@@ -957,6 +959,84 @@ describe('Quill', function () {
 
       expect(instance.getSemanticHTML()).toEqual(expected);
       this.container.style.visibility = '';
+    });
+  });
+
+  describe('check replaceStyleAttribute', function () {
+    const testCases = [{
+      testName: 'simple style attribute should be replaced',
+      inputMarkup: '<p style="text-align: right;">content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p>`,
+    }, {
+      testName: 'uppercase style attribute should be replaced',
+      inputMarkup: '<p STYLE="text-align: right;">content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p>`,
+    }, {
+      testName: 'style attribute with one space after attribute should be replaced',
+      inputMarkup: '<p style ="text-align: right;">content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p>`,
+    }, {
+      testName: 'style attribute with two spaces after attribute should be replaced',
+      inputMarkup: '<p style  ="text-align: right;">content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p>`,
+    }, {
+      testName: 'several style attributes  should be replaced',
+      inputMarkup: '<p style="text-align: right;" style="border: solid;">content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;" ${STYLE_ATTRIBUTE_KEY}="border: solid;">content</p>`,
+    }, {
+      testName: 'style inside tag attribute should not be replaced',
+      inputMarkup: '<p>style="text-align: right;"</p>',
+      expectedMarkup: '<p>style="text-align: right;"</p>',
+    }];
+
+    testCases.forEach(({ testName, inputMarkup, expectedMarkup }) => {
+      it(testName, function () {
+        const processedMarkup = Quill.replaceStyleAttribute(inputMarkup);
+
+        expect(processedMarkup).toEqual(expectedMarkup);
+      });
+    });
+  });
+
+  describe('check restoreStyleAttribute', function () {
+    it('STYLE_ATTRIBUTE_KEY should be replaced', function () {
+      const container = document.createElement('p');
+      const pElement = document.createElement('p');
+
+      pElement.setAttribute(STYLE_ATTRIBUTE_KEY, 'text-align: right;');
+
+      container.appendChild(pElement);
+
+      Quill.restoreStyleAttribute(container);
+
+      expect(pElement.style.textAlign).toEqual('right');
+      expect(pElement.hasAttribute(STYLE_ATTRIBUTE_KEY)).toEqual(false);
+    });
+
+    it('STYLE_ATTRIBUTE_KEY located in content should be stay', function () {
+      const container = document.createElement('p');
+      const pElement = document.createElement('p');
+
+      pElement.textContent = `${STYLE_ATTRIBUTE_KEY}="text-align: right;"`;
+
+      container.appendChild(pElement);
+
+      Quill.restoreStyleAttribute(container);
+
+      expect(pElement.textContent).toEqual(`${STYLE_ATTRIBUTE_KEY}="text-align: right;"`);
+    });
+
+    it('LIST_STYLE_KEY should be exist on element after call restoreStyleAttribute', function () {
+      const container = document.createElement('p');
+      const pElement = document.createElement('p');
+
+      pElement.setAttribute(STYLE_ATTRIBUTE_KEY, 'text-align: right;');
+
+      container.appendChild(pElement);
+
+      Quill.restoreStyleAttribute(container);
+
+      expect(pElement.hasAttribute(Quill.LIST_STYLE_KEY)).toEqual(true);
     });
   });
 });

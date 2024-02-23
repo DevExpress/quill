@@ -117,9 +117,13 @@ class Clipboard extends Module {
   }
 
   applyMatchers(html, keepLastNewLine, formats = {}) {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const safeHtml = Quill.replaceStyleAttribute(html);
+    const doc = new DOMParser().parseFromString(safeHtml, 'text/html');
     const container = doc.body;
     const nodeMatches = new WeakMap();
+
+    Quill.restoreStyleAttribute(doc);
+
     const [elementMatchers, textMatchers] = this.prepareMatching(
       container,
       nodeMatches,

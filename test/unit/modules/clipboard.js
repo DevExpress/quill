@@ -51,6 +51,69 @@ describe('Clipboard', function () {
         }, 2);
       });
 
+      it('content with inline style should be rendered', function (done) {
+        this.quill.setSelection(0, 0);
+        const captureData = {
+          ...this.clipboardEvent,
+          clipboardData: {
+            ...this.clipboardData,
+            getData: (type) => {
+              return type === 'text/html' ? '<p style="text-align: right;">123</p>' : '123';
+            },
+          },
+        };
+
+        this.quill.clipboard.onCapturePaste(captureData);
+
+        setTimeout(() => {
+          expect(this.quill.root).toEqualHTML(
+            '<p class="ql-align-right">123</p><h1>0123</h1><p>5<em>67</em>8</p>',
+          );
+          done();
+        }, 2);
+      });
+
+      describe('check restoreStyleAttribute and replaceStyleAttribute methods', function () {
+        beforeEach(function () {
+          this.sourceReplaceStyleAttribute = Quill.replaceStyleAttribute;
+          this.sourceRestoreStyleAttribute = Quill.restoreStyleAttribute;
+          this.replaceStyleAttributeCallCount = 0;
+          this.restoreStyleAttributeCallCount = 0;
+          Quill.replaceStyleAttribute = () => {
+            this.replaceStyleAttributeCallCount += 1;
+          };
+          Quill.restoreStyleAttribute = () => {
+            this.restoreStyleAttributeCallCount += 1;
+          };
+        });
+
+        afterEach(function () {
+          Quill.replaceStyleAttribute = this.sourceReplaceStyleAttribute;
+          Quill.restoreStyleAttribute = this.sourceRestoreStyleAttribute;
+        });
+
+        it('restoreStyleAttribute and replaceStyleAttribute should be called', function (done) {
+          this.quill.setSelection(0, 0);
+          const captureData = {
+            ...this.clipboardEvent,
+            clipboardData: {
+              ...this.clipboardData,
+              getData: (type) => {
+                return type === 'text/html' ? '<p style="text-align: right;">123</p>' : '123';
+              },
+            },
+          };
+
+          this.quill.clipboard.onCapturePaste(captureData);
+
+          setTimeout(() => {
+            expect(this.replaceStyleAttributeCallCount).toEqual(1);
+            expect(this.restoreStyleAttributeCallCount).toEqual(1);
+            done();
+          }, 2);
+        });
+      });
+
       // Copying from Word includes both html and files
       it('pastes html data if present with file', function (done) {
         const upload = spyOn(this.quill.uploader, 'upload');
