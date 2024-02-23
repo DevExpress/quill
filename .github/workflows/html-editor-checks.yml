@@ -5,8 +5,6 @@ on:
     branches:
       - master
   pull_request:
-    branches:
-      - master
 
 env:
   DEVEXTREME_BRANCHES: '["24_1", "23_2", "23_1", "22_2", "22_1"]'
