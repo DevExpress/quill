@@ -117,12 +117,14 @@ class Clipboard extends Module {
   }
 
   applyMatchers(html, keepLastNewLine, formats = {}) {
-    const safeHtml = Quill.replaceStyleAttribute(html);
-    const doc = new DOMParser().parseFromString(safeHtml, 'text/html');
+    // NOTE: Operations with style attribute is required
+    // to prevent a 'unsafe-inline' CSP error in DOMParser.
+    const htmlWithoutStyles = Quill.replaceStyleAttribute(html);
+    const doc = new DOMParser().parseFromString(htmlWithoutStyles, 'text/html');
+    Quill.restoreStyleAttribute(doc);
+
     const container = doc.body;
     const nodeMatches = new WeakMap();
-
-    Quill.restoreStyleAttribute(doc);
 
     const [elementMatchers, textMatchers] = this.prepareMatching(
       container,

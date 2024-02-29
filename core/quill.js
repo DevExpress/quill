@@ -469,13 +469,13 @@ Quill.events = Emitter.events;
 Quill.sources = Emitter.sources;
 // eslint-disable-next-line no-undef
 Quill.version = typeof QUILL_VERSION === 'undefined' ? 'dev' : QUILL_VERSION;
-Quill.LIST_STYLE_KEY = 'mso-list-data';
+Quill.MS_LIST_DATA_KEY = 'mso-list-data';
 
 Quill.replaceStyleAttribute = (html) => {
   const tagAttrsRegex = /(?:(<[a-z0-9]+\s*))([\s\S]*?)(>|\/>)/gi;
 
   return html.replace(tagAttrsRegex, (allTagAttrs, tagStart, tagAttrs, tagEnd) => {
-    const contentWithoutStyle = tagAttrs.replace(/style(\s?)+=/gi, `${STYLE_ATTRIBUTE_KEY}=`);
+    const contentWithoutStyle = tagAttrs.replace(/style\s*=/gi, `${STYLE_ATTRIBUTE_KEY}=`);
 
     return tagStart + contentWithoutStyle + tagEnd;
   });
@@ -487,7 +487,7 @@ Quill.restoreStyleAttribute = (element) => {
       const attrValue = currentElement.getAttribute(STYLE_ATTRIBUTE_KEY);
 
       currentElement.style = attrValue;
-      currentElement.setAttribute(Quill.LIST_STYLE_KEY, attrValue);
+      currentElement.setAttribute(Quill.MS_LIST_DATA_KEY, attrValue);
       currentElement.removeAttribute(STYLE_ATTRIBUTE_KEY);
     });
 };

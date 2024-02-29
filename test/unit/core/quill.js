@@ -1026,7 +1026,7 @@ describe('Quill', function () {
       expect(pElement.textContent).toEqual(`${STYLE_ATTRIBUTE_KEY}="text-align: right;"`);
     });
 
-    it('LIST_STYLE_KEY should exist on element after calling the restoreStyleAttribute', function () {
+    it('MS_LIST_DATA_KEY should exist on element after calling the restoreStyleAttribute', function () {
       const container = document.createElement('p');
       const pElement = document.createElement('p');
 
@@ -1036,7 +1036,7 @@ describe('Quill', function () {
 
       Quill.restoreStyleAttribute(container);
 
-      expect(pElement.hasAttribute(Quill.LIST_STYLE_KEY)).toEqual(true);
+      expect(pElement.hasAttribute(Quill.MS_LIST_DATA_KEY)).toEqual(true);
     });
   });
 });
