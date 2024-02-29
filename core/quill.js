@@ -483,13 +483,13 @@ Quill.replaceStyleAttribute = (html) => {
 
 Quill.restoreStyleAttribute = (element) => {
   element.querySelectorAll(`[${STYLE_ATTRIBUTE_KEY}]`)
-      .forEach((currentElement) => {
-    const attrValue = currentElement.getAttribute(STYLE_ATTRIBUTE_KEY);
+    .forEach((currentElement) => {
+      const attrValue = currentElement.getAttribute(STYLE_ATTRIBUTE_KEY);
 
-    currentElement.style = attrValue;
-    currentElement.setAttribute(Quill.LIST_STYLE_KEY, attrValue);
-    currentElement.removeAttribute(STYLE_ATTRIBUTE_KEY);
-  });
+      currentElement.style = attrValue;
+      currentElement.setAttribute(Quill.LIST_STYLE_KEY, attrValue);
+      currentElement.removeAttribute(STYLE_ATTRIBUTE_KEY);
+    });
 };
 
 Quill.imports = {
