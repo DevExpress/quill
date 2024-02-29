@@ -482,7 +482,8 @@ Quill.replaceStyleAttribute = (html) => {
 };
 
 Quill.restoreStyleAttribute = (element) => {
-  element.querySelectorAll(`[${STYLE_ATTRIBUTE_KEY}]`).forEach((currentElement) => {
+  element.querySelectorAll(`[${STYLE_ATTRIBUTE_KEY}]`)
+      .forEach((currentElement) => {
     const attrValue = currentElement.getAttribute(STYLE_ATTRIBUTE_KEY);
 
     currentElement.style = attrValue;

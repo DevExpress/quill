@@ -73,7 +73,7 @@ describe('Clipboard', function () {
         }, 2);
       });
 
-      describe('check restoreStyleAttribute and replaceStyleAttribute methods', function () {
+      describe('restoreStyleAttribute and replaceStyleAttribute methods', function () {
         beforeEach(function () {
           this.sourceReplaceStyleAttribute = Quill.replaceStyleAttribute;
           this.sourceRestoreStyleAttribute = Quill.restoreStyleAttribute;
@@ -92,7 +92,7 @@ describe('Clipboard', function () {
           Quill.restoreStyleAttribute = this.sourceRestoreStyleAttribute;
         });
 
-        it('restoreStyleAttribute and replaceStyleAttribute should be called', function (done) {
+        it('should be called on paste', function (done) {
           this.quill.setSelection(0, 0);
           const captureData = {
             ...this.clipboardEvent,

@@ -962,7 +962,7 @@ describe('Quill', function () {
     });
   });
 
-  describe('check replaceStyleAttribute', function () {
+  describe('replaceStyleAttribute', function () {
     const testCases = [{
       testName: 'simple style attribute should be replaced',
       inputMarkup: '<p style="text-align: right;">content</p>',
@@ -1013,7 +1013,7 @@ describe('Quill', function () {
       expect(pElement.hasAttribute(STYLE_ATTRIBUTE_KEY)).toEqual(false);
     });
 
-    it('STYLE_ATTRIBUTE_KEY located in content should be stay', function () {
+    it('STYLE_ATTRIBUTE_KEY located in the content should stay', function () {
       const container = document.createElement('p');
       const pElement = document.createElement('p');
 
@@ -1026,7 +1026,7 @@ describe('Quill', function () {
       expect(pElement.textContent).toEqual(`${STYLE_ATTRIBUTE_KEY}="text-align: right;"`);
     });
 
-    it('LIST_STYLE_KEY should be exist on element after call restoreStyleAttribute', function () {
+    it('LIST_STYLE_KEY should exist on element after calling the restoreStyleAttribute', function () {
       const container = document.createElement('p');
       const pElement = document.createElement('p');
 
