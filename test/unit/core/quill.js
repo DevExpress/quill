@@ -980,13 +980,45 @@ describe('Quill', function () {
       inputMarkup: '<p style  ="text-align: right;">content</p>',
       expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p>`,
     }, {
-      testName: 'several style attributes  should be replaced',
+      testName: 'several style attributes should be replaced',
       inputMarkup: '<p style="text-align: right;" style="border: solid;">content</p>',
       expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;" ${STYLE_ATTRIBUTE_KEY}="border: solid;">content</p>`,
     }, {
       testName: 'style inside tag attribute should not be replaced',
       inputMarkup: '<p>style="text-align: right;"</p>',
       expectedMarkup: '<p>style="text-align: right;"</p>',
+    }, {
+      testName: 'style attributes in sibling tags should be replaced',
+      inputMarkup: '<p style="text-align: left;">content</p><p style="text-align: right;">content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: left;">content</p><p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p>`,
+    }, {
+      testName: 'style attributes in parent and child elements should be replaced',
+      inputMarkup: '<div style="text-align: right;">content<div style="color: red;">content</div></div>',
+      expectedMarkup: `<div ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content<div ${STYLE_ATTRIBUTE_KEY}="color: red;">content</div></div>`,
+    }, {
+      testName: 'style attribute should not be replaced when input markup do not have open bracket for open tag',
+      inputMarkup: 'p style="text-align: right;">content</p>',
+      expectedMarkup: 'p style="text-align: right;">content</p>',
+    }, {
+      testName: 'style attribute should be replaced when input markup do not have closed bracket for open tag',
+      inputMarkup: '<p style="text-align: right;" content</p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;" content</p>`,
+    }, {
+      testName: 'style attribute should be replaced when input markup do not have open bracket for closed tag',
+      inputMarkup: '<p style="text-align: right;">content /p>',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content /p>`,
+    }, {
+      testName: 'style attribute should be replaced when input markup do not have closed bracket for closed tag',
+      inputMarkup: '<p style="text-align: right;">content</p',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content</p`,
+    }, {
+      testName: 'style attribute should be replaced when input markup do not have closed tag',
+      inputMarkup: '<p style="text-align: right;">content',
+      expectedMarkup: `<p ${STYLE_ATTRIBUTE_KEY}="text-align: right;">content`,
+    }, {
+      testName: 'should be no errors when value is equals empty string',
+      inputMarkup: '',
+      expectedMarkup: '',
     }];
 
     testCases.forEach(({ testName, inputMarkup, expectedMarkup }) => {
