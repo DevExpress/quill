@@ -30,8 +30,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access=public
 
-      - name: Setup NPM tags for 1.6.x
-        if: startsWith(inputs.version, '1.6')
+      - name: Setup NPM tags
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
