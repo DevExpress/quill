@@ -6,7 +6,7 @@ import logger from './logger';
 const debug = logger('quill:events');
 const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
 if (hasWindow()) {
-  EVENTS.forEach((eventName) => { 
+  EVENTS.forEach((eventName) => {
     document.addEventListener(eventName, (...args) => {
       const event = args[0];
       const shadowRoot = event?.target?.shadowRoot;
