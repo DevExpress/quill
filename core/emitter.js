@@ -6,16 +6,14 @@ import logger from './logger';
 const debug = logger('quill:events');
 const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
 if (hasWindow()) {
-  EVENTS.forEach((eventName) => {
+  EVENTS.forEach((eventName) => { 
     document.addEventListener(eventName, (...args) => {
       const event = args[0];
-
-      const target = event?.target;
-      const shadowRoot = target?.shadowRoot;
-
+      const shadowRoot = event?.target?.shadowRoot;
       const root = shadowRoot ?? document;
+      const quillContainers = root.querySelectorAll('.ql-container');
 
-      Array.from(root.querySelectorAll('.ql-container')).forEach((node) => {
+      Array.from(quillContainers).forEach((node) => {
         const quill = instances.get(node);
         if (quill && quill.emitter) {
           quill.emitter.handleDOM(...args);
