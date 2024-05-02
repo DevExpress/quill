@@ -8,7 +8,12 @@ const EVENTS = ['selectionchange', 'mousedown', 'mouseup', 'click'];
 if (hasWindow()) {
   EVENTS.forEach((eventName) => {
     document.addEventListener(eventName, (...args) => {
-      Array.from(document.querySelectorAll('.ql-container')).forEach((node) => {
+      const event = args[0];
+      const shadowRoot = event?.target?.shadowRoot;
+      const root = shadowRoot ?? document;
+      const quillContainers = root.querySelectorAll('.ql-container');
+
+      Array.from(quillContainers).forEach((node) => {
         const quill = instances.get(node);
         if (quill && quill.emitter) {
           quill.emitter.handleDOM(...args);
