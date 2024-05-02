@@ -1,7 +1,7 @@
 import Quill from '../../../core/quill';
 
 describe('Emitter', function () {
-  it('handleDOM is called on event hadling', function () {
+  it('handleDOM is called on event handling', function () {
     this.quill = this.initialize(Quill, '');
     spyOn(this.quill.emitter, 'handleDOM');
 
@@ -11,7 +11,7 @@ describe('Emitter', function () {
     expect(this.quill.emitter.handleDOM).toHaveBeenCalledWith(event);
   });
 
-  it('handleDOM is called on event hadling if quill container is in shadowDOM', function () {
+  it('handleDOM is called on event handling if quill container is in shadowDOM', function () {
     const shadowContainer = document.body.appendChild(document.createElement('div'));
     try {
       shadowContainer.attachShadow({ mode: 'open' });
