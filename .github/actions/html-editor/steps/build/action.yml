@@ -29,7 +29,7 @@ runs:
         DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
         BUILD_TESTCAFE: 'true'
-      run: npm run build:testcafe
+      run: npm run build
 
     - name: Build:systemjs
       if: ${{ !startsWith(inputs.branch, '22') }}
