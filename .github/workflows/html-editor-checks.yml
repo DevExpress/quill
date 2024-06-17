@@ -99,6 +99,7 @@ jobs:
         uses: ./quill-repo/.github/actions/html-editor/steps/testcafe-tests
         with:
           branch: ${{ matrix.branch }}
-          devextreme-package-directory: ${{ 'devextreme-repo/e2e/testcafe-devextreme' }}
+          devextreme-package-directory: devextreme-repo/e2e/testcafe-devextreme
+          e2e-package-directory: devextreme-repo/e2e/testcafe-devextreme
           component-directory: ${{ matrix.test-suite.componentFolder }}
           quarantine-mode: ${{ matrix.test-suite.quarantineMode }}

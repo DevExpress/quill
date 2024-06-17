@@ -12,6 +12,9 @@ inputs:
     description: DevExtreme package path
     required: true
     default: devextreme-repo
+  e2e-package-directory:
+    description: DevExtreme e2e package path
+    default: devextreme-repo
   component-directory:
     description: The component directory with Testcafe tests
     required: true
@@ -48,7 +51,7 @@ runs:
 
     - name: Run TestCafe tests
       shell: bash
-      working-directory: ${{ inputs.devextreme-package-directory }}
+      working-directory: ${{ inputs.e2e-package-directory }}
       run: |
         all_args="--concurrency 2 --browsers=chrome:devextreme-shr2 --componentFolder ${{ inputs.component-directory }} --quarantineMode ${{ env.TEST_SUITE.quarantineMode}}"
         echo "$all_args"
@@ -59,7 +62,7 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: compared-screenshots
-        path: ${{ inputs.devextreme-package-directory }}/testing/testcafe/artifacts/compared-screenshots/**/*
+        path: ${{ inputs.e2e-package-directory }}/testing/testcafe/artifacts/compared-screenshots/**/*
         if-no-files-found: ignore
 
     - name: Copy failed test artifacts
@@ -67,5 +70,5 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: failed-tests
-        path: ${{ inputs.devextreme-package-directory }}/testing/testcafe/artifacts/failedtests/**/*
+        path: ${{ inputs.devextreme-package-directory }}/artifacts/failedtests/**/*
         if-no-files-found: ignore
