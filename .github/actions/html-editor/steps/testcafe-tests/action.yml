@@ -29,6 +29,7 @@ runs:
       with:
         branch: ${{ inputs.branch }}
         working-directory: ${{ inputs.working-directory }}
+        devextreme-package-directory: ${{ inputs.devextreme-package-directory }}
 
     - name: Download artifact
       uses: ./quill-repo/.github/actions/html-editor/common/get-artifact
@@ -62,7 +63,7 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: compared-screenshots
-        path: ${{ inputs.e2e-package-directory }}/testing/testcafe/artifacts/compared-screenshots/**/*
+        path: ${{ inputs.e2e-package-directory }}/artifacts/compared-screenshots/**/*
         if-no-files-found: ignore
 
     - name: Copy failed test artifacts
@@ -70,5 +71,5 @@ runs:
       uses: actions/upload-artifact@v3
       with:
         name: failed-tests
-        path: ${{ inputs.devextreme-package-directory }}/artifacts/failedtests/**/*
+        path: ${{ inputs.e2e-package-directory }}/artifacts/failedtests/**/*
         if-no-files-found: ignore
