@@ -31,12 +31,6 @@ runs:
         BUILD_TESTCAFE: 'true'
       run: npx nx build
 
-    - name: Build:systemjs
-      if: ${{ !startsWith(inputs.branch, '22') }}
-      shell: bash
-      working-directory: ${{ inputs.devextreme-package-directory }}
-      run: npx nx build:systemjs
-
     - name: Zip artifacts
       shell: bash
       working-directory: ${{ inputs.devextreme-package-directory }}
